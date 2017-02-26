@@ -1,0 +1,443 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 日本語 resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
+#ifdef _WIN32
+LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
+#pragma code_page(932)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_NORMAL              ICON                    "GoYotsuya.ico"
+IDI_SMALL               ICON                    "small.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDC_GOYOTSUYA MENU 
+BEGIN
+    POPUP "ファイル(&F)"
+    BEGIN
+        MENUITEM "書き出し",                        IDM_EXPORT
+        MENUITEM "新たなノード複製",                    IDC_NODE_COPY
+        MENUITEM "別名で保存",                       32775
+        MENUITEM "マージ",                         32776
+        MENUITEM "アプリケーションの終了(&X)",             IDM_EXIT
+    END
+    POPUP "ヘルプ(&H)"
+    BEGIN
+        MENUITEM "バージョン情報(&A)...",              IDM_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDC_GOYOTSUYA ACCELERATORS 
+BEGIN
+    "?",            IDM_ABOUT,              ASCII,  ALT
+    "/",            IDM_ABOUT,              ASCII,  ALT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "バージョン情報 Yotsuya JosekiEditor"
+FONT 9, "MS UI Gothic", 0, 0, 0x1
+BEGIN
+    ICON            128,IDC_STATIC,14,14,20,20
+    LTEXT           "よつや定石辞典エディターVer.0.7.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2010",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
+END
+
+IDD_REMOCON DIALOGEX 0, 0, 316, 273
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Remocon"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,205,252,50,14
+    PUSHBUTTON      "キャンセル",IDCANCEL,259,252,50,14
+    PUSHBUTTON      "再生",IDC_R_PLAY,7,7,37,16
+    PUSHBUTTON      "もどす",IDC_R_BACK,45,7,37,16
+    PUSHBUTTON      ">>",IDC_R_FF,87,7,44,17
+    PUSHBUTTON      "<<",IDC_R_RV,184,7,44,17
+    PUSHBUTTON      "|<",IDC_R_TOP,136,7,44,17
+    PUSHBUTTON      ">|",IDC_R_END,231,7,44,17
+    PUSHBUTTON      "手順表示",IDC_R_SHOW_NO,7,29,44,17
+    PUSHBUTTON      "次の枝へ",IDC_R_NEXT_BRANCH,54,28,44,17
+    PUSHBUTTON      "前の枝へ",IDC_R_PREV_BRANCH,101,28,44,17
+    PUSHBUTTON      "次のコメントへ",IDC_R_NEXT_COMMENT,149,29,55,17
+    PUSHBUTTON      "前のコメントへ",IDC_R_PREV_COMMENT,207,29,55,17
+    PUSHBUTTON      "石追加",IDC_R_ADDSTONE_MODE,7,69,44,17
+    PUSHBUTTON      "削除",IDC_R_DELETE_BRANCH,93,70,44,17
+    PUSHBUTTON      "保存SGF",IDC_R_SAVE_SGF,139,71,44,17
+    PUSHBUTTON      "保存YGF",IDC_R_SAVE_YGF,185,68,44,17
+    PUSHBUTTON      "開く(SGF)",IDC_R_OPEN,181,49,44,17
+    EDITTEXT        IDC_COMMENT,7,126,201,124,ES_MULTILINE | ES_AUTOVSCROLL
+    PUSHBUTTON      "適用",IDC_R_TEXT_OK,209,229,44,17
+    COMBOBOX        IDC_LABEL_SELECT,7,89,82,14,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "あげ石指定",IDC_R_SELECT_DEAD_STONE,7,103,44,17
+    PUSHBUTTON      "地合計算",IDC_R_RESULT,53,104,44,17
+    COMBOBOX        IDC_INIT_STONE_COUNT,98,89,82,14,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "置石指定開始",IDC_R_FREE_INITSTONE,183,86,66,17
+    PUSHBUTTON      "黒編集",IDC_R_BLACK_DETAIL,101,104,44,17
+    PUSHBUTTON      "白編集",IDC_R_BLACK_DETAIL2,149,105,44,17
+    PUSHBUTTON      "オプション",IDC_R_BLACK_DETAIL3,197,105,44,17
+    PUSHBUTTON      "コメント検索開始",IDC_R_START_COMMENT,7,49,85,17
+    PUSHBUTTON      "コメント検索終了",IDC_R_END_COMMENT,95,49,85,17
+    PUSHBUTTON      "置石指定",IDC_R_INITSTONE,251,89,47,17
+    PUSHBUTTON      "石追加",IDC_R_NORMAL_MODE,51,70,44,17
+    PUSHBUTTON      "開く(YGF)",IDC_R_OPEN_YGF,228,49,44,17
+    PUSHBUTTON      "コメント登録",IDC_COMMENT_REGISTER,212,128,52,17
+END
+
+IDD_JOSEKI_DIALOG DIALOGEX 0, 0, 279, 288
+STYLE DS_SETFONT | DS_MODALFRAME | WS_CHILD
+FONT 8, "メイリオ", 400, 0, 0x80
+BEGIN
+    PUSHBUTTON      ">",IDC_R_PLAY,93,223,26,12
+    PUSHBUTTON      "<",IDC_R_BACK,65,223,26,12
+    PUSHBUTTON      ">>",IDC_R_FF,121,223,26,12
+    PUSHBUTTON      "<<",IDC_R_RV,37,223,26,12
+    PUSHBUTTON      "|<",IDC_R_TOP,9,223,26,12
+    PUSHBUTTON      ">|",IDC_R_END,149,223,26,12
+    PUSHBUTTON      "手順表示",IDC_R_SHOW_NO,180,223,44,12
+    PUSHBUTTON      "次の枝へ",IDC_R_NEXT_BRANCH,47,208,37,13
+    PUSHBUTTON      "前の枝へ",IDC_R_PREV_BRANCH,86,208,37,13
+    PUSHBUTTON      "コメントリスト表示",IDC_R_SHOW_COMMENT,196,208,76,13
+    PUSHBUTTON      "石追加",IDC_R_ADDSTONE_MODE,195,85,33,14
+    PUSHBUTTON      "枝削除",IDC_R_DELETE_BRANCH,231,108,38,14
+    DEFPUSHBUTTON   "保存",IDC_R_SAVE_SGF,228,270,44,12
+    EDITTEXT        IDC_COMMENT,7,11,265,27,ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL
+    PUSHBUTTON      "適用",IDC_ADJUST,184,270,44,12
+    COMBOBOX        IDC_LABEL_SELECT,9,110,50,14,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "オプション",IDC_R_BLACK_DETAIL3,7,270,44,12
+    PUSHBUTTON      "石追加終了",IDC_R_NORMAL_MODE,228,85,41,14
+    PUSHBUTTON      "OK",IDC_COMMENT_REGISTER,244,64,26,12
+    GROUPBOX        "操作",IDC_STATIC,7,201,265,36
+    GROUPBOX        "編集",IDC_STATIC,7,76,265,50
+    LTEXT           "特殊ラベル",IDC_STATIC,66,99,42,11
+    GROUPBOX        "コメント",IDC_STATIC,7,2,265,76
+    GROUPBOX        "属性",IDC_STATIC,7,126,265,76
+    COMBOBOX        IDC_CMB_HINDO,214,187,58,14,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_CMB_NANIDO,154,187,58,14,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "効き・狙いあり",IDC_CHK_KIKI,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,70,155,61,10
+    CONTROL         "編集完了",IDC_CHK_EDIT_COMPLETE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,74,169,43,10
+    CONTROL         "シチョウ次第",IDC_CHK_SICHO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,156,55,10
+    CONTROL         "置き碁お勧め",IDC_CHK_OKIGO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,169,59,10
+    COMBOBOX        IDC_CMB_TEXT,7,51,230,16,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_CMB_STATUS,32,186,94,14,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_CMB_TYPE,9,155,58,14,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_CMB_LABEL_SPETIAL,64,110,50,14,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "標準ラベル",IDC_STATIC,12,99,44,9
+    PUSHBUTTON      "ラベルを隠す",IDC_R_HIDE_LABEL,167,108,47,14
+    PUSHBUTTON      "パス",IDC_R_PASS,9,208,37,13
+    EDITTEXT        IDC_TXT_REGISTER,7,64,210,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "削除",IDC_COMMENT_DELETE,240,52,30,11
+    COMBOBOX        IDC_CMB_JOSEKI_NAME_HIGH,9,141,56,14,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_CMB_JOSEKI_NAME_LOW,65,141,63,14,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "クリア",IDC_COMMENT_CLEAR,221,38,50,11
+    LTEXT           "評価",IDC_STATIC,10,189,19,9
+    LTEXT           "頻度/はまり度",IDC_STATIC,215,178,49,9
+    LTEXT           "覚えやすさ",IDC_STATIC,156,178,41,8
+    LTEXT           "定石名",IDC_STATIC,9,133,30,8
+    LTEXT           "内容",IDC_STATIC,10,43,19,8
+    PUSHBUTTON      "ラベル終了",IDC_R_QUIT_LABEL,120,108,47,14
+    COMBOBOX        IDC_CMB_STONE_VALUE,48,86,76,14,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "今の手は？",IDC_STATIC,12,87,34,11
+    COMBOBOX        IDC_CMB_JOSEKI_NAME_DETAIL,128,141,64,14,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "最適化",IDC_R_OPTIMIZE,226,253,44,12
+    GROUPBOX        "その他の機能",IDC_STATIC,7,237,265,31
+    COMBOBOX        IDC_CMB_STONE_ATTR,154,253,68,12,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "石の属性",IDC_STATIC,156,243,48,9
+    CONTROL         "お気に入り",IDC_CHK_OKINIIRI,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,254,50,10
+    PUSHBUTTON      "コメント生成",IDC_COMMENT_CREATE,160,38,58,11
+    CONTROL         "旧型",IDC_CHK_OLD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,134,156,29,10
+    CONTROL         "コウ材次第",IDC_CHK_KO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,224,155,48,10
+    PUSHBUTTON      "反転",IDC_COMMENT_INVERSE,219,65,24,11
+    PUSHBUTTON      "改行",IDC_ENTER_LFCR,36,38,22,11
+    PUSHBUTTON      "。",IDC_ENTER_TEN,60,38,18,11
+    PUSHBUTTON      "、",IDC_ENTER_XTEN,80,38,18,11
+    PUSHBUTTON      "+参考図",IDC_R_SANKOUZU,161,85,33,14
+    PUSHBUTTON      "石順番",IDC_R_STONE_ORDER,128,85,33,14
+    PUSHBUTTON      "現在のノードのみ削除",IDC_R_DEL_CUR,63,253,82,12
+    PUSHBUTTON      "枝編集",IDC_NODE_EDITOR,55,270,44,12
+    PUSHBUTTON      "不正リンク削除",IDC_DELETE_REFERENCE,101,270,55,12
+    PUSHBUTTON      "問題リスト",IDC_R_SHOW_PROBLEM,151,208,44,13
+END
+
+IDD_COMMENT_CREATOR DIALOGEX 0, 0, 296, 154
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "コメント作成機"
+FONT 10, "メイリオ", 400, 0, 0x80
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,184,133,50,14
+    PUSHBUTTON      "クリア",IDC_CLEAR,239,7,50,14
+    EDITTEXT        IDC_COMMENT,7,7,229,59,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL
+    COMBOBOX        IDC_CMB_OBJECT,7,88,66,12,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "が",IDC_GA,7,111,18,13
+    PUSHBUTTON      "は",IDC_HA,27,111,18,13
+    PUSHBUTTON      "の",IDC_NO,47,111,18,13
+    PUSHBUTTON      "では",IDC_DEHA,67,111,18,13
+    LTEXT           "その他",IDC_STATIC,7,126,65,8
+    LTEXT           "名詞",IDC_STATIC,8,78,65,9
+    COMBOBOX        IDC_CMB_SECOND,78,88,66,12,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "述語",IDC_STATIC,149,78,65,9
+    PUSHBUTTON      "改行",IDC_LF,47,134,18,13
+    COMBOBOX        IDC_CMB_THIRD,149,88,66,12,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "状態",IDC_STATIC,79,78,58,9
+    PUSHBUTTON      "キャンセル",IDCANCEL,239,133,50,14
+    PUSHBUTTON      "、",IDC_TEN2,27,134,18,13
+    PUSHBUTTON      "。",IDC_TEN,7,134,18,13
+    LTEXT           "助詞",IDC_STATIC,9,102,65,8
+    PUSHBUTTON      "も",IDC_MO,87,111,18,13
+    LTEXT           "その他",IDC_STATIC,220,78,65,9
+    COMBOBOX        IDC_CMB_FOURTH,220,88,66,12,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "で",IDC_DE,107,111,18,13
+    PUSHBUTTON      "な",IDC_NA,127,111,18,13
+    PUSHBUTTON      "には",IDC_NIHA,168,111,18,13
+    PUSHBUTTON      "に",IDC_NI,148,111,18,13
+    PUSHBUTTON      "ので",IDC_NODE,189,111,18,13
+    COMBOBOX        IDC_CMB_HISTORY,7,66,229,12,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "黒",IDC_BLACK,67,134,18,13
+    PUSHBUTTON      "白",IDC_WHITE,87,134,18,13
+    PUSHBUTTON      "手",IDC_TE,107,134,18,13
+    PUSHBUTTON      "を",IDC_WO,209,111,18,13
+END
+
+IDD_NODE_EDITORXX DIALOGEX 0, 0, 317, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "枝編集エディター"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,205,162,50,14
+    PUSHBUTTON      "キャンセル",IDCANCEL,260,162,50,14
+    LTEXT           "現在のノード",IDC_STATIC,7,7,45,11
+END
+
+IDD_NODE DIALOGEX 0, 0, 208, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,96,162,50,14
+    PUSHBUTTON      "キャンセル",IDCANCEL,150,162,50,14
+    EDITTEXT        IDC_INFO,7,7,194,50,ES_AUTOHSCROLL
+    LISTBOX         IDC_STONELIST,127,60,74,83,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "座標",IDC_STATIC,7,62,22,13
+    EDITTEXT        IDC_EDIT_X,47,61,27,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_Y,75,61,27,14,ES_AUTOHSCROLL
+    LTEXT           "石の性格",IDC_STATIC,7,80,36,13
+    COMBOBOX        IDC_CMB_STONETYPE,47,79,54,13,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "適用",IDC_ADJUST,36,161,56,15,WS_DISABLED
+    PUSHBUTTON      "<",IDC_BACK,171,145,30,15
+END
+
+IDD_COMMENT_LIST DIALOGEX 0, 0, 315, 274
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "閉じる",IDOK,258,253,50,14
+    LISTBOX         IDC_COMMENT_LIST,7,7,301,227,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "",IDC_STATICX,7,236,301,15
+END
+
+IDD_PROBLEM_DLG DIALOGEX 0, 0, 240, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "問題リスト"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,183,162,50,14
+    LISTBOX         IDC_COMMENT_LIST,7,7,226,152,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_MERGE DIALOGEX 0, 0, 200, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "マージ"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "終了",IDCANCEL,142,162,50,14
+    LISTBOX         IDC_LIST_MERGE,7,7,186,150,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 163
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    IDD_REMOCON, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 266
+    END
+
+    IDD_JOSEKI_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 272
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 282
+    END
+
+    IDD_COMMENT_CREATOR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 289
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 147
+    END
+
+    IDD_NODE_EDITORXX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 310
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
+
+    IDD_NODE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 201
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
+
+    IDD_COMMENT_LIST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 308
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 267
+    END
+
+    IDD_PROBLEM_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 233
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
+
+    IDD_MERGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 193
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_APP_TITLE           "Yotsuya Joseki Editor"
+    IDS_APP_TITLE_DISPLAY   "四谷定石辞典エディター"
+    IDS_SOFTWARE_NAME       "YotsuyaSoft"
+    IDS_SOFTWARE_NAME_DISPLAY "四谷ソフト"
+    IDC_GOYOTSUYA           "GOYOTSUYA"
+END
+
+#endif    // 日本語 resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

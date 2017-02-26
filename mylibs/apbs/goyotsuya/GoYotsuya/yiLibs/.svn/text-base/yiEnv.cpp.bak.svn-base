@@ -1,0 +1,57 @@
+#include "yiEnv.h"
+
+cyiEnv::cyiEnv(void)
+{
+}
+
+cyiEnv::~cyiEnv(void)
+{
+}
+
+
+const char* cyiEnv::GetYotsuyaRootDir()
+{
+	return "c:\\yotsuya";
+}
+
+
+const char* cyiEnv::GetYotsuyaUserDir()
+{
+	return "c:\\yotsuya\\users";
+}
+
+const char* cyiEnv::GetYotsuyaUserDir(unsigned int id, const char* pszUserName)
+{
+	static char buffer[256];
+
+	if (id!=0)
+	{
+		wsprintf(buffer, "%s\\%d", GetYotsuyaUserDir(), id);
+		return buffer;
+	}
+	else
+	{
+		wsprintf(buffer, "%s\\%s\\%s", GetYotsuyaUserDir(), "noid", pszUserName);
+		return buffer;
+	}
+
+	return 0;
+}
+
+// -------------------------
+const char* cyiEnv::GetYotsuyaCacheDir()
+{
+	return "c:\\yotsuya\\cached";
+}
+
+void cyiEnv::MakeEnv()
+{
+	char buffer[256];
+
+	CreateDirectory(GetYotsuyaRootDir(), 0);
+	CreateDirectory(GetYotsuyaUserDir(), 0);
+	CreateDirectory(GetYotsuyaCacheDir(), 0);
+
+	wsprintf(buffer, "%s\\noid", GetYotsuyaUserDir());
+	CreateDirectory(buffer, 0);
+}

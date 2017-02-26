@@ -1,0 +1,134 @@
+#pragma once
+#include <windows.h>
+#include "yctrlGoDefs.h"
+
+// ----------------------
+typedef struct tagMap {
+	int map[LINE_DEFAULT+2][LINE_DEFAULT+2];
+} sMap;
+
+// ----------------------
+class cMap 
+{
+public:
+	cMap()
+	{
+		map = (int**)GlobalAlloc(GMEM_FIXED, sizeof(int*)*(LINE_DEFAULT+2));
+		for (int i=0; i<LINE_DEFAULT+2; i++)
+		{
+			map[i] = (int*)GlobalAlloc(GMEM_FIXED, sizeof(int)*(LINE_DEFAULT+2));
+		}
+	};
+
+	~cMap()
+	{
+		for (int i=0; i<LINE_DEFAULT+2; i++)
+		{
+			GlobalFree(map[i]);
+		}
+		GlobalFree(map);
+	};
+
+	int** map;
+};
+
+
+// ------------------------------------------------------
+class cStoneMap
+{
+public:
+	// -----------------------------------------------------
+	cStoneMap(void);
+
+	// -----------------------------------------------------
+	~cStoneMap(void);
+
+	// -----------------------------------------------------
+	void Init(eGoLineCount cnt=LINE_DEFAULT);
+
+	// -----------------------------------------------------
+	bool SetMap(int i, int j,  eStoneType stone, aStoneList stonelist);
+
+	// -----------------------------------------------------
+	stone_t GetStoneInfo(int i,int j);
+
+	// -----------------------------------------------------
+	int GetCatchedStone(bool bIsStoneWhite);
+
+	// -----------------------------------------------------
+	stone_t GetKou();
+
+	// -----------------------------------------------------
+	void Export(sMap copyMap, int until);
+
+	// -----------------------------------------------------
+	int** GetMap();
+
+	// -----------------------------------------------------
+int dumyGetAreamap(int i, int j);
+
+	// -----------------------------------------------------
+	BOOL IsDead(int i, int j);
+
+	// -----------------------------------------------------
+	void Copy(cStoneMap& map);
+
+	// -----------------------------------------------------
+	void StartCalculate();
+
+	void EndCalculate();
+
+	// -----------------------------------------------------
+	int SetDeadStone(stone_t stone, aStoneList deadstone);
+
+
+private: // private functions
+
+	// -----------------------------------------------------
+	short GenerateBlockId();
+
+	// -----------------------------------------------------
+	int ReplaceBlockId(short beforeId, short afterId);
+
+	// -----------------------------------------------------
+	int CreateBlock(int i, int j);
+
+	// -----------------------------------------------------
+	void RemoveBlockId();
+
+	// -----------------------------------------------------
+	bool IsBlockSurrounded(long nBlockId);
+
+	// -----------------------------------------------------
+	int RemoveBlock(long blockId, aStoneList list);
+
+	// -----------------------------------------------------
+	int CheckCatchedStone(int i, int j, aStoneList list);
+
+	// -----------------------------------------------------
+	stone_t IsAtari(int i, int j);
+
+	// -----------------------------------------------------
+	void MakeBlankGroup();
+
+	void  ChangeAraeMap(int before, int after);
+
+private:
+
+	//sMap m_mapData;
+	cMap m_mapData;
+	int	 m_blockMap[LINE_DEFAULT+2][LINE_DEFAULT+2];
+	bool  m_bBlockMaskId[MAX_GO_BLOCK_COUNT];
+	short m_order[LINE_DEFAULT][LINE_DEFAULT];
+	int m_nLastIndex;
+	unsigned int m_AreaMap[LINE_DEFAULT+2][LINE_DEFAULT+2];
+	int m_lastblankId;
+
+	int m_nLineCnt;
+	int m_nBlockCnt;
+
+	int m_nBlackAgeStone;
+	int m_nWhiteAgeStone;
+	bool	m_bKouActive;
+	stone_t m_kou;
+};

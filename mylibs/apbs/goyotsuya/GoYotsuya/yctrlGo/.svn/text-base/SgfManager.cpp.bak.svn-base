@@ -1,0 +1,380 @@
+#include "SgfManager.h"
+#include "yctrlGoDefs.h"
+
+#include <string.h>
+
+static void* wsxLoadFile(LPCSTR filename, long& size)
+{
+	HANDLE hFile = ::CreateFile(filename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+	if (hFile==NULL)
+	{
+		return NULL;
+	}
+
+	size = ::GetFileSize(hFile, NULL);
+
+	char* buffer = (char*)GlobalAlloc(GMEM_FIXED, size);
+	DWORD nRead;
+
+	if (::ReadFile(hFile, buffer, size, &nRead, NULL)==FALSE)
+	{
+		::CloseHandle(hFile);
+
+		return NULL;
+	}
+
+	return buffer;
+}
+
+static void wsxUnloadFile(void* p)
+{
+	GlobalFree(p);
+}
+
+
+cSgfManager::cSgfManager(void)
+{
+	m_node=NULL;
+	m_sgfRaw=NULL;
+}
+
+cSgfManager::~cSgfManager(void)
+{
+}
+
+// -----------------------------------
+void cSgfManager::Init()
+{
+	//if (m_node!=NULL)
+	//{
+	//	delete m_node;
+	//}
+
+	//m_node = new cYotsuyaNode();
+	m_currentNode = &m_node;
+
+	if (m_sgfRaw!=NULL)
+	{
+		wsxUnloadFile(m_sgfRaw);
+	}
+}
+
+
+// -----------------------------------
+bool cSgfManager::ParseSgf(void* sgf, int nSize)
+{
+	char* pIndex = (char*)sgf;
+
+	pIndex = strstr(pIndex, ";");
+	pIndex++;
+	pIndex = strstr(pIndex, ";");
+
+	ToTop();
+
+	int cnt=0;
+	while(1)
+	{
+		pIndex = strstr(pIndex, "B[");
+
+		if (pIndex==NULL)
+			break;
+
+		stone_t stone = MAKESTONE(STONE_BLACK, cnt++, (int)(pIndex[2]-'a'), (int)(pIndex[3]-'a'));
+		Add(stone, 0, NULL);
+
+		pIndex++;
+		pIndex = strstr(pIndex, "W[");
+
+		if (pIndex==NULL)
+			break;
+
+		stone = MAKESTONE(STONE_WHITE, cnt++, (int)(pIndex[2]-'a'), (int)(pIndex[3]-'a'));
+		Add(stone, 0, NULL);
+
+		pIndex++;
+
+	}
+
+	return true;
+}
+
+#include "yiFile.h"
+
+// -----------------------------------
+bool cSgfManager::LoadSgfFile(LPCSTR pszFileName)
+{
+	if (m_sgfRaw!=NULL)
+	{
+		wsxUnloadFile(m_sgfRaw);
+	}
+
+	m_sgfRaw = wsxLoadFile(pszFileName, m_blocksize);
+	bool res = ParseSgf(m_sgfRaw, m_blocksize);
+
+	if (res==true)
+	{
+		SetTitle(yiPathGetFileName(pszFileName));
+	}
+
+	ToTop();
+
+	return res;
+}
+
+// -----------------------------------
+void cSgfManager::UnloadSgfFile(void* data)
+{
+	wsxUnloadFile(data);
+}
+
+// -----------------------------------
+LPCSTR cSgfManager::GetTitle()
+{
+	return this->m_szTitle;
+}
+
+// -----------------------------------
+void cSgfManager::SetTitle(LPCSTR pszTitle)
+{
+	strcpy(m_szTitle, pszTitle);
+}
+
+// -----------------------------------
+//stone_t cSgfManager::Get(int n)
+//{
+//	cYotsuyaNode* pNode = m_node->ChildList[0];
+//
+//	if (pNode->nChildCount==0)
+//	{
+//		return STONE_EOF;
+//	}
+//
+//	for (int i=0; i<n; i++)
+//	{
+//		if (pNode==NULL)
+//			break;
+//
+//		pNode=pNode->ChildList[0];
+//	}
+//
+//
+//	if (pNode==NULL ||
+//		pNode->nChildCount==0)
+//	{
+//		return STONE_EOF;
+//	}
+//
+//	return ((sSgfStoneInfo*)pNode->data)->stone;
+//}
+
+// -----------------------------------
+//Bool cSgfManager::CreateCashe(unsigned int go_id)
+//{
+//	char buffer[256];
+//
+//	wsprintf(buffer, "cashe.%d", 
+//}
+
+// -----------------------------------
+//Bool cSgfManager::CasheEnd()
+//{
+//}
+
+
+// -----------------------------------
+void cSgfManager::InitStone(stone_t stone)
+{
+	m_InitStone.add((yiAnyValue)(new cSgfStoneInfo(stone, 0, (char*)0)));
+	//if (m_hFileCashe)
+	//{
+	//	AddCashe(stone);
+	//}
+}
+
+// -----------------------------------
+int cSgfManager::Add(stone_t stone, char label, LPCSTR comment, BOOL bIsCurrentNodeFixed)
+{
+	int ret;
+
+	if (m_currentNode->GetChildList().count()!=0)
+	{
+		cyiNode* node = m_currentNode->GetChildList().GetNodeTopFrom(0);
+
+		int cnt=0;
+		for (cyiNode* i = node; i!=NULL; i=i->np)
+		{
+			cyiTreeNode* treeNode = (cyiTreeNode*)i->data;
+
+			cSgfStoneInfo* stoneInfo = (cSgfStoneInfo*)treeNode->GetData();
+
+			if (STONE_TYPE(stoneInfo->stone)==STONE_TYPE(stone) &&
+					STONE_POS_X(stoneInfo->stone)==STONE_POS_X(stone) &&
+						STONE_POS_Y(stoneInfo->stone)==STONE_POS_Y(stone))
+			{
+				m_currentNode=treeNode;
+				return cnt;
+			}
+			cnt++;
+		}
+	}
+
+	cyiTreeNode* node = new cyiTreeNode((yiAnyValue)(new cSgfStoneInfo(stone, label, (char*)comment)));
+
+	m_currentNode->add(node);
+	ret = (int)m_currentNode->GetChildList().count();
+	m_currentNode = node;
+
+	//if (m_hFileCashe)
+	//{
+	//	AddCashe(stone);
+	//}
+
+	return ret-1;
+}
+
+// -----------------------------------
+bool cSgfManager::Delete(cyiTreeNode* node)
+{
+	if (node!=NULL)
+	{
+		m_currentNode = (cyiTreeNode*)node->GetParent();
+		delete node;
+		return true;
+	}
+
+	if (m_currentNode==NULL)
+	{
+		return true;
+	}
+	else if (m_currentNode->GetParent()==NULL)
+	{
+		return true;
+	}
+
+	cyiTreeNode* tempNode = m_currentNode;
+
+	m_currentNode = (cyiTreeNode*)m_currentNode->GetParent();
+	delete tempNode;
+
+	return true;
+}
+
+
+// -----------------------------------
+cyiTreeNode* cSgfManager::Play(int nBranchIndex)
+{
+	if (m_currentNode==NULL)
+	{
+		return NULL;
+	}
+	cyiList& list= (cyiList&)m_currentNode->GetChildList();
+
+	int cnt=0;
+	for (cyiNode* pListNode=list.GetNodeTopFrom(0); pListNode!=NULL; pListNode=pListNode->np)
+	{
+		if (cnt++==nBranchIndex)
+		{
+			m_currentNode = (cyiTreeNode*)pListNode->data;
+			m_stack.push((yiAnyValue)nBranchIndex);
+			return m_currentNode;
+		}
+	}
+	return NULL;
+}
+
+// -----------------------------------
+cyiTreeNode* cSgfManager::Back()
+{
+	if (m_currentNode==NULL)
+	{
+		return NULL;
+	}
+	cyiTreeNode* node = (cyiTreeNode* )m_currentNode->GetParent();
+
+	if (node==NULL)
+	{
+		return NULL;
+	}
+
+	yiAnyValue n;
+	m_stack.pop(n);
+
+	return (m_currentNode=node);
+}
+
+
+
+// -----------------------------------
+long cSgfManager::GetBranchCount()
+{
+	if (m_currentNode==NULL)
+	{
+		return 0;
+	}
+
+	return (long)m_currentNode->GetChildList().count();
+}
+
+// -----------------------------------
+bool cSgfManager::GetBranches(stone_t stone_list[])
+{
+	if (m_currentNode==NULL)
+	{
+		return false;
+	}
+	cyiList& list = (cyiList& )m_currentNode->GetChildList();
+
+	if (list.count()==0)
+	{
+		return false;
+	}
+
+	int cnt=0;
+	for (cyiNode* pListNode=list.GetNodeTopFrom(0); pListNode!=NULL; pListNode=pListNode->np)
+	{
+		cyiTreeNode* treeNode = (cyiTreeNode*)pListNode->data;
+		stone_list[cnt++] = ((cSgfStoneInfo*)treeNode->GetData())->stone;
+	}
+	stone_list[cnt]=STONE_EOF;
+	return true;
+}
+
+// -----------------------------------
+bool  cSgfManager::ToTop()
+{
+	m_currentNode=&m_node;
+	m_stack.clear();
+	return true;
+}
+
+// -----------------------------------
+void cSgfManager::Copy(cSgfManager& mgr)
+{
+	wsprintf(mgr.m_szTitle, "Copied %s", m_szTitle);
+	mgr.ParseSgf(m_sgfRaw, m_blocksize);
+
+	cyiStack tempStack;
+	
+	yiAnyValue val;
+	
+	while (m_stack.pop(val)==true)
+	{
+		tempStack.push(val);
+	}
+
+	cyiTreeNode* pNode = &m_node;
+
+	while (tempStack.pop(val)==true)
+	{
+		m_stack.push(val);
+		mgr.m_stack.push(val);
+		pNode = (cyiTreeNode*)pNode->GetChildList().GetNodeTopFrom(val)->data;
+
+		if (pNode==NULL)
+			return ;
+
+		m_currentNode = pNode;
+	}
+}
+

@@ -1,0 +1,989 @@
+#include "StoneMap.h"
+
+
+#define TEMPORARY_ID	361
+#define DELETE_ID		362
+#define INVALID_ID		363
+
+
+cStoneMap::cStoneMap(void)
+{
+}
+
+cStoneMap::~cStoneMap(void)
+{
+}
+
+
+ // -----------------------------------------------------
+void cStoneMap::Init(eGoLineCount cnt)
+{
+	m_nLastIndex = 0;
+
+	m_nLineCnt	= cnt;
+	m_nBlockCnt	= cnt*cnt;
+
+    for (int i = 0; i < MAX_GO_BLOCK_COUNT; i++)
+    {
+        m_bBlockMaskId[i] = false;
+    }
+
+	   for (int i = 0; i < LINE_DEFAULT+2; i++)
+        for (int j = 0; j < LINE_DEFAULT+2; j++)
+		{
+			m_mapData.map[i][j] = STONE_INVALID;
+			m_AreaMap[i][j] = 0;
+		}
+
+    for (int i = 1; i < LINE_DEFAULT+1; i++)
+    {
+        for (int j = 1; j < LINE_DEFAULT+1; j++)
+        {
+            m_mapData.map[i][j] = STONE_NONE;
+			m_AreaMap[i][j] = 0;
+            m_blockMap[i][j] = -1;
+        }
+    }
+
+	m_bKouActive=false;
+
+	m_nBlackAgeStone=0;
+	m_nWhiteAgeStone=0;
+}
+
+// -----------------------------------------------------
+bool cStoneMap::SetMap(int i, int j,  eStoneType stone, aStoneList stonelist)
+{
+	int _i=i+1;
+	int _j=j+1;
+
+	if (m_bKouActive==true && STONE_POS_X(m_kou)==i && STONE_POS_Y(m_kou)==j)
+	{
+
+		return false;
+	}
+
+	m_bKouActive=false;
+
+	if (stone != STONE_BLACK &&
+			stone != STONE_WHITE)
+	{
+		m_nLastIndex++;
+		return true;
+	}
+
+    if (m_mapData.map[_i][_j] != STONE_NONE)
+    {
+        return false;
+    }
+
+    m_mapData.map[_i][_j]=(char)stone;
+
+    CreateBlock(_i, _j);
+
+    int catchedStone = CheckCatchedStone(_i, _j, stonelist);
+
+    if (catchedStone == 0)
+    {
+        long nBlockId = m_blockMap[_i][_j];
+
+        // 石をいれてはいけないケース。
+        if (IsBlockSurrounded(nBlockId) == true)
+        {
+            m_mapData.map[_i][_j] = STONE_NONE;
+            m_blockMap[_i][_j] = -1;
+            m_bBlockMaskId[nBlockId] = false;
+
+            return false;
+        }
+    }
+
+	if (catchedStone==1)
+	{
+		stone_t temp = IsAtari(i, j);
+
+		if (temp!=STONE_EOF)
+		{
+			m_kou = temp;
+			m_bKouActive=true;
+
+		}
+	}
+
+	stonelist[catchedStone] = MAKESTONE(stone, m_nLastIndex, i, j);
+	stonelist[catchedStone+1] = STONE_EOF;
+
+    m_order[i][j] = (short)m_nLastIndex++;
+
+    return true;
+}
+
+// -----------------------------------------------------
+stone_t cStoneMap::GetStoneInfo(int i,int j)
+{
+	return MAKESTONE(m_mapData.map[i+1][j+1], m_order[i][j], i, j);
+}
+
+// -----------------------------------------------------
+stone_t cStoneMap::GetKou()
+{
+	if (m_bKouActive==true)
+			return m_kou;
+
+	return STONE_EOF;
+}
+
+// -----------------------------------------------------
+int cStoneMap::GetCatchedStone(bool bIsStoneWhite)
+{
+	return bIsStoneWhite ? this->m_nWhiteAgeStone:this->m_nBlackAgeStone;
+}
+
+// -----------------------------------------------------
+void cStoneMap::Export(sMap copyMap, int until)
+{
+    //for (int i = 1; i < m_nLineCnt; i++)
+    //{
+    //    for (int j = 1; j < m_nLineCnt; j++)
+    //    {
+    //        copyMap.map[i][j] = mapData.map[i][j];
+    //    }
+    //}
+}
+
+// -----------------------------------------------------
+int** cStoneMap::GetMap()
+{
+	return m_mapData.map;
+}
+
+// -----------------------------------------------------
+BOOL cStoneMap::IsDead(int i, int j)
+{
+	return this->m_AreaMap[i][j]?TRUE:FALSE;
+}
+
+// private
+
+// -----------------------------------------------------
+short cStoneMap::GenerateBlockId()
+{
+    for (int i = 0; i < m_nBlockCnt; i++)
+    {
+        if (m_bBlockMaskId[i] == false)
+        {
+            m_bBlockMaskId[i] = true;
+            return (short)i;
+        }
+    }
+    
+    // no case
+    return -1;
+}
+
+
+// -----------------------------------------------------
+int cStoneMap::ReplaceBlockId(short beforeId, short afterId)
+{
+    bool bReplaced = false;
+    int cnt = 0;
+
+    for (int i = 1; i < m_nLineCnt+1; i++)
+    {
+        for (int j = 1; j < m_nLineCnt+1; j++)
+        {
+            if (m_blockMap[i][j] == beforeId)
+            {
+                m_blockMap[i][j] = afterId;
+                bReplaced = true;
+                cnt++;
+            }
+        }
+    }
+
+    if (afterId == m_nBlockCnt)
+    {
+        return cnt;
+    }
+
+    if (bReplaced == true&&beforeId<m_nBlockCnt)
+    {
+        m_bBlockMaskId[beforeId] = false;
+    }
+
+    return cnt;
+}
+
+
+// -----------------------------------------------------
+int cStoneMap::CreateBlock(int i, int j)
+{
+    if (m_mapData.map[i][j] == STONE_NONE)
+    {
+        return 0;
+    }
+
+    if ((m_mapData.map[i][j] == m_mapData.map[i -1][j]))
+    {
+        int nBlockCount = ReplaceBlockId(m_blockMap[i -1][j], TEMPORARY_ID);
+        m_blockMap[i -1][j]=m_blockMap[i][j]=TEMPORARY_ID;
+    }
+
+    if ((m_mapData.map[i][j] == m_mapData.map[i +1][j]))
+    {
+        int nBlockCount = ReplaceBlockId(m_blockMap[i +1][j], TEMPORARY_ID);
+        m_blockMap[i +1][j]=m_blockMap[i][j]=TEMPORARY_ID;
+    }
+
+    if ((m_mapData.map[i][j] == m_mapData.map[i][ j-1]))
+    {
+        int nBlockCount = ReplaceBlockId(m_blockMap[i][ j - 1], TEMPORARY_ID);
+        m_blockMap[i][j-1]=m_blockMap[i][j]=TEMPORARY_ID;
+    }
+
+    if ((m_mapData.map[i][j] == m_mapData.map[i][j+1]))
+    {
+        int nBlockCount = ReplaceBlockId(m_blockMap[i][j + 1], TEMPORARY_ID);
+        m_blockMap[i][j+1]=m_blockMap[i][j]=TEMPORARY_ID;
+    }
+
+    if (m_blockMap[i][j]==TEMPORARY_ID)
+    {
+        return ReplaceBlockId(TEMPORARY_ID, GenerateBlockId());
+    }
+
+
+    // dependent block
+    m_blockMap[i][j] = GenerateBlockId();
+
+    return 1;
+}
+
+// -----------------------------------------------------
+ bool cStoneMap::IsBlockSurrounded(long nBlockId)
+{
+    for (int i = 1; i < m_nLineCnt+1; i++)
+    {
+        for (int j = 1; j < m_nLineCnt+1; j++)
+        {
+            if (m_blockMap[i][j] == nBlockId)
+            {
+                if (m_mapData.map[i + 1][ j] == STONE_NONE)
+                {
+                    return false;
+                }
+                if (m_mapData.map[i - 1][ j] == STONE_NONE)
+                {
+                    return false;
+                }
+                if (m_mapData.map[i][ j + 1] == STONE_NONE)
+                {
+                    return false;
+                }
+                if (m_mapData.map[i][ j-1] == STONE_NONE)
+                {
+                    return false;
+                }
+           }
+
+        }
+    }
+
+    return true;
+}
+
+
+ 
+// -----------------------------------------------------
+void cStoneMap::RemoveBlockId()
+{
+    for (int i = 1; i < m_nLineCnt+1; i++)
+    {
+        for (int j = 1; j < m_nLineCnt+1; j++)
+        {
+            if (m_blockMap[i][j] == (long)DELETE_ID)
+            {
+                m_blockMap[i][j] = -1;
+                
+            }
+        }
+    }
+                
+}
+
+
+// -----------------------------------------------------
+int cStoneMap::RemoveBlock(long blockId, aStoneList list)
+{
+
+    int cnt = 0;
+
+    for (int i = 1; i < m_nLineCnt+1; i++)
+    {
+        for (int j = 1; j < m_nLineCnt+1; j++)
+        {
+            if (m_blockMap[i][j] == blockId)
+            {
+				list[cnt]=MAKESTONE(STONE_NONE, m_order[i-1][j-1], i-1, j-1);
+
+                m_mapData.map[i][j] = STONE_NONE;
+                m_blockMap[i][j] = DELETE_ID;
+                m_bBlockMaskId[blockId] = false;
+
+                cnt++;
+            }
+        }
+    }
+
+	list[cnt]=STONE_EOF;
+    return cnt;
+}
+
+
+
+// -----------------------------------------------------
+int cStoneMap::CheckCatchedStone(int i, int j, aStoneList list)
+{
+    int nAgeStone = 0;
+
+     // pon nuki check.
+    if (IsBlockSurrounded(m_blockMap[i + 1][ j]) == true)
+    {
+        nAgeStone += RemoveBlock(m_blockMap[i + 1][ j], &list[nAgeStone]);
+    }
+
+    // pon nuki check.
+    if (IsBlockSurrounded(m_blockMap[i - 1][ j]) == true)
+    {
+        nAgeStone += RemoveBlock(m_blockMap[i - 1][ j], &list[nAgeStone]);
+    }
+
+    // pon nuki check.
+    if (IsBlockSurrounded(m_blockMap[i][ j + 1]) == true)
+    {
+        nAgeStone += RemoveBlock(m_blockMap[i][ j + 1], &list[nAgeStone]);
+    }
+
+    // pon nuki check.
+    if (IsBlockSurrounded(m_blockMap[i][ j - 1]) == true)
+    {
+        nAgeStone += RemoveBlock(m_blockMap[i][ j - 1], &list[nAgeStone]);
+    }
+
+	if (nAgeStone)
+	{
+		RemoveBlockId();
+	   
+	}
+
+	if (m_mapData.map[i+1][j+1]==STONE_BLACK)
+	{
+		m_nWhiteAgeStone+=nAgeStone;
+	}
+	else if (m_mapData.map[i+1][j+1]==STONE_WHITE)
+	{
+		m_nBlackAgeStone+=nAgeStone;
+	}
+
+	return nAgeStone;
+}
+
+// -----------------------------------------------------
+stone_t cStoneMap::IsAtari(int i, int j)
+{
+	long _i=i+1, _j=j+1;
+	long stone = m_mapData.map[_i][_j];
+	long reverseStone = stone == STONE_BLACK ? STONE_WHITE:STONE_BLACK;
+	long surround_cnt=0;
+	long none_cnt=0; 
+	stone_t ret = STONE_EOF;
+
+	if (m_mapData.map[_i+1][_j]==STONE_NONE)
+	{
+		none_cnt++;
+		ret = MAKESTONE(STONE_NONE, 0, i, j);
+	}
+
+	if (m_mapData.map[_i][_j+1]==STONE_NONE)
+	{
+		none_cnt++;
+		ret = MAKESTONE(STONE_NONE, 0, i, j+1);
+	}
+	
+	if (m_mapData.map[_i-1][_j]==STONE_NONE)
+	{
+		none_cnt++;
+		ret = MAKESTONE(STONE_NONE, 0, i-1, j);
+	}
+	
+	if (m_mapData.map[_i][_j-1]==STONE_NONE)
+	{
+		none_cnt++;
+		ret = MAKESTONE(STONE_NONE, 0, i, j-1);
+	}
+
+	if (none_cnt!=1)
+	{
+		return STONE_EOF;
+	}
+
+	if (m_mapData.map[_i+1][_j]==reverseStone ||
+			m_mapData.map[_i+1][_j]==STONE_INVALID)
+	{
+		surround_cnt++;
+	}
+
+	if (m_mapData.map[_i][_j-1]==reverseStone ||
+			m_mapData.map[_i][_j-1]==STONE_INVALID)
+	{
+		surround_cnt++;
+	}
+
+	if (m_mapData.map[_i-1][_j]==reverseStone ||
+			m_mapData.map[_i-1][_j]==STONE_INVALID)
+	{
+		surround_cnt++;
+	}
+
+	if (m_mapData.map[_i][_j+1]==reverseStone ||
+		m_mapData.map[_i][_j+1]==STONE_INVALID)
+	{
+		surround_cnt++;
+	}
+
+	if (surround_cnt==3)
+	{
+		return ret;
+	}
+
+	return STONE_EOF;
+
+}
+
+// -----------------------------
+void cStoneMap::StartCalculate()
+{
+	int id=1;
+
+	for (int i=0; i<LINE_DEFAULT+2; i++)
+			for (int j=0; j<LINE_DEFAULT+2; j++)
+				m_AreaMap[i][j]=0;
+
+	for (int i=1; i<LINE_DEFAULT+1; i++)
+	{
+		for (int j=1; j<LINE_DEFAULT+1; j++)
+		{
+			if (m_mapData.map[i][j]==STONE_NONE)
+			{
+				if (m_AreaMap[i-1][j] != 0)
+				{
+					m_AreaMap[i][j]=m_AreaMap[i-1][j];
+					continue;
+				}
+				if (m_AreaMap[i][j-1] != 0)
+				{
+					m_AreaMap[i][j]=m_AreaMap[i][j-1];
+					continue;
+				}
+				if (m_AreaMap[i+1][j] != 0)
+				{
+					m_AreaMap[i][j]=m_AreaMap[i+1][j];
+					continue;
+				}
+				if (m_AreaMap[i][j+1] != 0)
+				{
+					m_AreaMap[i][j]=m_AreaMap[i][j+1];
+					continue;
+				}
+				m_AreaMap[i][j]=id++;
+			}
+		}// for j
+	}// for i
+
+	m_lastblankId=id;
+
+	int _id;
+
+
+	for (_id=1; _id<id; _id++)
+	{
+		for (int i=1; i<LINE_DEFAULT+1; i++)
+		{
+			BOOL bIsChanged=FALSE;
+			for (int j=1; j<LINE_DEFAULT+1; j++)
+			{
+				
+				bIsChanged=FALSE;
+				if (m_AreaMap[i][j]==_id)
+				{
+					if (m_AreaMap[i+1][j]!=0 &&
+						m_AreaMap[i+1][j]!=m_AreaMap[i][j])
+					{
+						bIsChanged=TRUE;
+						ChangeAraeMap(m_AreaMap[i][j],m_AreaMap[i+1][j]);
+						break;
+					}
+					if (m_AreaMap[i][j+1]!=0 &&
+						m_AreaMap[i][j+1]!=m_AreaMap[i][j])
+					{
+						bIsChanged=TRUE;
+						ChangeAraeMap(m_AreaMap[i][j],m_AreaMap[i][j+1]);
+						break;
+					}
+					if (m_AreaMap[i-1][j]!=0 &&
+						m_AreaMap[i-1][j]!=m_AreaMap[i][j])
+					{
+						bIsChanged=TRUE;
+						ChangeAraeMap(m_AreaMap[i][j],m_AreaMap[i-1][j]);
+						break;
+					}
+					if (m_AreaMap[i][j-1]!=0 &&
+						m_AreaMap[i][j-1]!=m_AreaMap[i][j])
+					{
+						bIsChanged=TRUE;
+						ChangeAraeMap(m_AreaMap[i][j],m_AreaMap[i][j-1]);
+						break;
+					}
+				}
+			}
+			if (bIsChanged==TRUE)
+				break;
+		}
+	}
+
+	for (_id=1; _id<id; _id++)
+	{
+		int flag = -1;
+		BOOL bIsUnKnownArea=FALSE;
+		for (int i=1; i<LINE_DEFAULT+1; i++)
+		{
+			for (int j=1; j<LINE_DEFAULT+1; j++)
+			{
+				if ((m_AreaMap[i][j] & 0x000000FF)==_id)
+				{
+					if (m_AreaMap[i+1][j]==0)
+					{
+						if (m_mapData.map[i+1][j]!=STONE_INVALID )
+						{
+
+							if (flag==-1)
+							{
+								flag = m_mapData.map[i+1][j];
+								//continue;
+							}
+							else
+							{
+								if (flag!=m_mapData.map[i+1][j])
+								{
+									bIsUnKnownArea=TRUE;
+									break;
+								}
+							}
+						}
+					}
+					if (m_AreaMap[i][j+1]==0)
+					{
+						if (m_mapData.map[i][j+1]!=STONE_INVALID)
+						{
+
+							if (flag==-1)
+							{
+								flag = m_mapData.map[i][j+1];
+								//continue;
+							}
+							else
+							{
+								if (flag!=m_mapData.map[i][j+1])
+								{
+									bIsUnKnownArea=TRUE;
+									break;
+								}
+							}
+						}
+					}
+					if (m_AreaMap[i-1][j]==0)
+					{
+						if (m_mapData.map[i-1][j]!=STONE_INVALID)
+						{
+
+							if (flag==-1)
+							{
+								flag = m_mapData.map[i-1][j];
+								//continue;
+							}
+							else
+							{
+								if (flag!=m_mapData.map[i-1][j])
+								{
+									bIsUnKnownArea=TRUE;
+									break;
+								}
+							}
+						}
+					}
+					if (m_AreaMap[i][j-1]==0&&
+							m_mapData.map[i][j-1]!=0)
+					{
+						if (m_mapData.map[i][j-1]!=STONE_INVALID)
+						{
+
+							if (flag==-1)
+							{
+								flag = m_mapData.map[i][j-1];
+								//continue;
+							}
+							else
+							{
+								if (flag!=m_mapData.map[i][j-1])
+								{
+									bIsUnKnownArea=TRUE;
+									break;
+								}
+							}
+						}
+					}
+
+				} // if 
+			} // for i
+
+			if (bIsUnKnownArea==TRUE)
+				break;
+		}// for j
+
+		if (bIsUnKnownArea==FALSE)
+		{
+			for (int i=1; i<LINE_DEFAULT+1; i++)
+			{
+				for (int j=1; j<LINE_DEFAULT+1;j++)
+				{
+					if (m_AreaMap[i][j]==_id)
+					{
+						m_AreaMap[i][j] |= (flag<<8);
+					}
+				}// for j
+			}// for i
+		}
+	} // for _id
+
+}
+
+void cStoneMap::EndCalculate()
+{
+	for (int i=1; i<LINE_DEFAULT+1; i++)
+	{
+		for (int j=1; j<LINE_DEFAULT+1;j++)
+		{
+			m_AreaMap[i][j]&=0x000000FF;
+		}
+	}
+
+	for (int _id=1; _id<m_lastblankId; _id++)
+	{
+		int flag = -1;
+		BOOL bIsUnKnownArea=FALSE;
+		for (int i=1; i<LINE_DEFAULT+1; i++)
+		{
+			for (int j=1; j<LINE_DEFAULT+1; j++)
+			{
+				if ((m_AreaMap[i][j] & 0x000000FF)==_id)
+				{
+					if (m_AreaMap[i+1][j]==0)
+					{
+						if (m_mapData.map[i+1][j]!=STONE_INVALID)
+						{
+
+							if (flag==-1)
+							{
+								flag = m_mapData.map[i+1][j];
+								//continue;
+							}
+							else
+							{
+								if (flag!=m_mapData.map[i+1][j])
+								{
+									bIsUnKnownArea=TRUE;
+									break;
+								}
+							}
+						}
+					}
+					if (m_AreaMap[i][j+1]==0)
+					{
+						if (m_mapData.map[i][j+1]!=STONE_INVALID)
+						{
+
+							if (flag==-1)
+							{
+								flag = m_mapData.map[i][j+1];
+								//continue;
+							}
+							else
+							{
+								if (flag!=m_mapData.map[i][j+1])
+								{
+									bIsUnKnownArea=TRUE;
+									break;
+								}
+							}
+						}
+					}
+					if (m_AreaMap[i-1][j]==0)
+					{
+						if (m_mapData.map[i-1][j]!=STONE_INVALID)
+						{
+
+							if (flag==-1)
+							{
+								flag = m_mapData.map[i-1][j];
+								//continue;
+							}
+							else
+							{
+								if (flag!=m_mapData.map[i-1][j])
+								{
+									bIsUnKnownArea=TRUE;
+									break;
+								}
+							}
+						}
+					}
+					if (m_AreaMap[i][j-1]==0)
+					{
+						if (m_mapData.map[i][j-1]!=STONE_INVALID)
+						{
+
+							if (flag==-1)
+							{
+								flag = m_mapData.map[i][j-1];
+								//continue;
+							}
+							else
+							{
+								if (flag!=m_mapData.map[i][j-1])
+								{
+									bIsUnKnownArea=TRUE;
+									break;
+								}
+							}
+						}
+					}
+
+				} // if 
+			} // for i
+
+			if (bIsUnKnownArea==TRUE)
+				break;
+		}// for j
+
+		if (bIsUnKnownArea==FALSE)
+		{
+			for (int i=1; i<LINE_DEFAULT+1; i++)
+			{
+				for (int j=1; j<LINE_DEFAULT+1;j++)
+				{
+					if ((m_AreaMap[i][j]&0x000000FF)==_id)
+					{
+						m_AreaMap[i][j] |= (flag<<8);
+					}
+				}// for j
+			}// for i
+		}
+	} // for _id
+
+	//for (int i=1; i<LINE_DEFAULT+1; i++)
+	//{
+	//	for (int j=1; j<LINE_DEFAULT+1;j++)
+	//	{
+	//		if (m_AreaMap[i][j]!=0)
+	//		{
+	//			if (m_mapData.map[i][j]==STONE_BLACK)
+	//			{
+	//				this->m_nWhiteAgeStone++;
+	//			}
+	//			else if (m_mapData.map[i][j]==STONE_WHITE)
+	//			{
+	//				this->m_nBlackAgeStone++;
+	//			}
+	//		}
+	//	}
+	//}
+}
+
+
+void  cStoneMap::ChangeAraeMap(int before, int after)
+{
+	for (int i=1; i<LINE_DEFAULT+1; i++)
+	{
+		for (int j=1; j<LINE_DEFAULT+1;j++)
+		{
+			if (m_AreaMap[i][j]==before)
+			{
+				m_AreaMap[i][j]=after;
+			}
+		}
+	}
+}
+
+// -----------------------------------------------------
+int cStoneMap::dumyGetAreamap(int i, int j)
+{
+	return m_AreaMap[i+1][j+1];
+}
+
+
+// -----------------------------------------------------
+int cStoneMap::SetDeadStone(stone_t stone, aStoneList deadstone)
+{
+	int _i = STONE_POS_X(stone)+1;
+	int _j = STONE_POS_Y(stone)+1;
+	int type = (STONE_TYPE(stone)==STONE_WHITE)?STONE_BLACK:STONE_WHITE;
+	int nBlockId = m_blockMap[_i][_j];
+	int blankId=0;
+
+	
+
+	if (m_AreaMap[_i][_j]!=0)
+	{
+		int selectedId=m_AreaMap[_i][_j] & 0x000000FF;
+		
+		for (int i=1; i<LINE_DEFAULT+1; i++)
+		{
+			for (int j=1; j<LINE_DEFAULT+1;j++)
+			{
+				if (selectedId==(m_AreaMap[i][j]&0x000000FF)&&
+						m_mapData.map[i][j]!=STONE_NONE)
+				{
+					m_AreaMap[i][j]=0;
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	for (int i=1; i<LINE_DEFAULT+1; i++)
+	{
+		for (int j=1; j<LINE_DEFAULT+1;j++)
+		{
+			if (m_blockMap[i][j]==nBlockId)
+			{
+				blankId=0;
+				if ((blankId=m_AreaMap[i+1][j]) != 0)
+				{
+					break;
+				}
+				if ((blankId=m_AreaMap[i][j+1]) != 0)
+				{
+					break;
+				}
+				if ((blankId=m_AreaMap[i-1][j]) != 0)
+				{
+					break;
+				}
+				if ((blankId=m_AreaMap[i][j-1]) != 0)
+				{
+					break;
+				}
+
+				//if ((blankId>>8) & 0x00FF)
+				//{
+				//	blankId=0;
+				//	continue;
+				//}
+
+				//break;
+			}
+		}
+
+		if (blankId)
+		{
+			blankId&=0x000000FF;
+			break;
+		}
+	}
+	
+	int rtype = (type==STONE_BLACK)?STONE_WHITE:STONE_BLACK;
+
+	int sum=0;
+	while(1)
+	{
+	int cnt=0;
+	for (int i=1; i<LINE_DEFAULT+1; i++)
+	{
+		for (int j=1; j<LINE_DEFAULT+1;j++)
+		{
+			if ((m_AreaMap[i][j]&0x000000FF)==blankId)
+			{
+				if (m_mapData.map[i+1][j]==rtype &&
+					m_AreaMap[i+1][j] == 0)
+				{
+					m_AreaMap[i+1][j] = (type<<8)|blankId;
+
+					deadstone[cnt++] = MAKESTONE(rtype, 0, i, j-1);
+				}
+				if (m_mapData.map[i][j+1]==rtype &&
+					m_AreaMap[i][j+1] == 0)
+				{
+					m_AreaMap[i][j+1] = (type<<8)|blankId;
+
+					deadstone[cnt++] = MAKESTONE(rtype, 0, i-1, j);
+				}
+				if (m_mapData.map[i-1][j]==rtype &&
+					m_AreaMap[i-1][j] == 0)
+				{
+					m_AreaMap[i-1][j] = (type<<8)|blankId;
+
+					deadstone[cnt++] = MAKESTONE(rtype, 0, i-2, j-1);
+				}
+				if (m_mapData.map[i][j-1]==rtype &&
+					m_AreaMap[i][j-1] == 0)
+				{
+					m_AreaMap[i][j-1] = (type<<8)|blankId;
+
+					deadstone[cnt++] = MAKESTONE(rtype, 0, i-1, j-2);
+				}
+			}
+		}// for j
+	}// for i
+	if (!cnt)
+		break;
+	sum+=cnt;
+
+	}
+	deadstone[sum] = STONE_EOF;
+	return sum;
+}
+
+// -----------------------------
+void cStoneMap::Copy(cStoneMap& map)
+{
+	map.m_kou = m_kou;
+	map.m_bKouActive = m_bKouActive;
+	map.m_nWhiteAgeStone = m_nWhiteAgeStone;
+	map.m_nBlackAgeStone = m_nBlackAgeStone;
+	map.m_nBlockCnt = m_nBlockCnt;
+	map.m_nLineCnt = m_nLineCnt;
+	map.m_nLastIndex = m_nLastIndex;
+
+	for (int i=0; i<LINE_DEFAULT; i++)
+	{
+		for (int j=0; j<LINE_DEFAULT; j++)
+			map.m_order[i][j]=m_order[i][j];
+	}
+
+	for (int i=0; i<LINE_DEFAULT+2; i++)
+	{
+		for (int j=0; j<LINE_DEFAULT+2; j++)
+		{
+			map.m_blockMap[i][j]=m_blockMap[i][j];
+			map.m_mapData.map[i][j] = m_mapData.map[i][j];
+		}
+	}
+
+	for (int i=0; i<MAX_GO_BLOCK_COUNT; i++)
+		map.m_bBlockMaskId[i] = m_bBlockMaskId[i];
+
+}
+
+
+

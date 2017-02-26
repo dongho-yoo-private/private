@@ -1,0 +1,105 @@
+#include "yistd.h"
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef WIN32
+#define __malloci__(n) HeapAlloc(GetProcessHeap(), /*HEAP_NO_SERIALIZE|*/HEAP_ZERO_MEMORY, n)
+#define __malloc__(n) HeapAlloc(GetProcessHeap(), /*HEAP_NO_SERIALIZE*/0, n)
+#define __free__(p) HeapFree(GetProcessHeap(), /*HEAP_NO_SERIALIZE*/0, p)
+#else
+#define __malloci__(n) memset(malloc(n), 0, n)
+#define __malloc__(n) malloc(n)
+#endif
+
+// ----------------------------------
+void* FASTCALL  yiallocx(int n)
+{
+	register char* p = (char*)__malloc__(n+sizeof(int32)+YI_DEF_STRLEN+YI_ALIGNMENT);
+	register long remain;
+	register char* pAligned;
+#ifdef __x64__
+	remain = ((p+sizeof(int32)) & 0x000000000000000F);
+#else
+	remain = (long)((long)(p+sizeof(int32)) & 0x0000000F);
+#endif
+	
+	remain = (remain==0)?YI_ALIGNMENT+sizeof(int32):remain;
+
+	pAligned = &p[YI_ALIGNMENT-remain];
+	((int*)pAligned)[-1] = (int)p;	
+
+	return (void*)pAligned;
+}
+
+// ----------------------------------
+void* FASTCALL  yialloci(int n)
+{
+	return __malloci__(n);
+}
+
+
+// ----------------------------------
+void* FASTCALL  yialloc(int n)
+{
+	return __malloc__(n);
+}
+
+// ----------------------------------
+void* FASTCALL  yitoh(const void* buffer, int n)
+{
+	void* p = __malloc__(n);
+
+	if (p==0)
+		return 0;
+
+	memcpy(p, buffer, n);
+	return p;
+}
+
+// ----------------------------------
+void yifree(void* p)
+{
+	__free__(p);
+}
+
+// ----------------------------------
+void* FASTCALL  yiallocix(int n)
+{
+	int size = n+sizeof(int32)+YI_DEF_STRLEN+YI_ALIGNMENT;
+	register char* p = (char*)HeapAlloc(GetProcessHeap(),HEAP_ZERO_MEMORY, size);
+	register long remain;
+	register char* pAligned;
+
+	if (p==0)
+	{
+		return 0;
+	}
+
+	ZeroMemory(p, size);
+#ifdef __x64__
+	remain = ((p+sizeof(int32)) & 0x000000000000000F);
+#else
+	remain = (long)((long)(p+sizeof(int32)) & 0x0000000F);
+#endif
+	
+	remain = (remain==0)?YI_ALIGNMENT+sizeof(int32):remain;
+
+	pAligned = &p[YI_ALIGNMENT-remain];
+	((int*)pAligned)[-1] = (int)p;
+
+
+	return (void*)pAligned;
+}
+
+// ----------------------
+void yifreex(void* p)
+{
+	int* pr = (int*)p;
+	yifree((void*)pr[-1]);
+}
+
+// ----------------------
+void* FASTCALL yitoheap(void* buffer, int size)
+{
+	return memcpy(yialloc(size), buffer, size);
+}

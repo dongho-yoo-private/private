@@ -1,0 +1,649 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 日本語 resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
+#ifdef _WIN32
+LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
+#pragma code_page(932)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)\r\n"
+    "LANGUAGE 17, 1\r\n"
+    "#pragma code_page(932)\r\n"
+    "#include ""res\\YotsuyaClient.rc2""  // Microsoft Visual C++ 以外で編集されたリソース\r\n"
+    "#include ""l.JPN\\afxres.rc""          // 標準コンポーネント\r\n"
+    "#include ""l.JPN\\afxprint.rc""        // 印刷/印刷プレビュー リソース\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\YotsuyaClient.ico"
+IDR_YotsuyaClientTYPE   ICON                    "res\\YotsuyaClientDoc.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR  16, 15
+BEGIN
+    BUTTON      ID_FILE_NEW
+    BUTTON      ID_FILE_OPEN
+    BUTTON      ID_FILE_SAVE
+    SEPARATOR
+    BUTTON      ID_EDIT_CUT
+    BUTTON      ID_EDIT_COPY
+    BUTTON      ID_EDIT_PASTE
+    SEPARATOR
+    BUTTON      ID_FILE_PRINT
+    BUTTON      ID_APP_ABOUT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU 
+BEGIN
+    POPUP "ファイル(&F)"
+    BEGIN
+        MENUITEM "対局の申し込み\tCtrl+P(&P)",         ID_REQUEST_PLAY
+        MENUITEM SEPARATOR
+        MENUITEM "新規作成\tCtrl+N(&N)",            ID_FILE_NEW
+        MENUITEM "開く...\tCtrl+O(&O)",           ID_FILE_OPEN
+        MENUITEM "上書き保存\tCtrl+S(&S)",           ID_FILE_SAVE
+        MENUITEM SEPARATOR
+        MENUITEM "碁盤の切り換え",                     ID_FILE_MRU_FILE1
+        MENUITEM SEPARATOR
+        MENUITEM "アプリケーションの終了(&X)",             ID_APP_EXIT
+    END
+    POPUP "コントロール(&C)"
+    BEGIN
+        POPUP "対局コントロール"
+        BEGIN
+            MENUITEM "待った",                         ID_CMD_WAIT
+            MENUITEM "封じ手",                         ID_CMD_ABORT
+            MENUITEM "投了",                          ID_CMD_GIVEUP
+            MENUITEM "対局中止",                        ID_CMD_PLAY_CANCEL
+            MENUITEM "終局",                          ID_CMD_PLAY_END
+            MENUITEM "地合い計算終了",                     ID_CMD_CALCULATE_END
+        END
+        POPUP "編集コントロール"
+        BEGIN
+            MENUITEM "一手再生",                        ID_CMD_NEXT
+            MENUITEM "一手後ろ",                        ID_CMD_PREV
+            MENUITEM "10手再生",                       ID_CMD_NEXT_PLUS
+            MENUITEM "10手後ろ",                       ID_CMD_PREV_PLUS
+            MENUITEM "トップ",                         ID_CMD_TOP
+            MENUITEM "最後",                          ID_CMD_END
+            MENUITEM "次のノード",                       ID_CMD_NEXT_NODE
+            MENUITEM "前のノード",                       ID_CMD_PREV_NODE
+            MENUITEM "次のコメント",                      ID_CMD_NEXT_COMMENT
+            MENUITEM "前のコメント",                      ID_CMD_PREV_COMMENT
+            MENUITEM "番号表示",                        ID_CMD_SHOW_NUM
+            MENUITEM "ラベル追加",                       ID_CMD_ADD_LABEL
+        END
+    END
+    POPUP "編集(&E)"
+    BEGIN
+        MENUITEM "元に戻す\tCtrl+Z(&U)",            ID_EDIT_UNDO
+        MENUITEM SEPARATOR
+        MENUITEM "切り取り\tCtrl+X(&T)",            ID_EDIT_CUT
+        MENUITEM "コピー\tCtrl+C(&C)",             ID_EDIT_COPY
+        MENUITEM "貼り付け\tCtrl+V(&P)",            ID_EDIT_PASTE
+    END
+    POPUP "表示(&V)"
+    BEGIN
+        MENUITEM "ツール バー(&T)",                  ID_VIEW_TOOLBAR
+        MENUITEM "ステータス バー(&S)",                ID_VIEW_STATUS_BAR
+    END
+    POPUP "ヘルプ(&H)"
+    BEGIN
+        MENUITEM "バージョン情報 YotsuyaClient(&A)...", ID_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS 
+BEGIN
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL
+    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY 
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "バージョン情報 YotsuyaClient"
+FONT 9, "MS UI Gothic", 0, 0, 0x1
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,21,20
+    LTEXT           "YotsuyaClient, Version 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2010",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
+END
+
+IDD_GOBANCTRL DIALOGEX 0, 0, 30, 15
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_GOBANSELECTOR,"SysTabControl32",TCS_TOOLTIPS,0,0,30,13,WS_EX_TRANSPARENT
+END
+
+IDD_ENJOY_CONTROL DIALOGEX 0, 0, 165, 16
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "|<",IDC_BTN_TOP,2,1,25,15
+    PUSHBUTTON      "<<",IDC_BTN_PPREV,28,1,25,15
+    PUSHBUTTON      "<",IDC_BTN_PREV,54,1,25,15
+    PUSHBUTTON      ">",IDC_BTN_NEXT,82,1,25,15
+    PUSHBUTTON      ">>",IDC_BTN_NNEXT,110,1,25,15
+    PUSHBUTTON      ">>",IDC_BTN_END,138,1,25,15
+END
+
+IDD_PLAY_CONTROL DIALOGEX 0, 0, 301, 14
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "投了",IDC_BTN_GIVEUP,0,0,30,14
+    PUSHBUTTON      "パス",IDC_BTN_PASS,31,0,30,14
+    PUSHBUTTON      "地合い計算終了",IDC_BTN_CALCULATE_END,233,0,68,14,NOT WS_VISIBLE
+    PUSHBUTTON      "終局",IDC_BTN_PLAY_END,61,0,33,14
+    PUSHBUTTON      "待った",IDC_BTN_PLAY_WAIT,95,0,33,14,WS_DISABLED
+    PUSHBUTTON      "封じ手",IDC_BTN_PLAY_ABORT,130,0,33,14,WS_DISABLED
+    PUSHBUTTON      "対局取り消し",IDC_BTN_PLAY_CANCEL2,175,0,55,14
+END
+
+IDD_DLG_REQUEST_PLAY DIALOGEX 0, 0, 316, 215
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "対局申し込み"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,205,194,50,14
+    PUSHBUTTON      "キャンセル",IDCANCEL,259,194,50,14
+    LTEXT           "相手の名前",IDC_STATIC_USER_NAME,21,37,40,8
+    COMBOBOX        IDC_PLAYER_NAME,68,35,78,12,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "部屋番号",IDC_STATIC_ROOM_NO,18,37,33,8
+    EDITTEXT        IDC_ROOM_NUMBER,56,34,46,12,ES_AUTOHSCROLL
+    GROUPBOX        "対局条件",IDC_STATIC,7,56,302,134,BS_FLAT
+    LTEXT           "自分が",IDC_STATIC,10,71,31,8
+    CONTROL         "黒",IDC_IAM_WHITE,"Button",BS_AUTORADIOBUTTON | WS_GROUP,45,71,25,10
+    CONTROL         "白",IDC_IAM_BLACK,"Button",BS_AUTORADIOBUTTON,72,71,25,10
+    CONTROL         "握り",IDC_IAM_UNKNOWN,"Button",BS_AUTORADIOBUTTON,99,71,33,10
+    LTEXT           "置石",IDC_STATIC,10,94,18,13
+    COMBOBOX        IDC_HANDICAPS,34,92,59,12,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "コミ",IDC_STATIC,10,109,18,13
+    COMBOBOX        IDC_KOMI_LIST,33,107,59,12,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "逆コミ",IDC_BOOL_REVERSE_KOMI,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,102,110,33,11
+    CONTROL         "待ったあり",IDC_BOOL_WAITABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,173,48,11
+    CONTROL         "封じてあり",IDC_BOOL_ABORTABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,66,173,58,11
+    COMBOBOX        IDC_LIMIT_TIME_LIST,69,134,34,12,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "分",IDC_STATIC,184,137,30,14
+    COMBOBOX        IDC_LIMITED_MINITE_LIST,145,134,34,12,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "時間",IDC_STATIC,107,137,18,14
+    CONTROL         "制限時間あり",IDC_BOOL_LIMIT_TIME,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,135,55,11
+    CONTROL         "秒読みあり",IDC_CHECK5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,151,52,11
+    LTEXT           "秒読み",IDC_STATIC,106,153,33,14
+    COMBOBOX        IDC_MINITE_READ,69,151,34,12,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_SECOND_READ_COUNT,145,151,34,12,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "回",IDC_STATIC,184,154,30,14
+    GROUPBOX        "相手の情報",IDC_STATIC,7,8,302,44
+    CONTROL         "名前を指定",IDC_INPUT_USER_NAME,"Button",BS_AUTORADIOBUTTON | WS_GROUP,16,20,55,9
+    CONTROL         "部屋番号を指定",IDC_INPUT_ROOM_NO,"Button",BS_AUTORADIOBUTTON,80,20,72,9
+    PUSHBUTTON      "条件変更",IDC_CHANGE_CONDITION,6,194,50,14,NOT WS_VISIBLE
+    LTEXT           "部屋パスワード",IDC_STATIC_PASSWORD,118,36,48,8
+    EDITTEXT        IDC_ROOM_PASSWORD,168,34,46,12,ES_PASSWORD | ES_AUTOHSCROLL
+END
+
+IDD_LOGIN DIALOGEX 0, 0, 166, 95
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "ログイン"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_ID,58,39,101,14,ES_AUTOHSCROLL | NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT_PASSWORD,58,55,101,14,ES_PASSWORD | ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,57,74,50,14
+    PUSHBUTTON      "キャンセル",IDCANCEL,109,74,50,14
+    CONTROL         "通常ログイン",IDC_RADIO_NORMAL,"Button",BS_AUTORADIOBUTTON | WS_GROUP,14,19,52,13
+    CONTROL         "ID無しログイン",IDC_RADIO_NO_ID,"Button",BS_AUTORADIOBUTTON,77,19,62,13
+    GROUPBOX        "ログインモード",IDC_STATIC,7,7,152,27
+    LTEXT           "パスワード",IDC_STATIC,16,58,31,8
+    COMBOBOX        IDC_CMB_IDLIST,58,39,101,15,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_ROOM_PASSWORD,58,55,101,14,ES_AUTOHSCROLL
+    LTEXT           "名前（任意）",IDC_LABEL_ID2,11,42,40,8
+    LTEXT           "ID",IDC_STATIC_ID,32,40,13,9
+END
+
+IDD_INFORMATION_CTRL DIALOGEX 0, 0, 316, 183
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,1,0,0
+ PRODUCTVERSION 0,1,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041103a4"
+        BEGIN
+            VALUE "CompanyName", "Igo center yotsuya"
+            VALUE "FileDescription", "TODO: <ファイルの説明>"
+            VALUE "FileVersion", "1.0.0.1"
+            VALUE "InternalName", "YotsuyaClient.exe"
+            VALUE "LegalCopyright", "TODO: (C) <会社名>.  All rights reserved."
+            VALUE "OriginalFilename", "YotsuyaClient.exe"
+            VALUE "ProductName", "TODO: <製品名>"
+            VALUE "ProductVersion", "1.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x411, 932
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 163
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    IDD_DLG_REQUEST_PLAY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 208
+    END
+
+    IDD_LOGIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 159
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_INFORMATION_CTRL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_DLG_REQUEST_PLAY DLGINIT
+BEGIN
+    IDC_HANDICAPS, 0x403, 5, 0
+0xc882, 0xb582, "\000" 
+    IDC_HANDICAPS, 0x403, 5, 0
+0xe892, 0xe690, "\000" 
+    IDC_HANDICAPS, 0x403, 5, 0
+0x5182, 0x718e, "\000" 
+    IDC_HANDICAPS, 0x403, 5, 0
+0x5282, 0x718e, "\000" 
+    IDC_HANDICAPS, 0x403, 5, 0
+0x5382, 0x718e, "\000" 
+    IDC_HANDICAPS, 0x403, 5, 0
+0x5482, 0x718e, "\000" 
+    IDC_HANDICAPS, 0x403, 5, 0
+0x5582, 0x718e, "\000" 
+    IDC_HANDICAPS, 0x403, 5, 0
+0x5682, 0x718e, "\000" 
+    IDC_HANDICAPS, 0x403, 5, 0
+0x5782, 0x718e, "\000" 
+    IDC_HANDICAPS, 0x403, 5, 0
+0x5882, 0x718e, "\000" 
+    IDC_LIMIT_TIME_LIST, 0x403, 2, 0
+0x0030, 
+    IDC_LIMIT_TIME_LIST, 0x403, 2, 0
+0x0031, 
+    IDC_LIMIT_TIME_LIST, 0x403, 2, 0
+0x0032, 
+    IDC_LIMIT_TIME_LIST, 0x403, 2, 0
+0x0033, 
+    IDC_LIMIT_TIME_LIST, 0x403, 2, 0
+0x0034, 
+    IDC_LIMIT_TIME_LIST, 0x403, 2, 0
+0x0035, 
+    IDC_LIMIT_TIME_LIST, 0x403, 2, 0
+0x0036, 
+    IDC_LIMIT_TIME_LIST, 0x403, 2, 0
+0x0037, 
+    IDC_LIMIT_TIME_LIST, 0x403, 2, 0
+0x0038, 
+    IDC_LIMIT_TIME_LIST, 0x403, 2, 0
+0x0039, 
+    IDC_LIMIT_TIME_LIST, 0x403, 3, 0
+0x3031, "\000" 
+    IDC_LIMITED_MINITE_LIST, 0x403, 2, 0
+0x0030, 
+    IDC_LIMITED_MINITE_LIST, 0x403, 2, 0
+0x0035, 
+    IDC_LIMITED_MINITE_LIST, 0x403, 3, 0
+0x3031, "\000" 
+    IDC_LIMITED_MINITE_LIST, 0x403, 3, 0
+0x3531, "\000" 
+    IDC_LIMITED_MINITE_LIST, 0x403, 3, 0
+0x3032, "\000" 
+    IDC_LIMITED_MINITE_LIST, 0x403, 3, 0
+0x3532, "\000" 
+    IDC_LIMITED_MINITE_LIST, 0x403, 3, 0
+0x3033, "\000" 
+    IDC_LIMITED_MINITE_LIST, 0x403, 3, 0
+0x3533, "\000" 
+    IDC_LIMITED_MINITE_LIST, 0x403, 3, 0
+0x3034, "\000" 
+    IDC_LIMITED_MINITE_LIST, 0x403, 3, 0
+0x3534, "\000" 
+    IDC_LIMITED_MINITE_LIST, 0x403, 3, 0
+0x3035, "\000" 
+    IDC_LIMITED_MINITE_LIST, 0x403, 3, 0
+0x3535, "\000" 
+    IDC_MINITE_READ, 0x403, 3, 0
+0x3033, "\000" 
+    IDC_MINITE_READ, 0x403, 3, 0
+0x3036, "\000" 
+    IDC_MINITE_READ, 0x403, 3, 0
+0x3039, "\000" 
+    IDC_MINITE_READ, 0x403, 4, 0
+0x3231, 0x0030, 
+    IDC_SECOND_READ_COUNT, 0x403, 2, 0
+0x0031, 
+    IDC_SECOND_READ_COUNT, 0x403, 2, 0
+0x0032, 
+    IDC_SECOND_READ_COUNT, 0x403, 2, 0
+0x0033, 
+    IDC_SECOND_READ_COUNT, 0x403, 2, 0
+0x0034, 
+    IDC_SECOND_READ_COUNT, 0x403, 2, 0
+0x0035, 
+    IDC_SECOND_READ_COUNT, 0x403, 2, 0
+0x0036, 
+    IDC_SECOND_READ_COUNT, 0x403, 2, 0
+0x0037, 
+    IDC_SECOND_READ_COUNT, 0x403, 2, 0
+0x0038, 
+    IDC_SECOND_READ_COUNT, 0x403, 2, 0
+0x0039, 
+    IDC_SECOND_READ_COUNT, 0x403, 3, 0
+0x3031, "\000" 
+    IDC_SECOND_READ_COUNT, 0x403, 3, 0
+0x3531, "\000" 
+    IDC_SECOND_READ_COUNT, 0x403, 3, 0
+0x3032, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDP_OLE_INIT_FAILED     "OLE の初期化に失敗しました。OLE ライブラリのバージョンが正しいことを確認してください。"
+END
+
+STRINGTABLE 
+BEGIN
+    IDR_MAINFRAME           "YotsuyaClient\n\nYotsuyaClient\n\n\nYotsuyaClient.Document\nYotsuyaClient.Document"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "YotsuyaClient"
+    AFX_IDS_IDLEMESSAGE     "レディ"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_NEW             "新規にファイルを作成\n新規ファイル"
+    ID_FILE_OPEN            "既存のファイルを開く\n開く"
+    ID_FILE_CLOSE           "作業中のファイルを閉じる\n閉じる"
+    ID_FILE_SAVE            "作業中のファイルを上書きして保存\n保存"
+    ID_FILE_SAVE_AS         "作業中のファイルを新しい名前で保存\n名前をつけて保存"
+    ID_FILE_PAGE_SETUP      "印刷オプションの変更\nページ レイアウトの設定"
+    ID_FILE_PRINT_SETUP     "プリンタおよび印刷オプションの変更\n印刷設定"
+    ID_FILE_PRINT           "作業中のファイルを印刷\n印刷"
+    ID_FILE_PRINT_PREVIEW   "印刷イメージを表示\n印刷プレビュー"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_ABOUT            "プログラム情報、バージョン、著作権を表示します。\nバージョン情報"
+    ID_APP_EXIT             "アプリケーションを終了し、ファイルの保存を指示\\終了"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_MRU_FILE1       "指定のファイルを開く"
+    ID_FILE_MRU_FILE2       "指定のファイルを開く"
+    ID_FILE_MRU_FILE3       "指定のファイルを開く"
+    ID_FILE_MRU_FILE4       "指定のファイルを開く"
+    ID_FILE_MRU_FILE5       "指定のファイルを開く"
+    ID_FILE_MRU_FILE6       "指定のファイルを開く"
+    ID_FILE_MRU_FILE7       "指定のファイルを開く"
+    ID_FILE_MRU_FILE8       "指定のファイルを開く"
+    ID_FILE_MRU_FILE9       "指定のファイルを開く"
+    ID_FILE_MRU_FILE10      "指定のファイルを開く"
+    ID_FILE_MRU_FILE11      "指定のファイルを開く"
+    ID_FILE_MRU_FILE12      "指定のファイルを開く"
+    ID_FILE_MRU_FILE13      "指定のファイルを開く"
+    ID_FILE_MRU_FILE14      "指定のファイルを開く"
+    ID_FILE_MRU_FILE15      "指定のファイルを開く"
+    ID_FILE_MRU_FILE16      "指定のファイルを開く"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_NEXT_PANE            "次のウィンドウに切り替える\n次のペイン"
+    ID_PREV_PANE            "前のウィンドウに切り替える\n前のペイン"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_WINDOW_SPLIT         "作業中のウィンドウを分割\n分割"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_EDIT_CLEAR           "選択範囲を消去\n消去"
+    ID_EDIT_CLEAR_ALL       "すべて消去\nすべて消去"
+    ID_EDIT_COPY            "選択範囲をコピーしてクリップボードに保存\n保存"
+    ID_EDIT_CUT             "選択範囲を切り取ってクリップボードに保存\n切り取り"
+    ID_EDIT_FIND            "指定した文字列の検索\n検索"
+    ID_EDIT_PASTE           "クリップボードの内容を貼り付け\n貼り付け"
+    ID_EDIT_REPEAT          "直前に行った動作を繰り返す\n繰り返し"
+    ID_EDIT_REPLACE         "指定した文字列を他の文字列で置換\n置換"
+    ID_EDIT_SELECT_ALL      "ファイル内のすべてを選択\nすべて選択"
+    ID_EDIT_UNDO            "直前に行った動作を元に戻す\n元に戻す"
+    ID_EDIT_REDO            "取り消した操作をやり直す\nやり直す"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_TOOLBAR         "ツール バーの 表示/非表示\nツール バーの表示切り替え"
+    ID_VIEW_STATUS_BAR      "ステータス バーの 表示/非表示\nステータス バーの表示切り替え"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "ウィンドウのサイズを変更"
+    AFX_IDS_SCMOVE          "ウィンドウの位置を変更"
+    AFX_IDS_SCMINIMIZE      "ウィンドウを最小化する"
+    AFX_IDS_SCMAXIMIZE      "ウィンドウを最大化する"
+    AFX_IDS_SCNEXTWINDOW    "次のウィンドウに切り替える"
+    AFX_IDS_SCPREVWINDOW    "前のウィンドウに切り替える"
+    AFX_IDS_SCCLOSE         "作業中のウィンドウを閉じ、変更したファイルの保存を指示"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "ウィンドウを通常のサイズに戻す"
+    AFX_IDS_SCTASKLIST      "タスク一覧をアクティブにする"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_PREVIEW_CLOSE   "印刷プレビュー モードの終わり\nプレビューのキャンセル"
+END
+
+#endif    // 日本語 resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
+LANGUAGE 17, 1
+#pragma code_page(932)
+#include "res\YotsuyaClient.rc2"  // Microsoft Visual C++ 以外で編集されたリソース
+#include "l.JPN\afxres.rc"          // 標準コンポーネント
+#include "l.JPN\afxprint.rc"        // 印刷/印刷プレビュー リソース
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

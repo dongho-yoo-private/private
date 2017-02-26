@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "uthp", "uthp.vcproj", "{35738EB8-B83B-4371-9D16-0DF418574090}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DFA2965E-65C2-4AF3-8029-7E74368FDAE4} = {DFA2965E-65C2-4AF3-8029-7E74368FDAE4}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yiLibs", "..\yiLibs\yiLibs.vcproj", "{DFA2965E-65C2-4AF3-8029-7E74368FDAE4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "uthp_tester", "..\uthp_tester\uthp_tester.vcproj", "{B1AE8FC6-79A2-41E3-AE04-D0FF1EA61330}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DFA2965E-65C2-4AF3-8029-7E74368FDAE4} = {DFA2965E-65C2-4AF3-8029-7E74368FDAE4}
+		{35738EB8-B83B-4371-9D16-0DF418574090} = {35738EB8-B83B-4371-9D16-0DF418574090}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "uthp_tester2", "..\uthp_tester2\uthp_tester2.vcproj", "{C564891F-C653-4960-97E8-D9F337CE9F39}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DFA2965E-65C2-4AF3-8029-7E74368FDAE4} = {DFA2965E-65C2-4AF3-8029-7E74368FDAE4}
+		{35738EB8-B83B-4371-9D16-0DF418574090} = {35738EB8-B83B-4371-9D16-0DF418574090}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{35738EB8-B83B-4371-9D16-0DF418574090}.Debug|Win32.ActiveCfg = Debug|Win32
+		{35738EB8-B83B-4371-9D16-0DF418574090}.Debug|Win32.Build.0 = Debug|Win32
+		{35738EB8-B83B-4371-9D16-0DF418574090}.Release|Win32.ActiveCfg = Release|Win32
+		{35738EB8-B83B-4371-9D16-0DF418574090}.Release|Win32.Build.0 = Release|Win32
+		{DFA2965E-65C2-4AF3-8029-7E74368FDAE4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DFA2965E-65C2-4AF3-8029-7E74368FDAE4}.Debug|Win32.Build.0 = Debug|Win32
+		{DFA2965E-65C2-4AF3-8029-7E74368FDAE4}.Release|Win32.ActiveCfg = Release|Win32
+		{DFA2965E-65C2-4AF3-8029-7E74368FDAE4}.Release|Win32.Build.0 = Release|Win32
+		{B1AE8FC6-79A2-41E3-AE04-D0FF1EA61330}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B1AE8FC6-79A2-41E3-AE04-D0FF1EA61330}.Debug|Win32.Build.0 = Debug|Win32
+		{B1AE8FC6-79A2-41E3-AE04-D0FF1EA61330}.Release|Win32.ActiveCfg = Release|Win32
+		{B1AE8FC6-79A2-41E3-AE04-D0FF1EA61330}.Release|Win32.Build.0 = Release|Win32
+		{C564891F-C653-4960-97E8-D9F337CE9F39}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C564891F-C653-4960-97E8-D9F337CE9F39}.Debug|Win32.Build.0 = Debug|Win32
+		{C564891F-C653-4960-97E8-D9F337CE9F39}.Release|Win32.ActiveCfg = Release|Win32
+		{C564891F-C653-4960-97E8-D9F337CE9F39}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

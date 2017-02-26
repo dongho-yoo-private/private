@@ -1,0 +1,2381 @@
+#include "glsStackPannel.h"
+#include "yiBitmap.h"
+
+cglsStackPannel::cglsStackPannel(void)
+: cGlassInterface(),
+m_hBgAnit(0),
+m_bIsMouseUpNothing(False),
+m_eSelectedStatus(eDIS_INVALID),
+m_itemSelected(0),
+m_itemMouseMove(0),
+m_itemMouseDown(0),
+m_BgSelectedMode(False),
+m_bIsBgSelectedLock(False),
+m_bmpParentBg(0),
+m_bIsBufferSizeFixed(False)
+{
+	m_bIsSizeFixed=TRUE;
+	m_hWnd=0;
+	m_DrawObject=0;
+	m_bIsBeforeAdded=False;
+	memset(&m_bgItem, 0, sizeof(m_bgItem));
+	//m_bg=0;
+}
+
+cglsStackPannel::~cglsStackPannel(void)
+{
+}
+
+
+// -------------------------
+static void xInvalidateRect(HWND hWnd, RECT* rect, BOOL bEarse, Bool bIsCoordChanged=False)
+{
+	if (bIsCoordChanged==True)
+	{
+		RECT xrect = {rect->top, rect->left, rect->top+rect->bottom, rect->right+rect->left};
+		InvalidateRect(hWnd, &xrect, bEarse);
+		return ;
+	}
+
+	RECT xrect = {rect->left, rect->top, rect->left+rect->right, rect->bottom+rect->top};
+	InvalidateRect(hWnd, &xrect, bEarse);
+}
+
+
+// ---------------------------------------
+static BOOL xIsInRect(yiRect* rect, int x, int y, /*Bool bIsCoordChanged=False, */int posX=0, int posY=0)
+{
+	//if (bIsCoordChanged==True)
+	//{
+	//	int temp=x;
+	//	x=y;
+	//	y=temp;
+	//}
+
+	x+=posX;
+	y+=posY;
+
+	if (x<rect->x)	
+		return FALSE;
+	if (x>(rect->w+rect->x))
+		return FALSE;
+	if (y>(rect->h+rect->y))
+		return FALSE;
+	if (y<rect->y)
+		return FALSE;
+
+	return TRUE;
+}
+
+
+// --------------------------------------------
+BOOL cglsStackPannel::CreateFixed(HWND hWnd, int id, RECT* rect, RECT* margin, cglsDrawObject* obj, Bool bIsVertical, Bool bIsNotOwnDraw, eStackAlign align)
+{
+	m_bIsVertical=bIsVertical;
+	m_eAlign=align;
+	m_itemMouseDown=0;
+	m_itemMouseMove=0;
+	m_hScrollAnit=0;
+
+	m_nScrollPos=0;
+
+	m_DrawObject=obj;
+	m_bIsNotOwnDraw=bIsNotOwnDraw;
+
+
+	if (m_DrawObject &&
+			m_DrawObject->m_bIsTypeUserDraw==True)
+	{
+		cglsUserDrawObject* x = (cglsUserDrawObject* )m_DrawObject;
+		x->m_Itemz = &m_listItem;
+	}
+
+	cGlassInterface::InitResource();
+
+	memset(&m_rectMargin, 0, sizeof(RECT));
+
+	if (margin)
+		m_rectMargin=*margin;
+
+	
+	if (cGlassInterface::CreateNullWindow(hWnd, 0, id, rect)==False)
+	{
+		return False;
+	}
+
+	ReSize(rect->right, rect->bottom);
+	Move(rect->left, rect->top);
+	return True;
+}
+
+// --------------------------------------------
+BOOL cglsStackPannel::CreateDynamicSize(HWND hWnd, int id, POINT* pt, RECT* margin, cglsDrawObject* obj, Bool bIsVertical, Bool bIsNotOwnDraw, eStackAlign align)
+{
+	RECT rect={pt?pt->x:0, pt?pt->y:0, 10, 10};
+	m_bIsSizeFixed=FALSE;
+	return CreateFixed(hWnd, id, &rect, margin, obj,  bIsVertical, bIsNotOwnDraw, align);
+}
+
+
+
+// -----------------------------
+int cglsStackPannel::Insert(int id, int index, Bitmap* bmp, const wchar_t* pszText, int distance, 
+							eStackPannelType type/*=eSPT_NORMAL*/, eStackAlign align/*=eSA_LEFT*/, void* pParam/*=0*/, const wchar_t* pszToolTip/*=0*/)
+{
+	sDrawItem item;
+	memset(&item, 0, sizeof(item));
+
+	item.id=id;
+	item.bitmapId=(int)bmp;
+
+	if (pszText)
+	{
+		item.txt = yistrheapW(pszText);
+	}
+
+	//item.bitmapId=bitmapId;
+	item.distance=distance;
+
+	xSET_ITEM_TYPE((&item), type);
+	xSET_ITEM_ALIGN((&item), align);
+
+	if (m_DrawObject && 
+		m_DrawObject->CreateBitmap(&item, pParam)==False)
+	{
+		return False;
+	}
+
+	if (m_bIsNoAnimation==False &&
+			type!=eSPT_STATIC &&
+				type!=::eSPT_GLASSINTERFACE)
+	{
+		item.hAnit = yiAnitCreate();
+	}
+
+	yiMutexLock(m_hMutex);
+
+	if (index==-1)
+		m_listItem.addref(yitoheap(&item, sizeof(item)));
+	else
+		m_listItem.insertref(index, yitoheap(&item, sizeof(item)));
+
+	yiMutexUnlock(m_hMutex);
+
+	if (m_hWnd==0)
+	{
+		m_bIsBeforeAdded=True;
+	}
+
+	if (index==-1 && m_bIsBufferSizeFixed==True)
+	{
+		RECT rect;
+		xCalculatePosition(&rect, True);
+
+
+		if (m_bIsVertical)
+		{
+			ReSize(m_bmpCurrent->GetWidth(), m_h);
+		}
+		else
+		{
+			ReSize(m_w, m_bmpCurrent->GetHeight());
+		}
+		Update(eGUM_UPDATE_LASTITEM);
+
+		return True;
+	}
+
+	if (m_bIsSizeFixed==True || 
+			IsWindowVisible(m_hWnd)==TRUE)
+	{
+			//Update(eGUM_SKIP_REDRAW);
+			Update();
+	}
+
+	return True;
+
+}
+
+// -----------------------------
+int cglsStackPannel::Insert(int id, int index, cGlassInterface* pannel, int distance, eStackAlign align)
+{
+	sDrawItem item;
+	memset(&item, 0, sizeof(item));
+
+	item.id=id;
+	item.param=(void*)pannel;
+	item.distance=distance;
+	
+	xSET_ITEM_TYPE((&item), eSPT_GLASSINTERFACE);
+
+	yiMutexLock(m_hMutex);
+
+	if (index==-1)
+		m_listItem.addref(yitoheap(&item, sizeof(item)));
+	else
+		m_listItem.insertref(index, yitoheap(&item, sizeof(item)));
+
+	yiMutexUnlock(m_hMutex);
+
+	if (index==-1 && m_bIsBufferSizeFixed==True)
+	{
+		RECT rect;
+		xCalculatePosition(&rect, True);
+		Update();
+
+		return True;
+	}
+
+	if (m_bIsSizeFixed==True || 
+			IsWindowVisible(m_hWnd)==TRUE)
+	{
+			//Update(eGUM_SKIP_REDRAW);
+			Update(eGUM_SKIP_REDRAW);
+	}
+
+	return 1;
+}
+
+
+// -----------------------------
+int cglsStackPannel::Add(int id, Bitmap* bmp, const wchar_t* pszText, int distance, 
+						 eStackPannelType type/*=eSPT_NORMAL*/, eStackAlign align/*=eSA_LEFT*/, void* pParam/*=0*/, const wchar_t* pszToolTip/*=0*/)
+{
+	return Insert(id, -1, bmp, pszText, distance, type, align,  pParam, pszToolTip);
+}
+
+// -----------------------------
+int cglsStackPannel::Add(int id, cGlassInterface* pannel, int distance, eStackAlign align)
+{
+	return Insert(id, -1, pannel, distance, align);
+}
+
+// -----------------------------
+void cglsStackPannel::SetBufferSize(RECT& rect)
+{
+	if (m_bIsSizeFixed==False)
+	{
+		m_bIsBufferSizeFixed=False;
+		return ;
+	}
+
+	if (m_bmpCurrent)
+		delete m_bmpCurrent;
+	if (m_bg)
+		delete m_bg;
+
+	//m_bmpCurrent=BITMAP32(rect.right, rect.bottom);
+
+	//m_bg=BITMAP32(rect.right, rect.bottom);
+
+	//Bitmap* bg=GetParentBg(&rect);
+	
+	m_bgItem.rect.w=rect.right;
+	m_bgItem.rect.h=rect.bottom;
+
+	if (m_DrawObject)
+	{
+		if (m_DrawObject->CreateBitmap((sDrawItem*)&m_bgItem, 0)==True)
+		{
+			//if (bg)
+			//{
+			//	m_bg = BITMAP32(rect.right, rect.bottom);
+			//	//cyiBitmapBlender::BitmapCopy(m_bg, bg);
+			//	Graphics g(m_bg);
+			//	g.DrawImage(m_bgItem.pCurrentBmp, 0,0);
+			//}
+			//else
+			//{
+			m_bg = cyiBitmapBlender::BitmapCopy(0, m_bgItem.pCurrentBmp);
+			//}
+		}
+		else
+		{
+			m_bg=BITMAP32(rect.right, rect.bottom);
+			//if (bg)
+			//{
+			//	m_bg=bg;
+			//	cyiBitmapBlender::BitmapCopy(m_bg, bg, 0, 0, 
+			//}
+		}
+	}
+
+	m_bmpCurrent = cyiBitmapBlender::BitmapCopy(0, m_bg);
+
+	xTRACE("cglsStackPannel::SetBufferSize(%d, %d)", rect.right, rect.bottom);
+	m_bIsBufferSizeFixed=True;
+}
+
+// -----------------------------
+int cglsStackPannel::GetItemCount()
+{
+	return m_listItem.count();
+}
+
+// -----------------------------
+int cglsStackPannel::GetCurrentScrolledPos(float* ratio)
+{
+	if (ratio)
+	{
+		int nLength = m_bIsVertical?m_bmpCurrent->GetHeight():m_bmpCurrent->GetWidth();
+		nLength -= m_bIsVertical?m_h:m_w;
+
+		*ratio=(float)((float)m_nScrollPos/(float)nLength);
+	}
+
+	return m_nScrollPos;
+}
+
+
+// -----------------------------
+static sDrawItem* xGetItem(int id, cyiList* list)
+{
+	for (cyiNode* node=list->GetNodeTopFrom(); node; node=node->np)
+	{
+		sDrawItem* item=(sDrawItem*)node->ref;
+
+		if (id==item->id)
+		{
+			return item;
+		}
+	}
+
+	return 0;
+}
+
+// -----------------------------
+void cglsStackPannel::SetItem(int id, int bitmapId, const wchar_t* pszText, Bool bIsUpdate)
+{
+	sDrawItem* item = xGetItem(id, &m_listItem); //m_listItem.GetNodeTopFrom(index)->ref;
+
+	if (item)
+	{
+		if (item->txt)
+			yifree(item->txt);
+		item->txt=yistrheapW(pszText);
+		item->bitmapId=bitmapId;
+
+		m_DrawObject->CreateBitmap(item);
+		
+		if (bIsUpdate==True)
+		{
+			Update(eGUM_FORCED);
+		}
+	}
+	return ;
+}
+
+// -----------------------------
+int cglsStackPannel::GetId(int index)
+{
+	return ((sDrawItem*)(m_listItem.GetNodeTopFrom(index)->ref))->id;
+}
+
+// -----------------------------
+int cglsStackPannel::GetIndex(int id)
+{
+	int cnt=0;
+	for (cyiNode* node=m_listItem.GetNodeTopFrom(); node; node=node->np)
+	{
+		sDrawItem* item=(sDrawItem*)node->ref;
+		if (item->id==id)
+			return cnt;
+	}
+
+	return -1;
+}
+
+// -----------------------------
+void cglsStackPannel::xDestroyItem(sDrawItem * x)
+{
+
+	if (xGET_ITEM_TYPE(x)==eSPT_GLASSINTERFACE)
+	{
+		cGlassInterface* obj = (cGlassInterface*)x->param;
+		obj->Destroy();
+		yifree(x);
+		return ;
+	}
+
+	m_DrawObject->DestroyBitmap(x);
+
+	if (x->txt)
+		yifree(x->txt);
+
+	if (x->hAnit)
+		yiAnitDestroy(x->hAnit);
+
+	yifree(x);
+}
+
+// -----------------------------
+void cglsStackPannel::Remove(unsigned int id)
+{
+	yiMutexLock(m_hMutex);
+
+	for (cyiNode* p = m_listItem.GetNodeTopFrom(0); p!=0; p=p->np)
+	{
+		sDrawItem* x = (sDrawItem*)p->ref;
+		if (id==x->id)
+		{
+			m_listItem.remove(p);
+			xDestroyItem(x);
+			break;
+		}
+	}
+	yiMutexUnlock(m_hMutex);
+}
+
+// -----------------------------
+void cglsStackPannel::Clear()
+{
+	yiMutexLock(m_hMutex);
+	for (cyiNode* p = m_listItem.GetNodeTopFrom(0); p!=0; p=p->np)
+	{
+		sDrawItem* x = (sDrawItem*)p->ref;
+		xDestroyItem(x);
+	}
+
+	m_nItemzLength=0;
+	m_nItemzWidth=0;
+	m_listItem.clear();
+	m_itemMouseMove=0;
+	m_itemMouseDown=0;
+
+	m_nScrollPos=0;
+	yiMutexUnlock(m_hMutex);
+}
+
+
+// -----------------------------
+void cglsStackPannel::Update(sDrawItem* item, eDrawItemStatus status)
+{
+	RECT rect = {(LONG)item->rect.x, (LONG)item->rect.y, (LONG)(item->rect.x+item->rect.w), (LONG)(item->rect.y+item->rect.h)};
+
+	yiMutexLock(m_hMutex);
+	if (xDrawItem(item, status)==True)
+	{
+		if (m_bIsNotOwnDraw==True)
+		{
+			int sw, sh;
+			GetScrollPos(sw, sh);
+			rect.left-=sw;
+			rect.right-=sw;
+			rect.top-=sh;
+			rect.bottom-=sh;
+		}
+		InvalidateRect(&rect, FALSE);
+	}
+
+	//if (m_bIsSizeFixed==True)
+	//{
+	//	int sw=m_bIsVertical?0:m_nScrollPos;
+	//	int sh=m_bIsVertical?m_nScrollPos:0;
+	//	rect.left-=sw;
+	//	rect.top-=sh;
+	//}
+
+	//InvalidateRect(m_hWnd, 0, FALSE);
+	yiMutexUnlock(m_hMutex);
+}
+
+
+// -----------------------------
+// Updateが呼ばれるタイミングは、
+// 生成時、UIの追加、削除、スケールの変更がある場合
+
+void cglsStackPannel::Update(eGlsUpdateMode mode, eDrawItemStatus _status)
+{
+	int width=m_wMargin;
+	int height=m_hMargin;
+	int xHeight=0;
+	int xWidth=0;
+	RECT rect;
+
+	if (mode==eGUM_SKIP_REDRAW)
+	{
+		goto SKIP_REDRAW;
+	}
+
+	if (mode==eGUM_UPDATE ||
+		mode==eGUM_UPDATE_LASTITEM ||
+		mode==eGUM_UPDATE_BGCHANGED)
+	{
+		goto UPDATE_ONLY;
+	}
+
+	if (m_bIsBeforeAdded==True)
+	{
+		m_bIsBeforeAdded=False;
+		mode=eGUM_FORCED;
+	}
+
+	// スケールの変化がある場合
+	// 新たなビットマップを生成する。
+	if (mode==eGUM_FORCED)
+	{
+		xReDrawObject(); // itemのビットマップ生成
+
+	}
+
+SKIP_REDRAW:
+	// 座標計算
+	xCalculatePosition(&rect);
+
+
+	int w=rect.right, h=rect.bottom;
+	// 固定サイズでない場合、ここでWindowのサイズを変更する。
+	// バッファーも初期化
+	// 固定サイズの場合
+	if (m_bIsSizeFixed==True)
+	{
+		if (m_bIsBufferSizeFixed==False)
+		{
+			if (m_bIsVertical)
+			{
+				ReSize(rect.right, m_h);
+				h=m_bgItem.rect.h;
+			}
+			else
+			{
+				ReSize(m_w, rect.bottom);
+				w=m_bgItem.rect.w;
+			}
+		}
+		else
+		{
+			if (m_bIsVertical)
+			{
+				ReSize(w=m_bgItem.rect.w, m_h);
+			}
+			else
+			{
+				ReSize(m_w, h=w=m_bgItem.rect.w);
+			}
+		}
+	}
+	else
+	{
+		if (m_w!=rect.right || m_h!=rect.bottom)
+		{
+			ReSize(rect.right, rect.bottom);
+		}
+	}
+
+	yiMutexLock(m_hMutex);
+
+	xCreateBg(w, h);
+
+
+UPDATE_ONLY:
+
+	// すべてのアイテムの描画
+	if (mode==eGUM_UPDATE_LASTITEM)
+	{
+		sDrawItem* item = (sDrawItem*)m_listItem.GetNodeTailFrom(0)->ref;
+		xDrawItem(item, eDIS_FORCED);
+		if (m_bIsSizeFixed==True || 
+			IsWindowVisible(m_hWnd)==TRUE)
+		{
+			RECT rect = {item->rect.x, item->rect.y, item->rect.x+item->rect.w, item->rect.h+item->rect.y};
+			InvalidateRect(&rect, FALSE);
+		}
+	}
+	else
+	{
+		xDrawItem((mode==eGUM_UPDATE_BGCHANGED)? (sDrawItem*)-1: 0);
+
+		if (m_bIsSizeFixed==True || 
+			IsWindowVisible(m_hWnd)==TRUE)
+		{
+			InvalidateRect(0, FALSE);
+		}
+	}
+
+	yiMutexUnlock(m_hMutex);
+
+	return ;
+
+}
+
+// ------------------------------------
+LRESULT cglsStackPannel::OnChildDraw(WPARAM wp, LPARAM lp, BOOL& handled)
+{
+	cGlassInterface* obj = (cGlassInterface*)wp;
+	//PAINTSTRUCT* ps = (PAINTSTRUCT*)lp;
+	sForOwnerDraw* rect=(sForOwnerDraw*)lp;
+
+	if (m_bIsNotOwnDraw==False)
+	{
+		cyiBitmapBlender::BitmapCopy(m_bmpCurrent, obj->m_bmpCurrent, rect->x, rect->y, rect->org_x, rect->org_y, rect->w,rect->h);
+		Bool res = OnPaint(0, (PAINTSTRUCT*)rect);
+		handled=True;
+		return res;
+	}
+
+	if (m_parent)
+	{
+		rect->x+=m_x;
+		rect->y+=m_y;
+
+		if (obj==this && 
+			m_bIsSizeFixed==True)
+		{
+			int sw=(m_bIsVertical?0:m_nScrollPos);
+			int sh=(m_bIsVertical?m_nScrollPos:0);
+
+			if (rect->org_x<0)
+			{
+				rect->w+=rect->org_x;
+				rect->x=m_x;
+				rect->org_x=0;//-rect->org_x;
+			}
+
+			if (rect->org_y<0)
+			{
+				rect->h+=rect->org_y;
+				rect->y=m_y;
+				rect->org_y=0;//-rect->org_y;
+			}
+
+			if (rect->org_x+rect->w>m_w)
+			{
+				rect->w=m_w-rect->org_x;
+			}
+			if (rect->org_y+rect->h>m_h)
+			{
+				rect->h=m_h-rect->org_y;
+			}
+
+
+			rect->org_x+=sw;
+			rect->org_y+=sh;
+
+			return m_parent->OnChildDraw((WPARAM)obj, (LPARAM)rect, handled);
+		}
+
+		if (m_bIsSizeFixed==True)
+		{
+			int x=obj->m_x;
+			int y=obj->m_y;
+			int w=obj->m_w, h=obj->m_h;
+			int sw=(m_bIsVertical?0:m_nScrollPos);
+			int sh=(m_bIsVertical?m_nScrollPos:0);
+
+			// とりあえず。。。
+			cyiBitmapBlender::BitmapCopy(m_bmpCurrent, m_bg, obj->m_x, obj->m_y, obj->m_x, obj->m_y, obj->m_w, obj->m_h);
+			Graphics gxx(m_bmpCurrent);
+			gxx.DrawImage(obj->m_bmpCurrent, obj->m_x, obj->m_y, 0, 0, obj->m_w, obj->m_h, Unit::UnitPixel);
+
+			if ((obj->m_x-sw) <0)
+			{
+				x=sw;
+			}
+			else if ((obj->m_x+obj->m_w-sw) > m_w)
+			{
+				w = m_w-obj->m_x+sw;
+			}
+
+			if ((obj->m_y-sh) < 0)
+			{
+				y=sh;
+			}
+			else if ((obj->m_y+obj->m_h-sh) > m_h)
+			{
+				h=m_h-obj->m_y+sh;
+			}
+
+			if (w<0 ||
+					h<0)
+			{
+				return 0;
+			}
+
+			sForOwnerDraw s = {x+m_x-sw, y+m_y-sh, w, h, x, y};
+			return m_parent->OnChildDraw((WPARAM)this, (LPARAM)&s, handled);
+		}
+		else
+		{
+			return m_parent->OnChildDraw((WPARAM)obj, (LPARAM)rect, handled);
+		}
+	}
+
+	return 0;
+}
+
+// -----------------------------
+void cglsStackPannel::GetScrollPos(int&x,int&y)
+{
+	x=0;
+	y=0;
+
+	if (m_bIsVertical)
+		y=m_nScrollPos;
+	else
+		x=m_nScrollPos;
+}
+
+
+// ---------------------------------------
+BOOL cglsStackPannel::OnPaint(HDC hdc, PAINTSTRUCT* ps)
+{
+	Graphics* g;
+	Bitmap* bmp=m_bmpCurrent;
+	Bool bIsDirectDraw=False;
+
+	if (hdc==0)
+	{
+		bIsDirectDraw=True;
+		hdc=GetDC(m_hWnd);
+		goto DIRECT_DRAW;
+	}
+
+	if (m_bIsNotOwnDraw==True)
+	{
+		int sw,sh;
+		GetScrollPos(sw, sh);
+		sForOwnerDraw s = {ps->rcPaint.left+m_x, ps->rcPaint.top+m_y, ps->rcPaint.right-ps->rcPaint.left, ps->rcPaint.bottom-ps->rcPaint.top, ps->rcPaint.left+sw, ps->rcPaint.top+sh};
+		SendMessage(m_hParentWnd, WM_GLS_CHILD_DRAW, (WPARAM)this, (LPARAM)&s);
+		return True;
+	}
+
+DIRECT_DRAW:
+	g = new Graphics(hdc);
+
+	yiMutexLock(m_hMutex);
+	if (bmp)
+	{
+		if (bIsDirectDraw==True)
+		{
+			sForOwnerDraw* rect=(sForOwnerDraw*)ps;
+			g->DrawImage(bmp, rect->x, rect->y, rect->x, rect->y, rect->w, rect->h, Unit::UnitPixel);
+
+			ReleaseDC(m_hWnd, hdc);
+			delete g;
+
+			yiMutexUnlock(m_hMutex);
+			return True;
+		}
+
+		if (m_bIsSizeFixed==True)
+		{
+			if (m_bIsVertical==True)
+			{
+				g->DrawImage(bmp, 0, 0, 0, m_nScrollPos, m_w, m_h, UnitPixel);
+			}
+			else
+			{
+				g->DrawImage(bmp, 0, 0, m_nScrollPos, 0, m_w, m_h, UnitPixel);
+			}
+		}
+		else
+		{
+			g->DrawImage(bmp, 0, 0);
+		}
+
+		if (m_bgItem.pCurrentMaskBmp)
+		{
+			g->DrawImage(m_bgItem.pCurrentMaskBmp, 0, 0);
+		}
+	}
+
+
+
+	yiMutexUnlock(m_hMutex);
+	delete g;
+
+	return TRUE;
+}
+
+// ---------------------------------------
+LRESULT cglsStackPannel::OnClicked(sDrawItem* item)
+{
+	SendMessage(m_hParentWnd, WM_COMMAND, item->id, 0);
+	return 0;
+}
+
+// ---------------------------------------
+LRESULT cglsStackPannel::OnMouseLButtonDown(WPARAM wp, LPARAM lp, BOOL& handled)
+{
+	POINT pos;
+	int xPos   =  lp & 0xFFFF;         // カーソルx座標
+	int yPos   = (lp >> 16) & 0xFFFF;  // カーソルy座標
+	int index=0;
+	Bool bIsHitted=False;
+
+	xPos+=m_bIsVertical?0:m_nScrollPos;
+	yPos+=m_bIsVertical?m_nScrollPos:0;
+
+	for (cyiNode* node=m_listItem.GetNodeTopFrom(); node; node=node->np)
+	{
+		sDrawItem* item = (sDrawItem*)node->ref;
+
+		if (xIsInRect(&item->rect, xPos, yPos)==TRUE)
+		{
+			Bool bIsGlassInterface=(xGET_ITEM_TYPE(item)==eSPT_GLASSINTERFACE);
+			// Disable
+			if (xIS_ITEM_DISABLE(item) ||
+					(xGET_ITEM_TYPE(item)==eSPT_STATIC) ||
+						bIsGlassInterface==True)
+			{
+				if (m_bIsSizeFixed==True &&
+						bIsGlassInterface==True)
+				{
+					if (m_itemMouseDown==item)
+					{
+						break;
+					}
+
+					if (m_itemMouseDown)
+					{
+						if (xGET_ITEM_TYPE(m_itemMouseDown)==eSPT_GLASSINTERFACE)
+						{
+							cGlassInterface* obj=(cGlassInterface*)m_itemMouseDown->param;
+							obj->OnMouseLeave(wp, lp);
+						}
+						else
+						{
+							Update(m_itemMouseDown, eDIS_MOUSE_LEAVE);
+						}
+					}
+					cGlassInterface* obj = (cGlassInterface*)item->param;
+					obj->OnMouseLButtonDown(wp, lp, handled);
+					m_itemMouseDown=item;
+					bIsHitted=True;
+				}
+				break;
+			}
+
+			// 既に押されている。
+			if (m_itemMouseDown==item)
+			{
+				break;
+			}
+
+			if (m_eSelectedStatus==eDIS_MOUSE_DOWN)
+			{
+				if (m_itemSelected && m_itemSelected!=item)
+				{
+					sDrawItem* xItem=m_itemSelected;
+					m_itemSelected=0;
+					//SetItemStatus(xItem, eDIS_NORMAL);
+					Update(xItem, eDIS_MOUSE_DOWN);
+				}
+
+				m_itemSelected=item;
+			}
+
+			m_itemMouseDown=item;
+
+			if (yiAnitIsAlived(item->hAnit)==True)
+			{
+				yiAnitStop(item->hAnit, False);
+				//if (item->pAnimationBmp)
+				//	delete item->pAnimationBmp;
+			}
+
+			//SetItemStatus(item, eDIS_MOUSE_DOWN);
+			Update(item, eDIS_MOUSE_DOWN);
+			bIsHitted=True;
+			break;
+		}
+		index++;
+	}
+
+	UpdateBg(eDIS_MOUSE_DOWN, bIsHitted);
+
+	return 0;
+}
+
+// ---------------------------------------
+LRESULT cglsStackPannel::OnMouseLButtonUp(WPARAM wp, LPARAM lp, BOOL& handled)
+{
+	POINT pos;
+	int xPos   =  lp & 0xFFFF;         // カーソルx座標
+	int yPos   = (lp >> 16) & 0xFFFF;  // カーソルy座標
+	int index=0;
+	Bool bIsHitted=False;
+
+	xPos+=m_bIsVertical?0:m_nScrollPos;
+	yPos+=m_bIsVertical?m_nScrollPos:0;
+
+	for (cyiNode* node=m_listItem.GetNodeTopFrom(); node; node=node->np)
+	{
+		sDrawItem* item = (sDrawItem*)node->ref;
+
+		if (xIsInRect(&item->rect, xPos, yPos)==TRUE)
+		{
+			Bool bIsGlassInterface=(xGET_ITEM_TYPE(item)==eSPT_GLASSINTERFACE);
+			bIsHitted=True;
+			// Disable
+			if (xIS_ITEM_DISABLE(item) ||
+					(xGET_ITEM_TYPE(item)==eSPT_STATIC) ||
+						bIsGlassInterface==True)
+			{
+				if (m_bIsSizeFixed==True &&
+						bIsGlassInterface==True)
+				{
+					if (m_itemMouseDown!=item)
+					{
+						break;
+					}
+
+					cGlassInterface* obj=(cGlassInterface*)m_itemMouseDown->param;
+					obj->OnMouseLButtonUp(wp, lp, handled);
+					m_itemMouseDown=0;
+				}
+
+				break;
+			}
+
+
+			if (m_itemMouseDown==0)
+			{
+				break;
+			}
+
+			//SetItemStatus(m_itemMouseDown, eDIS_NORMAL);
+			Update(m_itemMouseDown, eDIS_MOUSE_UP);
+
+			if (m_itemMouseDown!=item)
+			{
+				m_itemMouseDown=0;
+				break;
+			}
+
+			m_itemMouseDown=0;
+			OnClicked(item);
+
+			break;
+		}
+		index++;
+	}
+	UpdateBg(eDIS_MOUSE_UP, bIsHitted);
+
+	return 0;
+}
+
+// ---------------------------------------
+LRESULT cglsStackPannel::OnMouseMove(WPARAM wp, LPARAM lp, BOOL& handled)
+{
+	POINT pos;
+	int xPos   =  lp & 0xFFFF;         // カーソルx座標
+	int yPos   = (lp >> 16) & 0xFFFF;  // カーソルy座標
+
+	int index=0;
+	Bool bIsHit=False;
+	Bool bIsHitted=False;
+
+	xPos+=m_bIsVertical?0:m_nScrollPos;
+	yPos+=m_bIsVertical?m_nScrollPos:0;
+
+	for (cyiNode* node=m_listItem.GetNodeTopFrom(); node; node=node->np)
+	{
+		sDrawItem* item = (sDrawItem*)node->ref;
+
+		if (xIsInRect(&item->rect, xPos, yPos)==TRUE)
+		{
+			Bool bIsGlassInterface=(xGET_ITEM_TYPE(item)==eSPT_GLASSINTERFACE);
+			bIsHit=True;
+			// Disable or static
+			if (xIS_ITEM_DISABLE(item) || 
+				(xGET_ITEM_TYPE(item)==eSPT_STATIC) ||
+					(xGET_ITEM_TYPE(item)==eSPT_GLASSINTERFACE))
+			{
+				if (m_bIsSizeFixed==True && bIsGlassInterface)
+				{
+					cGlassInterface* obj = (cGlassInterface*)item->param;
+
+					xPos-=item->rect.x;
+					yPos-=item->rect.y;
+					lp = (yPos<<16)|xPos;
+
+					if (m_itemMouseMove==item)
+					{
+						break;
+					}
+
+					if (m_itemMouseMove)
+					{
+						if (xGET_ITEM_TYPE(m_itemMouseMove)==eSPT_GLASSINTERFACE)
+						{
+							cGlassInterface* obj=(cGlassInterface*)m_itemMouseMove->param;
+							obj->OnMouseLeave(wp, lp);
+						}
+						else
+						{
+							Update(m_itemMouseMove, eDIS_MOUSE_LEAVE);
+						}
+					}
+
+					if (obj->OnMouseMove(wp, lp, handled)==-1)
+					{
+						obj->OnMouseEnter(wp, lp);
+						m_itemMouseMove=item;
+					}
+					bIsHitted=True;
+					handled=True;
+					break;
+				}
+
+
+				if (m_itemMouseMove)
+				{
+					// 検討
+					/*SetItemStatus(m_itemMouseMove, eDIS_NORMAL);*/
+					Update(m_itemMouseMove, eDIS_MOUSE_LEAVE);
+					m_itemMouseMove=0;
+				}
+				break;
+			}
+
+			if (item == m_itemMouseMove)
+			{
+				break;
+			}
+
+			if (m_itemMouseMove)
+			{
+				if (m_bIsSizeFixed==True &&
+					xGET_ITEM_TYPE(m_itemMouseMove)==eSPT_GLASSINTERFACE)
+				{
+					cGlassInterface* obj=(cGlassInterface*)m_itemMouseMove->param;
+					obj->OnMouseLeave(wp, lp);
+				}
+				else
+				{
+					Update(m_itemMouseMove, eDIS_MOUSE_LEAVE);
+				}
+			}
+
+			m_itemMouseMove=item;
+
+			Update(item, eDIS_MOUSE_MOVE);
+			bIsHitted=True;
+			break;
+		}
+	}
+
+	if (bIsHit==False)
+	{
+		if (m_itemMouseMove)
+		{
+			if (m_bIsSizeFixed==True &&
+				xGET_ITEM_TYPE(m_itemMouseMove)==eSPT_GLASSINTERFACE)
+			{
+				cGlassInterface* obj=(cGlassInterface*)m_itemMouseMove->param;
+				obj->OnMouseLeave(wp, lp);
+			}
+			else
+			{
+				Update(m_itemMouseMove, eDIS_MOUSE_LEAVE);
+			}
+		}
+
+		if (m_itemMouseDown)
+		{
+			if (m_bIsSizeFixed==True &&
+				xGET_ITEM_TYPE(m_itemMouseDown)==eSPT_GLASSINTERFACE)
+			{
+				cGlassInterface* obj=(cGlassInterface*)m_itemMouseDown->param;
+				obj->OnMouseLeave(wp, lp);
+			}
+			else
+			{
+				Update(m_itemMouseDown, eDIS_MOUSE_LEAVE);
+			}
+		}
+		m_itemMouseMove=0;
+		m_itemMouseDown=0;
+	}
+
+	UpdateBg(eDIS_MOUSE_MOVE, bIsHitted);
+
+	return 0;
+
+}
+
+// -------------------------
+LRESULT cglsStackPannel::OnMouseLeave(WPARAM wp, LPARAM lp)
+{
+	if (m_itemMouseMove)
+	{
+		//SetItemStatus(m_itemMouseMove, eDIS_NORMAL);
+
+		if (m_bIsSizeFixed==True)
+		{
+			if (xGET_ITEM_TYPE(m_itemMouseMove)==eSPT_GLASSINTERFACE)
+			{
+				cGlassInterface* obj = (cGlassInterface* )m_itemMouseMove->param;
+				obj->OnMouseLeave(wp, lp);
+			}
+			else
+			{
+				Update(m_itemMouseMove, eDIS_MOUSE_LEAVE);
+			}
+		}
+		else
+			Update(m_itemMouseMove, eDIS_MOUSE_LEAVE);
+	}
+
+	if (m_itemMouseDown)
+	{
+		//SetItemStatus(m_itemMouseMove, eDIS_NORMAL);
+		if (m_bIsSizeFixed==True)
+		{
+			if (xGET_ITEM_TYPE(m_itemMouseDown)==eSPT_GLASSINTERFACE)
+			{
+				cGlassInterface* obj = (cGlassInterface* )m_itemMouseDown->param;
+				obj->OnMouseLeave(wp, lp);
+			}
+		}
+		else
+			Update(m_itemMouseDown, eDIS_MOUSE_LEAVE);
+	}
+
+	m_itemMouseMove=0;
+	m_itemMouseDown=0;
+
+	UpdateBg(eDIS_MOUSE_LEAVE, False);
+
+	return 0;
+
+}
+
+// ---------------------------------------
+LRESULT cglsStackPannel::OnMouseEnter(WPARAM wp, LPARAM lp)
+{
+	UpdateBg(eDIS_MOUSE_ENTER, False);
+	return 0;
+}
+
+// -----------------------------
+void cglsStackPannel::EnableItem(int id, Bool bIsEnable)
+{
+	for (cyiNode* node=m_listItem.GetNodeTopFrom(); node; node=node->np)
+	{
+		sDrawItem* item = (sDrawItem*)node->ref;
+
+		if (item->id==id)
+		{
+			xITEM_DISABLE(item);
+
+			if (m_itemMouseMove==item)
+			{
+				m_itemMouseMove=0;
+			}
+
+			if (m_itemMouseDown==item)
+			{
+				m_itemMouseDown=0;
+			}
+			Update(item);
+		}
+	}
+}
+
+// ------------------------------------
+LRESULT cglsStackPannel::OnNotHandledCommand(WPARAM wp, LPARAM lp)
+{
+	SendMessage(m_hParentWnd, WM_COMMAND, wp, lp);
+	return 0;
+}
+
+// ---------------------------------------
+void* cglsStackPannel::xGetItemById(int id)
+{
+	for (cyiNode* node=m_listItem.GetNodeTopFrom(); node; node=node->np)
+	{
+		sDrawItem* item = (sDrawItem*)node->ref;
+
+		if (id==item->id)
+		{
+			return item;
+			//return xGET_ITEM_TYPE(item)==eSPT_GLASSINTERFACE ? item->param:(void*)item;
+		}
+	}
+	return 0;
+}
+
+// ---------------------------------------
+void* cglsStackPannel::xGetItemByIndex(int index)
+{
+	cyiNode* node=m_listItem.GetNodeTopFrom(index);
+
+	if (node)
+	{
+		return node->ref;
+	}
+
+	return 0;
+}
+
+// ---------------------------------------
+int cglsStackPannel::xGetItemIndex(int id)
+{
+	int cnt=0;
+	for ( cyiNode* node=m_listItem.GetNodeTopFrom(); node; node=node->np, cnt++)
+	{
+		sDrawItem* item = (sDrawItem*)node->ref;
+
+		if (id==item->id)
+		{
+			return cnt;
+		}
+	}
+	return -1;
+}
+
+
+// -----------------------------
+void cglsStackPannel::xReDrawObject()
+{
+	int cnt=0;
+	int length=0;
+
+	for (cyiNode* node=m_listItem.GetNodeTopFrom(); node; node=node->np)
+	{
+		sDrawItem* item = (sDrawItem*)node->ref;
+
+		if (xGET_ITEM_TYPE(item)!=eSPT_GLASSINTERFACE)
+		{
+			m_DrawObject->CreateBitmap(item);
+			continue;
+		}
+
+		cGlassInterface* obj = (cGlassInterface*)item->param;
+		obj->Update(eGUM_FORCED);
+	}
+}
+
+
+// ---------------------------------------
+int cglsStackPannel::GetBgIndex(eDrawItemStatus status, Bool bIsHitted, Bool& bIsSkipAnimation)
+{
+	int ret=0;
+
+	bIsSkipAnimation=False;
+
+	if (bIsHitted==True)
+	{
+		return -1;
+	}
+
+	if (m_BgSelectedMode==True &&
+			m_bIsBgSelectedLock==True)
+	{
+		return -1;
+	}
+
+	if (status==eDIS_MOUSE_MOVE ||
+			status==eDIS_MOUSE_ENTER)
+	{
+		ret=1;
+		//bg=m_bgItem.pBmp[1];
+		//bgMask=m_bgItem.pBmpMasked[1];
+		if (SetItemStatus((sDrawItem*)&m_bgItem, eDIS_MOUSE_MOVE)==False)
+		{
+			return -1;
+		}
+	}
+	else if (status==eDIS_MOUSE_DOWN)
+	{
+		ret=2;
+		//bg=m_bgItem.pBmp[2];
+		//bgMask=m_bgItem.pBmpMasked[2];
+		if (SetItemStatus((sDrawItem*)&m_bgItem, eDIS_MOUSE_DOWN)==False)
+		{
+			return -1;
+		}
+		m_bIsBgSelectedLock=True;
+		bIsSkipAnimation=True;
+		return ret;
+	}
+	else
+	{
+		if (SetItemStatus((sDrawItem*)&m_bgItem, eDIS_NORMAL)==False)
+		{
+			return -1;
+		}
+		xTRACE("cglsStackPannel::UpdateBg(OTHER) %d", status);
+
+	}
+
+	return ret;
+}
+
+
+
+// ---------------------------------------
+Bool cglsStackPannel::UpdateBg(eDrawItemStatus status, Bool bIsHitted)
+{
+
+	//return False;
+	Bitmap* bg = m_bgItem.pBmp[0];
+	Bitmap* bgMask = m_bgItem.pBmpMasked[0];
+	int nBmpIndex=0;
+	Bool bIsSkipAnimation;
+
+
+	//goto SKIP_ANIMATION;
+
+	//if (bg==m_bgItem.pCurrentBmp)
+	//{
+	//	return False;
+	//}
+
+	if (m_bIsNoAnimation==True)
+	{
+		goto SKIP_ANIMATION;
+	}
+
+	if ((nBmpIndex=GetBgIndex(status, bIsHitted, bIsSkipAnimation))==-1)
+	{
+		return False;
+	}
+
+	bg=m_bgItem.pBmp[nBmpIndex];
+	bgMask=m_bgItem.pBmpMasked[nBmpIndex];
+
+	if (m_bIsNoAnimation==True ||
+			bIsSkipAnimation==True)
+	{
+		goto SKIP_ANIMATION;
+	}
+
+	if (m_bgItem.pAnimationBmp==0)
+	{
+		if (bg==m_bgItem.pCurrentBmp)
+		{
+			xTRACE("cglsStackPannel::UpdateBg() exit");
+			return False;
+		}
+	}
+
+
+	//goto SKIP_ANIMATION;
+
+	if (m_hBgAnit==0)
+	{
+		m_hBgAnit = yiAnitCreate();
+	}
+
+	if (yiAnitIsAlived(m_hBgAnit)==True)
+	{
+		yiAnitStop(m_hBgAnit, True);
+	}
+
+	if (m_bgItem.pStartBmp)
+		delete m_bgItem.pStartBmp;
+
+	if (m_bgItem.pMaskStartBmp)
+		delete m_bgItem.pMaskStartBmp;
+
+	//if (m_bgItem.pEndBmp)
+	//	delete m_bgItem.pEndBmp;
+
+	m_bgItem.pStartBmp=cyiBitmapBlender::BitmapCopy(0, m_bgItem.pAnimationBmp?m_bgItem.pAnimationBmp:m_bgItem.pCurrentBmp);
+	m_bgItem.pEndBmp=bg;//cyiBitmapBlender::BitmapCopy(0, bg);
+
+	m_bgItem.pMaskStartBmp=cyiBitmapBlender::BitmapCopy(0, m_bgItem.pMaskAnimationBmp?m_bgItem.pMaskAnimationBmp:m_bgItem.pCurrentMaskBmp);
+	m_bgItem.pMaskEndBmp=bgMask;
+
+	yiAnitStart(m_hBgAnit, m_hWnd, WM_GLS_BG_ANIMT, 300, 30, eGAP_FISO, &m_bgItem); 
+	
+	return True;
+
+SKIP_ANIMATION:
+	{
+		RECT rect = {0, 0, m_bmpCurrent->GetWidth(), m_bmpCurrent->GetHeight()};
+		Bitmap* xBg = GetParentBg(&rect);
+		
+		if (xBg)
+		{
+			cyiBitmapBlender::BitmapCopy(m_bg, xBg);
+			Graphics g(m_bg);
+			g.DrawImage(bg, 0, 0);
+			m_bgItem.pCurrentBmp=bg;
+			//m_bg=x;
+		}
+		else
+		{
+			cyiBitmapBlender::BitmapCopy(m_bg, bg);
+			m_bgItem.pCurrentBmp=bg;
+		}
+
+		//m_bg=m_bgItem.pCurrentBmp=bg;
+
+		cyiBitmapBlender::BitmapCopy(m_bmpCurrent, m_bg);
+		Bitmap* bmpx = UpdateBuffer();
+		InvalidateRect(0, False);
+		//NotifyBgChanged();
+		//cyiBitmapBlender::BitmapCopy(m_bmpCurrent, m_bg);
+		//Update(eGUM_UPDATE_BGCHANGED);
+	}
+	return True;
+}
+
+// -----------------------------
+void cglsStackPannel::BgChanged()
+{
+	Bitmap* bg=GetParentBg(0);
+
+	if (bg==0)
+		return ;
+
+	if (m_bmpParentBg)
+		delete m_bmpParentBg;
+
+	m_bmpParentBg=bg;
+
+	if (m_bgItem.pCurrentBmp)
+	{
+		cyiBitmapBlender::BitmapCopy(m_bg, bg);
+		Graphics g(m_bg);
+		g.DrawImage(m_bgItem.pCurrentBmp, 0, 0);
+	}
+	else
+	{
+		delete m_bg;
+		m_bg=bg;
+	}
+
+	Update(eGUM_UPDATE_BGCHANGED);
+
+	//NotifyBgChanged();
+}
+
+// -----------------------------
+Bitmap* cglsStackPannel::UpdateBufferFixedMode(Graphics* g, RECT* _rect, Bitmap* bmpBuffer)
+{
+	RECT rect = {0, 0, m_w, m_h};
+	Graphics* _g=0;
+	Bitmap* bmp=0;
+	Bool bIsSizeFixedDraw=False;
+	Rect rectSizeFixed;
+	int sw=(m_bIsVertical?0:m_nScrollPos);
+	int sh=(m_bIsVertical?m_nScrollPos:0);
+
+	if (_rect)
+	{
+		rect=*_rect;
+	}
+
+	if (g==0)
+	{
+		bmp=m_bmpCurrent;
+		_g = new Graphics(bmp);
+		_g->SetSmoothingMode(SmoothingMode::SmoothingModeHighQuality);
+		g=_g;
+
+		goto NO_SCROLL_POS_DRAW;
+	}
+	else
+	{
+		if (bmpBuffer)
+		{
+			//cyiBitmapBlender::BitmapCopy(m_bmpParentBg, bmpBuffer, 0, 0, rect.left, rect.top, m_w, m_h);
+		}
+
+		g->DrawImage(m_bgItem.pAnimationBmp?m_bgItem.pAnimationBmp:m_bgItem.pCurrentBmp, rect.left, rect.top, sw, sh, m_w, m_h, Unit::UnitPixel);
+
+		// これがBgイメージ
+		if (bmpBuffer)
+		{
+			//cyiBitmapBlender::BitmapCopy(m_bg, bmpBuffer, sw, sh, rect.left, rect.top,  m_w, m_h);
+		}
+
+		g->GetClipBounds(&rectSizeFixed);
+		g->SetClip(Rect(rect.left, rect.top, m_w, m_h));
+	}
+
+	for (cyiNode* node = m_listItem.GetNodeTopFrom(); node; node=node->np)
+	{
+		sDrawItem* s=(sDrawItem*)node->ref;
+
+		int x=s->rect.x-sw;
+		int y=s->rect.y-sh;
+		int w=s->rect.w;
+		int h=s->rect.h;
+
+		if (x+s->rect.w<0)
+			continue;
+		if (y+s->rect.h<0)
+			continue;
+		if (x>m_w)
+			continue;
+		if (y>m_h)
+			continue;
+
+
+		if (x<0)
+		{
+			//x=w+x;
+		}
+		else if (x+w>m_w)
+		{
+			w=m_w-x;
+		}
+
+		if (y<0)
+		{
+			//y=h+y;
+		}
+		else if (y+h>m_h)
+		{
+			h=m_h-y;
+		}
+
+		if (xGET_ITEM_TYPE(s)!=eSPT_GLASSINTERFACE)
+		{
+			//g->DrawImage(s->pCurrentBmp, rect.left+x, rect.top+y);
+
+			g->DrawImage(s->pAnimationBmp?s->pAnimationBmp:s->pCurrentBmp, 
+				rect.left+x, rect.top+y, 0, 0, w, h, Unit::UnitPixel);
+			continue;
+		}
+		else
+		{
+			cGlassInterface* obj = (cGlassInterface*)s->param;
+			g->DrawImage(obj->m_bmpCurrent, rect.left+x, rect.top+y, 0, 0, w, h, Unit::UnitPixel);
+		}
+	}
+
+	g->SetClip(rectSizeFixed);
+	return bmpBuffer;
+
+
+NO_SCROLL_POS_DRAW:
+
+	for (cyiNode* node = m_listItem.GetNodeTopFrom(); node; node=node->np)
+	{
+		sDrawItem* s=(sDrawItem*)node->ref;
+
+		if (xGET_ITEM_TYPE(s)!=eSPT_GLASSINTERFACE)
+		{
+			g->DrawImage(s->pAnimationBmp?s->pAnimationBmp:s->pCurrentBmp, 
+				s->rect.x, s->rect.y, 0, 0, s->rect.w, s->rect.h, Unit::UnitPixel);
+			continue;
+		}
+		else
+		{
+			cGlassInterface* obj = (cGlassInterface*)s->param;
+			g->DrawImage(obj->m_bmpCurrent, s->rect.x, s->rect.y, 0, 0, s->rect.w, s->rect.h, Unit::UnitPixel);
+		}
+	}
+
+	delete _g;
+
+	return bmpBuffer;
+}
+
+
+// -----------------------------
+Bitmap* cglsStackPannel::UpdateBuffer(Graphics* g, RECT* _rect, Bitmap* bmpBuffer)
+{
+	RECT rect = {0, 0, m_w, m_h};
+	Graphics* _g;
+	Bitmap* bmp=0;
+	Bool bIsSizeFixedDraw=False;
+	Rect rectSizeFixed;
+
+	if (m_bIsSizeFixed==True)
+	{
+		return UpdateBufferFixedMode(g, _rect, bmpBuffer);
+	}
+
+	if (_rect)
+	{
+		rect=*_rect;
+	}
+
+	if (g==0)
+	{
+		bmp=m_bmpCurrent;
+		_g = new Graphics(bmp);
+		_g->SetSmoothingMode(SmoothingMode::SmoothingModeHighQuality);
+		g=_g;
+	}
+	else
+	{
+		// これがBgイメージ
+		if (bmpBuffer)
+		{
+			//cyiBitmapBlender::BitmapCopy(m_bmpParentBg, bmpBuffer, 0, 0, rect.left+m_bIsVertical?0:m_nScrollPos, rect.top+m_bIsVertical?m_nScrollPos:0, m_w, m_h/*m_bg->GetWidth(), m_bg->GetHeight()*/);
+		}
+
+		if (g->DrawImage(m_bgItem.pAnimationBmp?m_bgItem.pAnimationBmp:m_bgItem.pCurrentBmp, 
+			rect.left, rect.top, m_bIsVertical?0:m_nScrollPos, m_bIsVertical?m_nScrollPos:0, m_w, m_h, Unit::UnitPixel)!=Status::Ok)
+		{
+			return 0;
+		}
+
+		// これがBgイメージ
+		if (bmpBuffer)
+		{
+			//cyiBitmapBlender::BitmapCopy(m_bg, bmpBuffer, 0, 0, rect.left+m_bIsVertical?0:m_nScrollPos, rect.top+m_bIsVertical?m_nScrollPos:0,  m_w, m_h/*m_bg->GetWidth(), m_bg->GetHeight()*/);
+		}
+	}
+
+	for (cyiNode* node = m_listItem.GetNodeTopFrom(); node; node=node->np)
+	{
+		sDrawItem* s=(sDrawItem*)node->ref;
+
+		if (xGET_ITEM_TYPE(s)!=eSPT_GLASSINTERFACE)
+		{
+			g->DrawImage(s->pCurrentBmp, (INT)(rect.left+s->rect.x), (INT)(rect.top+s->rect.y));
+			continue;
+		}
+		else
+		{
+			int sw=(m_bIsVertical?0:m_nScrollPos);
+			int sh=(m_bIsVertical?m_nScrollPos:0);
+			RECT crect = {s->rect.x+rect.left-sw, s->rect.y+rect.top-sh, 0, 0};
+			//RECT crect = {s->rect.x+rect.left, s->rect.y+rect.top, 0, 0};
+			cGlassInterface* obj = (cGlassInterface*)s->param;
+
+			if (IsWindowVisible(obj->m_hWnd)==False)
+			{
+				continue;
+			}
+
+			obj->UpdateBuffer(g, &crect, bmpBuffer);
+		}
+	}
+
+
+
+	if (_g!=0)
+	{
+		delete _g;
+	}
+
+	return bmp;
+}
+
+
+// ---------------------------------------
+// m_bg -> ???
+LRESULT cglsStackPannel::OnBgAnimation(WPARAM wp, LPARAM lp, BOOL& handled)
+{
+	int cnt=wp;
+	float factor;
+	sDrawItemEx* item = (sDrawItemEx*)lp;
+	Bool bIsQuit=False;
+	int sw, sh;
+
+	if (m_bg==0 || yiAnitIsAlived(m_hBgAnit)==False)
+	{
+		yiAnitStop(m_hBgAnit, False);
+		return 0;
+	}
+
+	GetScrollPos(sw, sh);
+
+	if ((factor=yiAnitGetFactor(m_hBgAnit, cnt))<0.0)
+	{
+		yiAnitStop(m_hBgAnit, False);
+
+		if (m_bmpParentBg)
+		{
+			cyiBitmapBlender::BitmapCopy(m_bg, m_bmpParentBg, sw, sh, 0, 0, m_w, m_h);
+			Graphics g(m_bg);
+			g.DrawImage(item->pEndBmp, 0, 0);//sw, sh, sw, sh, m_w, m_h, UnitPixel);
+		}
+		else
+		{
+			//cyiBitmapBlender::BitmapCopy(m_bg, m_bmpParentBg, sw, sh, 0, 0, m_w, m_h);
+			cyiBitmapBlender::BitmapCopy(m_bg, item->pEndBmp, 0, 0);// sw, sh, sw, sh, m_w, m_h);
+		}
+
+		item->pCurrentMaskBmp=item->pMaskEndBmp;
+		bIsQuit=True;
+
+		if (item->pAnimationBmp)
+			delete item->pAnimationBmp;
+
+		if (item->pMaskAnimationBmp)
+			delete item->pMaskAnimationBmp;
+
+
+		xTRACE("OnBgAnimation(%f), end", factor);
+	}
+	else
+	{
+		if (item->pAnimationBmp)
+			delete item->pAnimationBmp;
+
+		item->pAnimationBmp = cyiBitmapBlender::Desolve(item->pStartBmp, item->pEndBmp, factor);
+		//xTRACE("OnBgAnimation(%x, %x, %f)", item->pStartBmp, item->pEndBmp, factor);
+		//item->pAnimationBmp = cyiBitmapBlender::Average(item->pStartBmp, item->pEndBmp, factor);
+		xTRACE("OnBgAnimation(%f, %d)", factor, cnt);
+
+
+		if (m_bmpParentBg)
+		{
+			cyiBitmapBlender::BitmapCopy(m_bg, m_bmpParentBg, sw, sh, 0, 0,m_w, m_h);
+			Graphics g(m_bg);
+			g.DrawImage(item->pAnimationBmp, 0, 0);//sw, sh, sw, sh, m_w, m_h, UnitPixel);
+		}
+		else
+		{
+			cyiBitmapBlender::BitmapCopy(m_bg, item->pAnimationBmp);//, sw, sh, sw, sh, m_w, m_h);
+		}
+
+		if (item->pMaskAnimationBmp)
+			delete item->pMaskAnimationBmp;
+		item->pCurrentMaskBmp=item->pMaskAnimationBmp = cyiBitmapBlender::Desolve(item->pMaskStartBmp, item->pMaskEndBmp, factor);
+		//item->pCurrentMaskBmp=item->pMaskAnimationBmp = cyiBitmapBlender::Average(item->pMaskStartBmp, item->pMaskEndBmp, factor);
+	}
+
+	//cyiBitmapBlender::BitmapCopy(m_bmpCurrent, m_bg);
+	//Bitmap* bmpx = CreateCaptureImage();
+	//InvalidateRect(0, False);
+	
+	cyiBitmapBlender::BitmapCopy(m_bmpCurrent, m_bg);//, sw, sh, sw, sh, m_w, m_h);
+
+	if (bIsQuit==False)
+	{
+		UpdateBuffer();
+	}
+	else
+	{
+		item->pAnimationBmp=0;
+		item->pMaskAnimationBmp=0;
+		item->pCurrentBmp=item->pEndBmp;
+		UpdateBuffer(0, 0, m_bmpCurrent);
+	}
+
+	if (m_parent)
+	{
+		if (m_parent->IsBgAnimation()==True)
+		{
+			xTRACE("OnBgAnimation.... no draw...");
+			return 0;
+		}
+	}
+	InvalidateRect(0, False);
+
+	return 0;
+}
+
+
+// ------------------------------------
+// Default
+int cglsStackPannel::GetStatusToBitmapIndex(sDrawItem* item, eDrawItemStatus status, Bool& bIsNoAnimation)
+{
+	eDrawItemStatus _status = xGET_ITEM_STATUS(item);
+	eDrawItemStatus _preStatus = xGET_ITEM_PRE_STATUS(item);
+	bIsNoAnimation=True;
+
+	if (status==eDIS_MOUSE_ENTER)
+	{
+		status=eDIS_MOUSE_MOVE;
+	}
+
+	if (status==_status)
+	{
+		return -1;
+	}
+
+	if (status==eDIS_FORCED)
+	{
+		SetItemStatus(item, eDIS_NORMAL);
+		return 0;
+	}
+
+	if (status==eDIS_MOUSE_MOVE)
+	{
+		if (_status==eDIS_NORMAL)
+		{
+			bIsNoAnimation=False;
+			SetItemStatus(item, status);
+			return 1;
+		}
+
+		return -1;
+	}
+
+	if (status==eDIS_MOUSE_DOWN)
+	{
+		//if (_status==eDIS_MOUSE_MOVE)
+		//{
+		SetItemStatus(item, status);
+		return 2;
+		//}
+		//return -1;
+	}
+
+	if (status==eDIS_MOUSE_LEAVE)
+	{
+		if (_status==eDIS_MOUSE_MOVE)
+		{
+			bIsNoAnimation=False;
+			SetItemStatus(item, eDIS_NORMAL);
+			return 0;
+		}
+		else if (_status==eDIS_MOUSE_DOWN)
+		{
+			SetItemStatus(item, eDIS_NORMAL);
+			return 0;
+		}
+
+		return -1;
+	}
+
+	if (status==eDIS_MOUSE_UP)
+	{
+		if (_status==eDIS_MOUSE_DOWN)
+		{
+			SetItemStatus(item, eDIS_MOUSE_MOVE);
+			return 1;
+		}
+
+		return -1;
+	}
+
+	return -1;
+
+}
+
+// ---------------------------------------
+Bool cglsStackPannel::xCreateBg(int w, int h)
+{
+	if (w==0 ||
+			h==0)
+	{
+		return False;
+	}
+
+	if (m_bgItem.rect.w==w &&
+			m_bgItem.rect.h==h)
+	{
+		return False;
+	}
+
+	// size changed.
+
+	if (m_bmpCurrent!=0)
+	{
+		delete m_bmpCurrent;
+	}
+	
+	m_bmpCurrent = new Bitmap(w, h, PixelFormat32bppARGB);
+
+	if (m_bg)
+		delete m_bg;
+
+	RECT rect = {0, 0, w, h};
+	Bitmap* bg=GetParentBg(&rect);
+	
+	m_bgItem.rect.w=w;
+	m_bgItem.rect.h=h;
+
+	if (m_DrawObject)
+	{
+		if (m_DrawObject->CreateBitmap((sDrawItem*)&m_bgItem, 0)==True)
+		{
+			if (bg)
+			{
+				m_bg = BITMAP32(w, h);
+				cyiBitmapBlender::BitmapCopy(m_bg, bg);
+				Graphics g(m_bg);
+				g.DrawImage(m_bgItem.pCurrentBmp, 0,0);
+			}
+			else
+			{
+				m_bg = cyiBitmapBlender::BitmapCopy(0, m_bgItem.pCurrentBmp);
+			}
+		}
+		else
+		{
+			if (bg)
+				m_bg=bg;
+			else
+				m_bg=BITMAP32(w, h);
+		}
+	}
+
+	cyiBitmapBlender::BitmapCopy(m_bmpCurrent, m_bg);
+
+	return True;
+}
+
+// ---------------------------------------
+Bool cglsStackPannel::xDrawItem(sDrawItem* item, eDrawItemStatus status)
+{
+	Bitmap* bmpItem;
+	Bitmap* bmpPrev;
+	Bool bSkipControlUpdate=False;
+	Bool bIsNoAnimation=False;
+	int nBitmapIndex;
+
+	if (m_bmpCurrent==0)
+	{
+		return False;
+	}
+
+	// Draw All
+	if (item==0 || (int)(item)==-1)
+	{
+		goto DRAW_ALL;
+	}
+
+	if (status==eDIS_FORCED)
+	{
+		status=eDIS_NORMAL;
+		goto SKIP_ANIMATION;
+	}
+
+	if ((nBitmapIndex=GetStatusToBitmapIndex(item, status, bIsNoAnimation))==-1)
+	{
+		return False;
+	}
+
+	bmpPrev = item->pCurrentBmp;
+
+	if (m_DrawObject)
+	{
+		// ユーザー定義
+		if (m_DrawObject->m_bIsTypeUserDraw==True)
+		{
+			cglsUserDrawObject* x = (cglsUserDrawObject* )m_DrawObject;
+			x->OnDrawItem(item, status);
+		}
+		else
+		{
+			eDrawItemStatus status = xGET_ITEM_STATUS(item);
+
+			if (item->pBmp[nBitmapIndex]==0)
+			{
+				if (m_DrawObject->OnNullBitmapDraw(item, (void*)nBitmapIndex)==False)
+				{
+					return False;
+				}
+			}
+			item->pCurrentBmp=item->pBmp[nBitmapIndex];//(status==eDIS_FORCED)?eDIS_NORMAL:status];
+		}
+	}
+
+
+	if (bIsNoAnimation==True)
+	{
+		if (item->pCurrentBmp==bmpPrev)
+			return False;
+
+		goto SKIP_ANIMATION;
+	}
+
+	//if (status==eDIS_FORCED ||
+	//		status==eDIS_MOUSE_DOWN ||
+	//			status==eDIS_MOUSE_UP ||
+	//				item->hAnit==0)
+	//{
+	//	goto SKIP_ANIMATION;
+	//}
+
+	if (m_bIsNoAnimation==False)
+	{
+		Bitmap* bmpStart = item->pAnimationBmp?item->pAnimationBmp:bmpPrev;
+
+		if (bmpStart==item->pCurrentBmp)
+		{
+			return False;
+		}
+
+		CrossDraw(item, bmpStart, item->pCurrentBmp);
+		return False;
+	}
+
+SKIP_ANIMATION:
+	bmpItem=item->pCurrentBmp;
+
+	if (m_bg)
+	{
+		cyiBitmapBlender::BitmapCopy(m_bmpCurrent, m_bg, item->rect.x, item->rect.y, item->rect.x, item->rect.y, item->rect.w, item->rect.h);
+	}
+
+	{
+		Graphics g(m_bmpCurrent);
+		g.DrawImage(bmpItem, item->rect.x, item->rect.y, 0, 0, bmpItem->GetWidth(), bmpItem->GetHeight(), UnitPixel);
+	}
+
+	return True;
+
+DRAW_ALL:
+	{
+		Graphics g(m_bmpCurrent);
+
+		if ((int)item==-1)
+		{
+			bSkipControlUpdate=True;
+		}
+
+		for (cyiNode* node=m_listItem.GetNodeTopFrom(0); node; node=node->np)
+		{
+			sDrawItem* item=(sDrawItem*)node->ref;
+
+			if (xGET_ITEM_TYPE(item)==eSPT_GLASSINTERFACE)
+			{
+				cGlassInterface* x = (cGlassInterface*)item->param;
+				
+				if (x->m_bIsNotOwnDraw==False)
+					continue;
+
+				if (m_bIsSizeFixed==False && 
+						IsWindowVisible(x->m_hWnd)==False)
+					continue;
+
+				if (bSkipControlUpdate==True)
+					continue;
+
+				x->Update(eGUM_UPDATE);
+				bmpItem = x->m_bmpCurrent;
+			}
+			else
+			{
+				bmpItem=item->pCurrentBmp;
+			}
+
+			// どういうケース？
+			if (bmpItem==0)
+				continue;
+
+			g.DrawImage(bmpItem, item->rect.x, item->rect.y, 0, 0, bmpItem->GetWidth(), bmpItem->GetHeight(), UnitPixel);
+		}
+	}
+
+	return True;
+}
+
+// ---------------------------------------
+static int xGetPos(eStackAlign align, RECT* rect, RECT* margine, int w, int h)
+{
+	if (w==0)
+	{
+		if (align==eSA_CENTER)
+		{
+			int _h = (rect->bottom-margine->top-margine->bottom);
+			return ((_h-h)>>1)+margine->top;
+		}
+		else if (align==eSA_LEFT)
+		{
+			return margine->top;
+		}
+		else
+		{
+			return rect->bottom-h-margine->bottom;
+		}
+	}
+
+	if (align==eSA_CENTER)
+	{
+		int _w = (rect->right-margine->left-margine->right);
+		return ((_w-w)>>1)+margine->left;
+	}
+	else if (align==eSA_LEFT)
+	{
+		return margine->left;
+	}
+	else
+	{
+		return rect->right-w-margine->right;
+	}
+
+	return 0;
+}
+
+// ---------------------------------------
+void cglsStackPannel::xCalculatePosition(RECT* rectAll, Bool bIsCalculateEnd/*=False*/)
+{
+	int sum=0;
+	//RECT rect;
+
+	if (m_nItemzLength!=0 &&
+			bIsCalculateEnd==True)
+	{
+		goto CALCULATE_LAST_ITEM;
+	}
+
+	m_nItemzLength=0;
+	m_nItemzWidth=0;
+
+	if (m_bIsVertical==FALSE)
+	{	
+		goto NOT_VERTICAL;
+	}
+	m_nItemzLength=m_rectMargin.top;
+
+	for (cyiNode* node=m_listItem.GetNodeTopFrom(); node; node=node->np)
+	{
+		sDrawItem* item = (sDrawItem*)node->ref;
+
+		item->rect.y = m_nItemzLength+item->distance;
+
+		if (xGET_ITEM_TYPE(item)==eSPT_GLASSINTERFACE)
+		{
+			cGlassInterface* gls=(cGlassInterface*)item->param;
+
+			item->rect.w=gls->m_w;
+			item->rect.h=gls->m_h;
+		}
+
+		m_nItemzLength+=(item->rect.h+item->distance);
+		m_nItemzWidth = m_nItemzWidth>item->rect.w? m_nItemzWidth:item->rect.w;
+	}
+
+	m_nItemzLength+=m_rectMargin.bottom;
+
+	if (rectAll)
+	{
+		rectAll->left=0;
+		rectAll->top=0;
+		rectAll->right=m_nItemzWidth+m_rectMargin.left+m_rectMargin.right;
+		rectAll->bottom=m_nItemzLength;
+	}
+
+	for (cyiNode* node=m_listItem.GetNodeTopFrom(); node; node=node->np)
+	{
+		sDrawItem* item = (sDrawItem*)node->ref;
+		item->rect.x = ::xGetPos(xGET_ITEM_ALIGN(item), rectAll, &m_rectMargin, item->rect.w, 0);
+		
+		if (xGET_ITEM_TYPE(item)==eSPT_GLASSINTERFACE)
+		{
+			cGlassInterface* gls=(cGlassInterface*)item->param;
+			gls->Move(item->rect.x, item->rect.y);
+		}
+	}
+
+	return ;
+NOT_VERTICAL:
+
+	m_nItemzLength=m_rectMargin.left;
+
+	for (cyiNode* node=m_listItem.GetNodeTopFrom(); node; node=node->np)
+	{
+		sDrawItem* item = (sDrawItem*)node->ref;
+
+		item->rect.x = m_nItemzLength+item->distance;
+		
+		if (xGET_ITEM_TYPE(item)==eSPT_GLASSINTERFACE)
+		{
+			cGlassInterface* gls=(cGlassInterface*)item->param;
+
+			item->rect.w=gls->m_w;
+			item->rect.h=gls->m_h;
+		}
+
+		m_nItemzLength+=(item->rect.w+item->distance);
+		m_nItemzWidth = m_nItemzWidth>item->rect.h? m_nItemzWidth:item->rect.h;
+	}
+
+	m_nItemzLength+=m_rectMargin.right;
+	if (rectAll)
+	{
+		rectAll->left=0;
+		rectAll->top=0;
+		rectAll->right=m_nItemzLength;
+		rectAll->bottom=m_nItemzWidth+m_rectMargin.top+m_rectMargin.bottom;
+	}
+
+	for (cyiNode* node=m_listItem.GetNodeTopFrom(); node; node=node->np)
+	{
+		sDrawItem* item = (sDrawItem*)node->ref;
+		item->rect.y = ::xGetPos(xGET_ITEM_ALIGN(item), rectAll, &m_rectMargin, 0, item->rect.h);
+		if (xGET_ITEM_TYPE(item)==eSPT_GLASSINTERFACE)
+		{
+			cGlassInterface* gls=(cGlassInterface*)item->param;
+			gls->Move(item->rect.x, item->rect.y);
+		}
+	}
+	return ;
+
+CALCULATE_LAST_ITEM:
+	{
+		cyiNode* node=m_listItem.GetNodeTailFrom(0);
+		cyiNode* prevNode=node->pp;
+
+		if (prevNode==0)
+		{
+			return ;
+		}
+
+		sDrawItem* item = (sDrawItem*)node->ref;
+		sDrawItem* prevItem = (sDrawItem*)prevNode->ref;
+
+		if (m_bIsVertical)
+		{
+			m_nItemzLength+=item->distance+item->rect.h;
+			m_nItemzWidth=m_nItemzWidth>item->rect.w?m_nItemzWidth:item->rect.w;
+			item->rect.y=prevItem->rect.y+prevItem->distance+prevItem->rect.h;
+
+			RECT xrect = {0, 0, m_nItemzLength+m_rectMargin.left+m_rectMargin.right, m_nItemzLength};
+			item->rect.x = ::xGetPos(xGET_ITEM_ALIGN(item), &xrect, &m_rectMargin, item->rect.w, 0);
+
+			if (rectAll)
+			{
+				*rectAll=xrect;
+			}
+		}
+		else
+		{
+			m_nItemzLength+=item->distance+item->rect.w;
+			m_nItemzWidth=m_nItemzWidth>item->rect.h?m_nItemzWidth:item->rect.h;
+			item->rect.x=prevItem->rect.x+prevItem->distance+prevItem->rect.w;
+
+			RECT xrect = {0, 0, m_nItemzLength+m_rectMargin.top+m_rectMargin.bottom, m_nItemzLength};
+			item->rect.y = ::xGetPos(xGET_ITEM_ALIGN(item), &xrect, &m_rectMargin, 0, item->rect.h);
+			
+			if (rectAll)
+			{
+				*rectAll=xrect;
+			}
+		}
+	}
+
+	return ;
+}
+
+// -----------------------------
+typedef struct xsScrollAnit {
+	unsigned int from;
+	unsigned int to;
+	int nStopScrollPos;
+	int nStopMillisec;
+} sScrollAnit;
+
+// ---------------------------------------
+LRESULT cglsStackPannel::OnScrolled(WPARAM wp, LPARAM lp, BOOL& handled)
+{
+	int cnt=wp;
+	sScrollAnit* s = (sScrollAnit*)lp;
+	float factor;
+	int range;
+	int delta=0;
+
+	if (s==0)
+	{
+		// 中止された状態
+		return 0;
+	}
+
+	range= s->to-s->from;
+
+	// 中止された場合
+	//if (cnt==-1)
+	//{
+	//	yifree(s);
+	//	return 0;
+	//}
+
+	if ((factor=yiAnitGetFactor(m_hScrollAnit, cnt))<0.0 ||
+			factor>1.0)
+	{
+		// 終了
+		yiAnitStop(m_hScrollAnit, False);
+
+		m_nScrollPos=s->to;
+		InvalidateRect(0, FALSE);
+
+		if (s->nStopScrollPos!=0)
+			Scroll(s->nStopScrollPos, s->nStopMillisec);
+		return 0;
+	}
+
+
+
+	delta = (int)(factor*(float)range);
+
+	m_nScrollPos=s->from+delta;
+	InvalidateRect(0, FALSE);
+	return 0;
+}
+
+sScrollAnit g_scrollAnit;
+
+// -----------------------------
+int cglsStackPannel::Scroll(int pos, int nMilliSec, int StopPos, int nStopPosMilliSec)
+{
+	unsigned int prev = m_nScrollPos;
+	int range;
+	if (m_bIsSizeFixed==False)
+		return -1;
+
+	pos-=StopPos;
+	if (m_bIsNoAnimation)
+	{
+		m_nScrollPos=pos;
+		InvalidateRect(0, FALSE);
+	}
+
+	if (m_hScrollAnit==0)
+	{
+		m_hScrollAnit = yiAnitCreate();
+	}
+
+	if (yiAnitIsAlived(m_hScrollAnit)==True)
+	{
+		yiAnitStop(m_hScrollAnit, True);
+	}
+
+	pos+=m_nScrollPos;
+	if (pos<0)
+	{
+		pos=0;
+	}
+	else if (pos>(int)(m_bmpCurrent->GetHeight()-m_h))
+	{
+		pos = m_bmpCurrent->GetHeight()-m_h;
+	}
+
+	if (nMilliSec==0)
+	{
+		m_nScrollPos=pos;
+		InvalidateRect(0, FALSE);
+
+		return prev;
+	}
+
+
+	sScrollAnit s = {m_nScrollPos, pos, StopPos, nStopPosMilliSec};
+	g_scrollAnit=s;
+	yiAnitStart(m_hScrollAnit, m_hWnd, WM_STACKPANNEL_SCROLLED, nMilliSec, 10, eGAP_FISO, &g_scrollAnit/*xTOHEAP(&s)*/);
+
+	return prev;
+}
+
+// ---------------------------------------
+void cglsStackPannel::Destroy()
+{
+	cyctrlbase::Destroy();
+
+	for (cyiNode* node = m_listItem.GetNodeTopFrom(); node; node->np)
+	{
+		sDrawItem* item=(sDrawItem*)node->ref;
+		xDestroyItem(item);
+	}
+
+	m_listItem.clear();
+
+	if (m_bg)
+		delete m_bg;
+
+	if (m_bmpCurrent)
+		delete m_bmpCurrent;
+
+	yiMutexDestroyEx(m_hMutex);
+	yiAnitDestroy(m_hScrollAnit);
+	yiAnitDestroy(m_hBgAnit);
+}
+
+// ------------------------------------
+Bool cglsStackPannel::IsBgAnimation()
+{
+	if (m_hBgAnit==0)
+		return False;
+
+	if (yiAnitIsAlived(m_hBgAnit)==False)
+	{
+		return m_parent->IsBgAnimation();
+	}
+}

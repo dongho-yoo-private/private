@@ -1,0 +1,249 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 日本語 resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
+#ifdef _WIN32
+LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
+#pragma code_page(932)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_NORMAL              ICON                    "yigEditor.ico"
+IDI_SMALL               ICON                    "small.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDC_YIGEDITOR MENU 
+BEGIN
+    POPUP "ファイル(&F)"
+    BEGIN
+        MENUITEM "開く(&O)",                      ID_32771
+        MENUITEM "保存(&S)",                      ID_32772
+        MENUITEM SEPARATOR
+        MENUITEM "アプリケーションの終了(&X)",             IDM_EXIT
+    END
+    POPUP "表示"
+    BEGIN
+        MENUITEM "プレビューを表示",                    ID_32780
+    END
+    POPUP "ヘルプ(&H)"
+    BEGIN
+        MENUITEM "バージョン情報(&A)...",              IDM_ABOUT
+    END
+END
+
+IDR_GOBAN_TOP MENU 
+BEGIN
+    POPUP "GobanTop"
+    BEGIN
+        MENUITEM "ログイン",                        IDM_LOGIN
+        MENUITEM "新規ユーザ登録",                     IDM_REGISTER_USER
+        MENUITEM "対局申し込み",                      IDM_REQUEST_PLAY
+        MENUITEM SEPARATOR
+        MENUITEM "開く(&O)",                      IDC_OPEN_FILE
+        MENUITEM "新規作成(&N)",                    IDC_CREATE_NEW
+        MENUITEM "保存(&S)",                      IDC_SAVE
+        MENUITEM "名前を付けて保存(&A)",                IDC_SAVE_AS
+        MENUITEM "碁盤のコピー(Ctrl+C)",              32817
+        MENUITEM SEPARATOR
+        POPUP "ツール"
+        BEGIN
+            MENUITEM "地合い計算",                       IDM_CALCULATE_START
+        END
+        MENUITEM SEPARATOR
+        POPUP "言語"
+        BEGIN
+            MENUITEM "日本語",                         IDC_LOCALE_JAPANESE
+            MENUITEM "韓国語",                         IDC_LOCALE_KOREAN
+            MENUITEM "中国語",                         IDC_LOCALE_CHINESE
+        END
+        POPUP "表示"
+        BEGIN
+            MENUITEM "プレビュー",                       IDC_SHOW_PREVIEW
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "背景...",                       IDC_CHANGE_BG
+        MENUITEM "詳細設定(&D)",                    IDC_DETAIL_SETUP
+        MENUITEM "閉じる(&Q)",                     IDC_CLOSE
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDC_YIGEDITOR ACCELERATORS 
+BEGIN
+    "?",            IDM_ABOUT,              ASCII,  ALT
+    "/",            IDM_ABOUT,              ASCII,  ALT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "バージョン情報 yigEditor"
+FONT 9, "MS UI Gothic", 0, 0, 0x1
+BEGIN
+    ICON            128,IDC_STATIC,14,14,21,20
+    LTEXT           "yigEditor, Version 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2010",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 163
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_APP_TITLE           "yigEditor"
+    IDS_APP_TITLE_DISPLAY   "四谷囲碁エディター"
+    IDS_SOFTWARE_NAME       "YotsuyaSoft"
+    IDS_SOFTWARE_NAME_DISPLAY "四谷ソフト"
+    IDS_USERLIST            "ユーザ一覧"
+    IDS_CONFIG_PLAY         "対局設定"
+    IDC_YIGEDITOR           "YIGEDITOR"
+    IDS_FRIEND              "友人"
+    IDS_NOMAL_PLAY_ROOM     "一般対局室"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ROOM_NO             "部屋番号"
+    IDS_ROOM_NO_DIRECT      "部屋番号直接入力"
+    IDS_SCORE               "対戦戦績"
+    IDS_SCORE_IN_GROUP      "グループ内戦績"
+    IDS_PLAY_RULE           "対局ルール"
+    IDS_SAVE                "保存"
+    IDS_SAVE_RULE           "現在の対局ルールを保存します。"
+    IDS_TEAI                "手合い"
+    IDS_TAGAISEN            "互い先"
+    IDS_JOSEN               "定先"
+    IDS_KOMI                "コミ"
+    IDS_HALFSCORE           "半目"
+    IDS_REVERSE             "逆コミ"
+    IDS_BLACK               "黒"
+    IDS_WHITE               "白"
+    IDS_NIGIRI              "にぎり"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_LIMITED_TIME        "持ち時間（無制限）"
+    IDS_SECOND_READ         "秒読み"
+    IDS_HOUR                "時間"
+    IDS_SECOND              "秒"
+    IDS_MINUTE              "分"
+    IDS_KAI                 "回"
+    IDS_WAIT                "待ったあり"
+    IDS_HUU                 "封じ手あり"
+    IDS_PAUSE               "一時中断あり"
+    IDS_DELETE              "削除"
+    IDS_OPTION              "オプション"
+    IDS_OKIGOX              "%s子局"
+    IDS_NHKDETAIL           "ＮＨＫ杯ルール（持ち時間なし、一手30秒、一分秒読み10回）"
+    IDS_STRING141           "Go!よつやルール（アマチュアに無難なルール）"
+END
+
+#endif    // 日本語 resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

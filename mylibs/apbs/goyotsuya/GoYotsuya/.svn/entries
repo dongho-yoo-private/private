@@ -1,0 +1,149 @@
+10
+
+dir
+522
+svn://localhost/goyotsuya/GoYotsuya
+svn://localhost/goyotsuya
+
+
+
+2011-12-11T12:02:15.764277Z
+522
+dongho
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+abfab711-e207-4eec-8928-ff5f96e48cce
+
+uthp
+dir
+
+gyPreview
+dir
+
+yiLogger
+dir
+
+yiLibTesterConsole
+dir
+
+Include
+dir
+
+yctrlGo
+dir
+
+gyJoseki
+dir
+
+fupsvr
+dir
+
+libs
+dir
+
+tfp
+dir
+
+GoEngine
+dir
+
+yiLibs
+dir
+
+glsGoban
+dir
+
+ygJe
+dir
+
+yigEditor
+dir
+
+gypTest
+dir
+
+Setup
+dir
+
+GoYotsuya
+dir
+
+ctrlTest
+dir
+
+GoYotsuyaApp
+dir
+
+Images
+dir
+
+yictrl
+dir
+
+ResourceMaker
+dir
+
+GoMail
+dir
+
+data
+dir
+
+UnInstall
+dir
+
+common.manifest.txt
+file
+
+
+
+
+2011-12-13T15:26:19.000000Z
+ec44b4c6c59e2a1d9ebb8ef8a1af3152
+2010-12-26T13:47:03.469295Z
+15
+dongho
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+598
+
+YotsuyaClient
+dir
+
+AppTemplate
+dir
+
+ipregister
+dir
+

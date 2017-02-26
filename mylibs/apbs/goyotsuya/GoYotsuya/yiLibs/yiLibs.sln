@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yiLibs", "yiLibs.vcproj", "{DFA2965E-65C2-4AF3-8029-7E74368FDAE4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		DLL_DEBUG|Win32 = DLL_DEBUG|Win32
+		DLL_RELEASE|Win32 = DLL_RELEASE|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DFA2965E-65C2-4AF3-8029-7E74368FDAE4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DFA2965E-65C2-4AF3-8029-7E74368FDAE4}.Debug|Win32.Build.0 = Debug|Win32
+		{DFA2965E-65C2-4AF3-8029-7E74368FDAE4}.DLL_DEBUG|Win32.ActiveCfg = DLL_DEBUG|Win32
+		{DFA2965E-65C2-4AF3-8029-7E74368FDAE4}.DLL_DEBUG|Win32.Build.0 = DLL_DEBUG|Win32
+		{DFA2965E-65C2-4AF3-8029-7E74368FDAE4}.DLL_RELEASE|Win32.ActiveCfg = DLL_RELEASE|Win32
+		{DFA2965E-65C2-4AF3-8029-7E74368FDAE4}.DLL_RELEASE|Win32.Build.0 = DLL_RELEASE|Win32
+		{DFA2965E-65C2-4AF3-8029-7E74368FDAE4}.Release|Win32.ActiveCfg = Release|Win32
+		{DFA2965E-65C2-4AF3-8029-7E74368FDAE4}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

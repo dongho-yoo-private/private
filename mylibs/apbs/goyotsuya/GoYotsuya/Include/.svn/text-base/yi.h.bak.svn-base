@@ -1,0 +1,262 @@
+#ifndef __yi_h__
+#define __yi_h__
+
+
+#ifdef _WIN32
+#ifndef FD_SETSIZE 
+#define FD_SETSIZE 256
+#endif
+#include <winsock2.h>
+#include <windows.h>
+#endif
+
+typedef UINT color_t;
+typedef unsigned long Handle;
+typedef unsigned char HandleBuffer[32];
+
+
+
+#ifdef __POSIX__
+#	define FASTCALL __attribute__((fastcall)) 
+#	define CDECL __attribute__((cdecl)) 
+#	define STDCALL __attribute__((stdcall)) 
+#else
+#	define FASTCALL __fastcall
+#	ifndef CDECL
+#		define CDECL __cdecl
+#	endif
+#	define STDCALL __stdcall
+#endif
+
+#ifdef __cplusplus
+#define EXTERN_C extern "C"
+#else
+#define EXTERN_C extern
+#endif
+
+typedef int Bool;
+#define True 1
+#define False 0
+
+/*#define MEM_ZERO(a) yimemzero(&a, sizeof(a))*/
+#define MEM_ZERO(a) memset(&a, 0, sizeof(a))
+
+#ifndef int32
+typedef int int32;
+#endif
+
+#ifndef Int32
+typedef int Int32;
+typedef unsigned int uInt32;
+#endif
+
+typedef uInt32 Bit32;
+
+typedef unsigned short Bit16;
+
+typedef unsigned char Bit8;
+
+
+#ifdef __x64__
+#	define __long_byte_shift__	3
+#	define __long_bit_shift__	6
+#	define __long_bit_cnt__		64
+#	define __LONG_SIGNED_BIT__	0x8000000000000000
+#	define __LONG_FULL_BIT__	0xFFFFFFFFFFFFFFFF
+#	define YISTR(str) (const char*)(str"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0")
+#else
+#	define __long_byte_shift__	2
+#	define __long_bit_shift__	5
+#	define __long_bit_cnt__		32
+#	define __LONG_SIGNED_BIT__	0x80000000
+#	define __LONG_FULL_BIT__	0xFFFFFFFF
+#	define YISTR(str) (const char*)(str"\0\0\0\0\0\0\0")
+#endif
+
+#define __long_shift__ __long_byte_shift__	
+
+#define __shift_mod__(n, a) (~(__LONG_FULL_BIT__<<n)&(long)a)
+
+#define bytetobit(n) (n<<3)
+
+#define sizeofbit(a) bytetobit(sizeof(a))
+
+#ifndef offsetof
+#define xoffsetof(type, member) (unsigned int)(&(((type*)0)->member))
+#endif
+
+
+#define __sse2_bit_shift__ 4
+#define YI_ALIGN_SHIFT __sse2_bit_shift__ 
+
+#define YI_ALIGNMENT 16
+#define YI_DEF_STRLEN 8
+
+#define __YI_ALIGNED__ __attribute__((aligned(YI_ALIGNMENT)))
+
+#define __is_yi_aligned__(x, y) \
+	!(__shift_mod__(YI_ALIGN_SHIFT, (long)x) || __shift_mod__(YI_ALIGN_SHIFT, (long)y))
+
+#ifdef __POSIX__
+typedef char yiBuffer[256] __YI_ALIGNED__;
+#endif
+
+//#define IPADDRESS(a, b, c, d) ((a<<24) | (b<<16) | (c<<8) | d)
+#define __ipaddress__(a, b, c, d) ((a<<24) | (b<<16) | (c<<8) | d)
+
+#define __highword__(n) = ((Int32)n>>16)
+#define __loword__(n) = (0x0000FFFF&(int32)n)
+
+#define __highbyte__(n) = ((Int32)n>>8)
+#define __lowbyte__(n) = (0x000000FF&(Int32)n)
+
+#define FILE_YOTSUYA_PREFIX 0x53544f59 // "YOTS"
+
+#define credit_sizeof(a) (sizeof(a)-sizeof(Int32))
+
+#define __8to32__(a,b,c,d)  (((uInt32)a<<24)|((uInt32)b<<16)|((uInt32)c<<8)|(uInt32)d)
+
+#define __16to32__(a,b)  (((uInt32)a<<16)|(uInt32)b);
+
+#define __32to8__(value32, n) ((value32>>(n<<3)) & 0x000000FF)
+
+#define __32to16__(value32,n)  ((value32>>(n<<4)) & 0x0000FFFF)
+
+#define __p8to32__(p, n) *((Bit32*)(&p[n]))
+
+#define __set8to32__(p, n, value) (*((Bit32*)(&p[n])) = value)
+
+#define __setbiton__(n32, n) ((1<<n) | n32)
+
+#define __setbitoff__(n32, n) ((~(1<<n)) & n32)
+
+#define __biton__(n32, n) ((1<<n) | n32)
+
+#define __date32__(y, m, d) ((y<<9) | (m<<5) | (d))
+
+#define __year__(date) (date>>9)
+
+#define __month__(date) (((date>>5)&0x0000000F)+1)
+
+#define __day__(date) ((date&0x0000001F)+1)
+
+#define __integer__(f) (((f-(int)f) > 0.5) ? (int)(f+1): (int)f)
+
+#define __integerb__(f) (((f-(int)f) > 0.0) ? (int)(f+1): (int)f)
+
+#define __INTEGER__(f) (((f - (float)((INT)f)) < 0.5) ? (INT)f : ((INT)f+1))
+#define __INTEGERF__(f) (((f - (float)((INT)f)) == 0.0) ? (INT)f : ((INT)f+1))
+
+#ifndef __MAX_PATH__ 
+#define __MAX_PATH__ 256
+#endif
+
+//#ifdef _WIN32
+//#define yiTrace
+//#endif
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
+#ifndef __GODEFS__
+#define __GODEFS__
+enum eStoneType
+{
+	STONE_NONE=0,
+	STONE_BLACK,
+	STONE_WHITE,
+	STONE_CHAR,
+	STONE_BLACK_CHAR,
+	STONE_WHITE_CHAR,
+	STONE_WHITE_PATH,
+	STONE_BLACK_PATH,
+	STONE_DEAD_STONE,
+	STONE_INVALID=0xFFFFFFFF
+	//STONE_INVALID=0x0000007F
+};
+
+
+#define MAX_GO_BLOCK_COUNT 361
+
+
+typedef unsigned int stone_t;
+
+typedef stone_t aStoneList[MAX_GO_BLOCK_COUNT];
+
+#define MAKESTONE(type, order, x, y) (((type)<<25)|((order)<<16) | ((y)<<8) | (x))
+
+#define STONE_POS_X(s)	(0x000000FF&s)
+#define STONE_POS_Y(s)	((0x0000FF00&s)>>8)
+#define STONE_ORDER(s)	((0x0001FF00&s)>>16)
+#define STONE_TYPE(s)	((eStoneType)(s>>25))
+#define STONE_EOF		0xFFFFFFFF
+
+enum eGoLineCount
+{
+	LINE_19 = 19,
+	LINE_13 = 13,
+	LINE_9 = 9,
+	LINE_DEFAULT = LINE_19
+};
+
+#endif
+
+// ëŒã«èåè
+enum ePlayGeneralCondition {
+	ePGC_IAM_BLACK = 1<<31,
+	ePGC_HANDICAP_ON = 1<<30,
+	ePGC_HALF_SCORE	 = 1<<17,
+	ePGC_REVERSE_KOMI = 1<<16,
+	
+};
+
+#define SET_IAM_BLACK(con) (con = (con | ePGC_IAM_BLACK))
+#define SET_IAM_WHITE(con) (con = (con & (~ePGC_IAM_BLACK)))
+#define IAM_BLACK(con) ((con&ePGC_IAM_BLACK)!=0)
+
+#define SET_HANDICAP(con) (con=(con | ePGC_HANDICAP_ON))
+#define IS_NIGIRI(con) ((con&ePGC_HANDICAP_ON)==0)
+
+#define SET_INIT_STONE(con, n) (con=(con | (n<<25)))
+#define GET_INIT_STONE(con) ((con>>25)&0x0000001F)
+
+#define SET_KOMI(con, n) (con=(con | (n<<18)))
+#define GET_KOMI(con) ((con>>18)&0x0000007F)
+
+#define SET_HALF_SCORE(con) (con=(con | ePGC_HALF_SCORE))
+#define HALF_SCORE(con) ((con&ePGC_HALF_SCORE)!=0)
+
+#define SET_REVERSE_KOMI(con) (con=(con | ePGC_REVERSE_KOMI))
+#define REVERSE_KOMI(con) ((con&ePGC_REVERSE_KOMI)!=0)
+
+#define SET_PLAY_TIME(con, n) (con=(con| ((n/5)<<9)))
+#define GET_PLAY_TIME(con) ((con>>9)&0x0000007F)
+
+#define SET_SECOND(con, n) (con=(con|(n<<6)))
+#define GET_SECOND(con) ((con>>6)&0x00000007)
+
+#define SET_SECOND_COUNT(con, n) (con=(con | n))
+#define GET_SECOND_COUNT(con) (con&0x0000003F)
+
+//
+enum ePlayExtenedCondition {
+	ePEC_WAITABLE	= 1<<31,
+	ePEC_SLOW_GO	= 1<<30,
+	ePEC_STOPABLE	= 1<<29,
+	ePEC_STOPABLE_EX = 1<<28
+
+};
+
+
+// --------------------------------
+typedef struct xsyiGeneralParam {
+	unsigned int param[16];
+}syiGeneralParam;
+
+#define sGeneralParam syiGeneralParam
+
+#define GENERAL_PARAM_SIZE(n) (n<<2)
+#define GP_SIZE(n) (n<<2)
+
+#endif

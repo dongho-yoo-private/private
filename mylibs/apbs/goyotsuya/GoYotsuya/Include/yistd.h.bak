@@ -1,0 +1,130 @@
+#ifndef __yi_alloc_h__
+#define __yi_alloc_h__
+
+#include "yi.h"
+
+#define YOTSUYA_LOG_PORT 33553
+
+// ------------------------------
+EXTERN_C void* FASTCALL yitoh(void* buffer, int n);
+
+// ------------------------------
+EXTERN_C void* FASTCALL yialloc(int n);
+
+// ------------------------------
+EXTERN_C void* FASTCALL yialloci(int n);
+
+// ----------------------------------
+EXTERN_C void* FASTCALL  yiallocix(int n);
+
+// ----------------------
+EXTERN_C void yifreex(void* p);
+
+// ------------------------------
+EXTERN_C void yifree(void* p);
+
+// ------------------------------
+EXTERN_C void* FASTCALL yitoheap(void* buffer, int size);
+
+// ------------------------------
+typedef void (*OnThreadCallback)(void* param);
+
+// ------------------------------
+typedef void (__stdcall *OnThreadCallbackx)(void* param);
+
+typedef Handle HandleThread;
+
+#define yiThreadStart yiStartThread
+
+#define yiThreadStartx yiStartThreadx
+
+// ------------------------------
+EXTERN_C  Bool yiStartThread(OnThreadCallback callback, void* param, int size);
+
+// ------------------------------
+EXTERN_C Bool yiWaitThread(HandleThread hThread, int nTimeOut);
+
+// ------------------------------
+EXTERN_C HandleThread yiStartThreadx(OnThreadCallbackx callbackx, void* param, int size);
+
+// ------------------------------
+EXTERN_C void* FASTCALL yiallocx(int n);
+
+// ------------------------------
+EXTERN_C void* FASTCALL yiallocix(int n);
+
+// ------------------------------
+EXTERN_C void yifreex(void* p);
+
+// ------------------------------
+//EXTERN_C void* FASTCALL yimemcpy(void* dest, const void* src, int n);
+#define yimemcpy memcpy
+
+// ------------------------------
+//EXTERN_C void* FASTCALL yimemzero(void* dest, int n);
+#define yimemzero ZeroMemory
+
+// ------------------------------
+//EXTERN_C long FASTCALL yimemcmp(const void* dest, const void* mem2, int n);
+#define yimemcmp memcmp
+
+// ------------------------------
+//EXTERN_C int FASTCALL yistrlen(const char* str);
+#define yistrlen strlen
+
+// ------------------------------
+//EXTERN_C char* FASTCALL yistrcpy(char* dest, const char* src);
+#define yistrcpy strcpy
+
+// ------------------------------
+EXTERN_C char* FASTCALL yistrncpy(char* dest, const char* src, int n);
+
+// ------------------------------
+EXTERN_C long FASTCALL yistrcmp(const char* str1, const char* str2);
+
+// ------------------------------
+EXTERN_C long FASTCALL yistrncmp(const char* str1, const char* str2, int n);
+
+// ------------------------------
+EXTERN_C void FASTCALL yistr(const char* str1);
+
+// ------------------------------
+EXTERN_C void FASTCALL yistrn(const char* str1, int len);
+
+// -----------------------------
+EXTERN_C char* FASTCALL yistricpy(char* dest, const char* from, const char* end);
+
+// ------------------------------
+EXTERN_C char* FASTCALL yistrcpych(char* dest, const char* src, char ch);
+
+// ------------------------------
+EXTERN_C int FASTCALL yiatoh(char* HexsaCode);
+
+// ------------------------------
+EXTERN_C char* FASTCALL yistrheap(const char* str, int n);
+
+// ------------------------------
+EXTERN_C void yiLogInit();
+
+// ------------------------------
+EXTERN_C void yiLogFin();
+
+// ------------------------------
+EXTERN_C void yiTrace(const char* fmt, ...);
+
+#include "yimutex.h"
+#include "yiFile.h"
+
+#ifdef __cplusplus
+#include "yitime.h"
+#include "yiList.h"
+#include "yiStream.h"
+#include "yiBitmap.h"
+#include "yiQueue.h"
+#include "yiStack.h"
+#include "yiTreeNode.h"
+#include "yiBitmapBlender.h"
+#include "yishape.h"
+#endif
+
+#endif

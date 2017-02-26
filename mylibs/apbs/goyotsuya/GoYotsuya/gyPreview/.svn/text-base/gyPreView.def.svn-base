@@ -1,0 +1,9 @@
+LIBRARY	"gyPreview"
+
+LIBRARY	"gyPreview"
+
+EXPORTS
+	DllCanUnloadNow PRIVATE
+	DllGetClassObject PRIVATE
+	DllRegisterServer PRIVATE
+	DllUnregisterServer PRIVATE
