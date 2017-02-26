@@ -1,0 +1,20 @@
+igx_file.c:227:7: error: conflicting types for 'igx_file_vload'
+void* igx_file_vload(const char* file_name, void* dest, size_t* size, igx_file_security_t* secur)
+      ^
+./igx_file.h:111:23: note: previous declaration is here
+IGX_FILE_EXTERN void* igx_file_vload(const char* file_name, size_t* size, igx_file_security_t* secur);
+                      ^
+igx_file.c:251:24: warning: implicit declaration of function 'mmap' is invalid in C99 [-Wimplicit-function-declaration]
+    p_dest = (ubit8_t*)mmap(0, file_size+1, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
+                       ^
+igx_file.c:251:45: error: use of undeclared identifier 'PROT_READ'
+    p_dest = (ubit8_t*)mmap(0, file_size+1, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
+                                            ^
+igx_file.c:251:55: error: use of undeclared identifier 'PROT_WRITE'
+    p_dest = (ubit8_t*)mmap(0, file_size+1, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
+                                                      ^
+igx_file.c:252:18: error: use of undeclared identifier 'MAP_FAILED'
+    if(p_dest == MAP_FAILED)
+                 ^
+1 warning and 4 errors generated.
+make: *** [igx_file.o] Error 1

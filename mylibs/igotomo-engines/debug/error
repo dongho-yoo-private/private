@@ -1,0 +1,11 @@
+igx_stack_trace.c:72:9: warning: implicit declaration of function 'IGX_CRITICAL' is invalid in C99 [-Wimplicit-function-declaration]
+        IGX_CRITICAL("=========== ASSERT!! ============");
+        ^
+igx_stack_trace.c:73:9: error: too few arguments to function call, expected 1, have 0
+        va_end();
+        ^~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include/stdarg.h:34:48: note: expanded from macro 'va_end'
+#define va_end(ap)          __builtin_va_end(ap)
+                            ~~~~~~~~~~~~~~~~   ^
+1 warning and 1 error generated.
+make: *** [igx_stack_trace.o] Error 1

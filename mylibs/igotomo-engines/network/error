@@ -1,0 +1,21 @@
+mime.c:174:5: error: use of undeclared identifier 'working_buffer'
+    working_buffer[n++]=' ';
+    ^
+mime.c:176:5: error: use of undeclared identifier 'working_buffer'
+    working_buffer[n++]='<';
+    ^
+mime.c:177:12: error: use of undeclared identifier 'working_buffer'
+    memcpy(working_buffer+n, email->str, email->length);
+           ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/include/secure/_string.h:65:27: note: expanded from macro 'memcpy'
+  __builtin___memcpy_chk (dest, src, len, __darwin_obsz0 (dest))
+                          ^
+mime.c:179:5: error: use of undeclared identifier 'working_buffer'
+    working_buffer[n++]='>';
+    ^
+mime.c:180:5: error: use of undeclared identifier 'working_buffer'
+    working_buffer[n++]='\0';
+    ^
+5 errors generated.
+make[1]: *** [mime.o] Error 1
+make: *** [protocols] Error 2

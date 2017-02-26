@@ -1,0 +1,655 @@
+﻿
+#ifdef _IGX_HTTP_INTERN_
+
+#define _IGX_GET_PROGRESS(s) (s->detail.progress?&s->detail.progress->fprogress:0)
+#define _IGX_HTTP_UPDATE_STATE(state, _progress) \
+if (s->detail.progress!=0)\
+{\
+    s->detail.progress->fprogress=_progress;\
+    s->detail.progress->status=state;\
+}
+
+#ifdef USE_IGX_MEMORY
+#   define  IGX_HTTP_MALLOC(str, p) IGX_MALLOC(str, p)
+#   define  IGX_HTTP_FREE(p)     IGX_FREE(p)
+#else
+#   define  IGX_HTTP_MALLOC(str, p) malloc(p)
+#   define  IGX_HTTP_FREE(p)     free(p)
+#endif
+
+static igx_http_error_t __read_chunk_data(__igx_http_intern_t* s);
+static void __init_mem_page(__igx_http_intern_t* s);
+
+static char* __move_no_space_tab(char* p)
+{
+    while(*p!=0)
+    {
+        if (*p==' ' || *p=='\t')
+        {
+            ++p;
+            continue;
+        }
+        break;
+    }
+    return p;
+}
+static void* __http_malloc(__igx_http_intern_t* s, size_t size)
+{
+    if (s->mem.page==0 && s->detail.use_mem_page==1)
+    {
+        __init_mem_page(s);
+    }
+
+    if (s->mem.page!=0)
+    {
+        //igx_print_current_stacktrace();
+        return pmalloc_c(s->mem.page, size);
+    }
+    //igx_print_current_stacktrace();
+
+    return IGX_HTTP_MALLOC("__http_malloc", size);
+}
+static void __http_free(__igx_http_intern_t* s, void* p)
+{
+    if (s->mem.page!=0)
+    {
+        return ;
+    }
+    IGX_HTTP_FREE(p);
+}
+static void __new_linked_list(__igx_http_intern_t* s)
+{
+    s->mem.list = igx_llist_new(16, false, 0, s->mem.page);
+}
+static void __delete_linked_list(__igx_http_intern_t* p)
+{
+    if (p->mem.list!=0&&p->mem.page!=0)
+    {
+        igx_llist_delete(p->mem.list);
+    }
+}
+static void __init_mem_page(__igx_http_intern_t* s)
+{
+    s->mem.page = igx_new_mem_page(0, 0, 8, true);
+    IGX_ASSERT(s->mem.page);
+}
+static void __delete_mem_page(__igx_http_intern_t* s)
+{
+    if (s->mem.page!=0)
+    {
+        igx_delete_mem_page(s->mem.page);
+        s->mem.page=0;
+    }
+}
+static igx_http_error_t __http_request(__igx_http_intern_t* s, const char* request, size_t header_size, const void* data, int size)
+{
+    igx_sock_error_t error;
+    // このタイミングで以前のレスポンスは削除しておく
+    IGX_DEBUG("++++++++++++ request header ++++++++++++ \n%s", request);
+    IGX_DEBUG("++++++++++++ request body ++++++++++++ \n%s", (char*)data?(char*)data:"none");
+
+    /* ヘッダー送信 */
+    if ((error=igx_sock_write(&s->sock, request, header_size, _IGX_GET_PROGRESS(s)))!=kSockErrorSuccess)
+    {
+        if (error==kSockErrorTimeout)
+        {
+            return s->error=kHttpErrorConnectTimeout;
+        }
+        return s->error=kHttpErrorConnect;
+    }
+
+    if (data!=0 &&
+        size!=0)
+    {
+        /* Body送信 */
+        if ((error=igx_sock_write(&s->sock, (const char*)data, size, _IGX_GET_PROGRESS(s)))!=kHttpErrorSuccess)
+        {
+            return s->error=kHttpErrorRequest;
+        }
+    }
+
+    _IGX_HTTP_UPDATE_STATE(kHttpStatusResponseWait,0.0f);
+    return s->error=kHttpErrorSuccess;
+}
+static char* __skip_space_tab(char* p)
+{
+    char* str= (char*)p;
+    while(*str==' '||*str=='\t') str++;
+    return str;
+}
+static char* __get_http_header_value(__igx_http_intern_t* s, const char* src, const char* key, size_t* value_len)
+{
+    char working_buffer[4096];
+    char* p = strcasestr(src, key);
+    const size_t key_len = strlen(key);
+    size_t len, i, cnt=0;
+    bool_t is_first=false, is_found_column=false;
+
+    if (p==0)
+    {
+        /* 見つからない。*/
+        IGX_WARN("not found %s", key);
+        return 0;
+    }
+    p+=key_len;
+    len = igx_strlen_until_c(p,'\r');
+
+    if (len>sizeof(working_buffer))
+    {
+        IGX_WARN("%s", src);
+        IGX_ERROR("invalid html!");
+        return 0;
+    }
+
+    for (i=0;i<len; ++i, ++p)
+    {
+        if (is_first==false && (*p=='\"'||*p==' '||*p=='\t'))
+        {
+            continue;
+        }
+        if (is_found_column==false && *p==':')
+        {
+            is_found_column=true;
+            continue;
+        }
+        is_first=true;
+        working_buffer[cnt++]=*p;
+    }
+    working_buffer[cnt]=0;
+    if (value_len!=0)
+    {
+        *value_len = cnt;
+    }
+    //IGX_INFO("%s:%s", key, working_buffer);
+    return (char*)memcpy(__http_malloc(s, cnt+1), working_buffer, cnt+1);
+}
+
+static int __get_status_from_header(__igx_http_intern_t* s, const char* p, size_t header_size)
+{
+    int n;
+    size_t content_length_len, content_type_len;
+    char* p_content_length = __get_http_header_value(s, p, "Content-Length", &content_length_len);
+    char* p_content_type   = __get_http_header_value(s, p, "Content-Type", &content_type_len);
+    char* p_char_set=0;
+
+    if (p_content_type!=0)
+    {
+        /* Content-Type:text/html; charset=iso-8859-1*/
+        char* p_content_type_end = igx_str_ch(p_content_type, ';');
+        if (p_content_type_end!=0)
+        {
+            *p_content_type_end=0;
+            p_char_set=++p_content_type_end;
+            p_char_set=__move_no_space_tab(p_char_set);
+            if (strncasecmp(p_char_set, "charset", 7)==0)
+            {
+                p_char_set+=7;
+                p_char_set=igx_str_ch(p_char_set, '=');
+
+                if (p_char_set!=0)
+                {
+                    p_char_set=__move_no_space_tab(p_char_set);
+                }
+            }
+        }
+        s->response.content_type=p_content_type;
+    }
+    if (p_content_length!=0)
+    {
+        bit32_t n;
+        s->response.size=0;
+        if (igx_atoi(p_content_length, &n)==true)
+        {
+            s->response.size = (size_t)n;
+        }
+    }
+    n = sscanf(p, "HTTP/1.1 %d", &s->response.status);
+
+    if (n!=1)
+    {
+        n = sscanf(p, "HTTP/1.0 %d", &s->response.status);
+        if (n!=1)
+        {
+            IGX_WARN("%s", p);
+            IGX_ERROR("invalid format!");
+            return -1;
+        }
+    }
+
+    /* パースは成功だけど、エラー時 */
+    if (s->response.status!=200)
+    {
+        IGX_WARN("status:%d!=200", s->response.status);
+        if (s->response.status==301 ||
+                s->response.status==302)
+        {
+            /* redirect */
+            size_t location_len;
+            char* p_location = __get_http_header_value(s, p, "Location", &location_len);
+
+            if (p_location!=NULL)
+            {
+                s->detail.redirect=1;
+                s->response.location=p_location;
+            }
+            return -1;
+        }
+    }
+
+    if (s->response.size==0)
+    {
+        /* chunk data かどうか */
+        if (p_content_type!=0)
+        {
+            char* transfer_encoding = strcasestr(p, "transfer-encoding"); 
+            if (transfer_encoding!=0)
+            {
+                /* ぴんぽーん チャンクデータ */
+                char temp[32];
+                size_t len;
+                transfer_encoding+=17; /* 'transfer-encoding' */
+
+                strncpy(temp, transfer_encoding, sizeof(temp)-1);
+                temp[sizeof(temp)-1]=0;
+                if (strcasestr(temp, "chunked"))
+                {
+                    IGX_INFO("http response is chunk data!");
+                    s->response.size=0;
+                    s->detail.has_chunk=1;
+                }
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        else
+        {
+            IGX_WARN("no content-type");
+        }
+    }
+
+    return 0;
+}
+static igx_http_error_t __recv_http_header_4_ssl(__igx_http_intern_t*s, int timeout)
+{
+    char  header[kHTTP_MAX_HEADER_LEN+1];
+    char* p_header_end = 0;
+    bit32_t sum = 0;
+    bit32_t header_size;
+    const unsigned int kLFCRLFCR = *((unsigned int*)"\r\n\r\n");
+
+    while(sum!=sizeof(header))
+    {
+        size_t read_byte;
+        igx_sock_error_t error = igx_sock_read_once(&s->sock, header+sum, 1, &read_byte, timeout);
+        if (error!=kSockErrorSuccess || read_byte!=1)
+        {
+            /*IGX_ERROR("read error %s", igx_sock_get_error_msg(error));*/
+            return kHttpErrorResponse;
+        }
+        sum++;
+        if (sum>4)
+        {
+            unsigned int x = *((unsigned int*)&header[sum-4]);
+            if (x==kLFCRLFCR)
+            {
+                header[sum]=0;
+                break;
+            }
+        }
+    }
+
+#ifdef DEBUG
+    IGX_DEBUG("++++++++++++ response header ++++++++++++ \n%s", header);
+#endif
+    if (sum==kHTTP_MAX_HEADER_LEN)
+    {
+        header[sum]=0;
+          
+#ifdef DEBUG
+        IGX_ERROR("too long header");
+#endif
+        return kHttpErrorResponse;
+    }
+
+    s->response.size=0;
+    s->response.data=0;
+
+    header_size  = sum;
+    p_header_end = &header[sum];
+
+    if (__get_status_from_header(s, header, header_size)==0)
+    {
+        return kHttpErrorSuccess;
+    }
+    if (s->detail.redirect==1)
+    {
+        IGX_INFO("redirect ");
+        return kHttpErrorRedirect;
+    }
+    IGX_ERROR("invalid header error!");
+    return kHttpErrorUnknown;
+}
+static igx_http_error_t __http_response(__igx_http_intern_t* s)
+{
+    bit32_t received_body_size = 0;
+    char* received_body = 0;
+    igx_sock_error_t error;
+
+    s->detail.redirect=0;
+    /* ヘッダー受信 */
+    if ((s->error = __recv_http_header_4_ssl(s, s->detail.read_timeout))!=kSockErrorSuccess)
+    {
+        _IGX_HTTP_UPDATE_STATE(kHttpStatusIdle, 0.0f);
+        return s->error;
+    }
+    if (s->detail.has_chunk==0 &&
+                s->response.size==0)
+    {
+        _IGX_HTTP_UPDATE_STATE(kHttpStatusIdle, 1.0f);
+        return kHttpErrorSuccess;
+    }
+
+    if (s->detail.has_chunk==1)
+    {
+        // chunk dataの場合
+        return __read_chunk_data(s);
+    }
+
+    s->response.data = __http_malloc(s, s->response.size+1);
+    s->response.data[s->response.size]=0;
+    error = igx_sock_read(&s->sock, s->response.data, s->response.size, s->detail.read_timeout, _IGX_GET_PROGRESS(s));
+
+    if (error!=kSockErrorSuccess)
+    {
+        s->error=kHttpErrorResponse;
+        if (error==kSockErrorTimeout)
+        {
+            s->error=kHttpErrorResponseTimeout;
+        }
+    }
+    if (s->detail.progress)
+    {
+        _IGX_HTTP_UPDATE_STATE(kHttpStatusIdle, 1.0f);
+    }
+
+    return s->error;
+}
+bool_t __http_redirect(__igx_http_intern_t* s, char** path)
+{
+    char* hostname;
+    bit32_t port;
+    bool_t use_ssl;
+    bool_t reconnect=false;
+
+    if (igx_http_url_parse(s->response.location, &use_ssl, &port, &hostname, path)==false)
+    {
+        IGX_ERROR("parse failure! (%s)", s->response.location);
+        return false;
+    }
+    if (igx_http_is_connected((igx_http_t*)s)==false)
+    {
+        reconnect=true;
+    }
+    if (s->detail.use_ssl!=use_ssl)
+    {
+        reconnect=true;
+    }
+    s->detail.use_ssl=use_ssl;
+
+    if (s->detail.port!=port)
+    {
+        reconnect=true;
+    }
+    s->detail.port=port;
+
+    if (strcmp(s->header.hostname, hostname)!=0)
+    {
+        igx_addrv4_t addr = igx_sock_get_host_addr(hostname);
+        if (addr!=s->header.addr)
+        {
+            reconnect=true;
+        }
+        s->header.addr=addr;
+        s->header.hostname = hostname;
+    }
+    IGX_DEBUG("reconnect server......");
+    if (reconnect==true)
+    {
+        igx_sock_close(&s->sock);
+        if (igx_http_connect((igx_http_t*)s)!=kHttpErrorSuccess)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+igx_http_error_t __read_chunk_data(__igx_http_intern_t* s)
+{
+	const char* strLfCr = "\r\n";
+	const unsigned short LINE_FEED = *((unsigned short*)(strLfCr));
+	size_t chunk_size_sum=0;
+	bool_t is_quit=true;
+    /* chunkデータ専用のメモリプールを用意する
+    臨時的に使われる為。*/
+    char buffer[1024];
+    HITX h_mem  = igx_new_mem_page(buffer, sizeof(buffer), 8, true);
+    HITX h_list = igx_llist_new(32, false, 0, h_mem);
+
+	s->response.size=0;	
+
+__NORMAL_PROCESS:
+	while(is_quit)
+	{
+        char str_no[32]={0, };
+		bit32_t i;
+
+		for (i=0; i<sizeof(str_no); i++)
+		{
+			size_t received=0;
+			size_t chunk_size;
+			char* data;
+			igx_sock_error_t error = igx_sock_read_once(&s->sock, str_no+i, 1, &received, s->detail.read_timeout);
+			if (error!=kSockErrorSuccess ||
+					received!=1)
+			{
+				IGX_ERROR("Read Error!(chunk size) %d, %d", received, error);
+				goto __ERROR_EXIT;
+			}
+
+			if (*((unsigned short*)&str_no[i-1])!=LINE_FEED)
+			{
+				continue;
+			}
+			
+			str_no[i+1]=0;
+			if (sscanf(str_no, "%zx", &chunk_size)!=1)
+			{
+				IGX_WARN("invalid chunk size %s\n", str_no);
+				s->error=kHttpErrorResponse;
+				goto __ERROR_EXIT;
+			}
+
+			if ((is_quit=chunk_size)==0)
+			{
+				char buffer[4];
+				// あと２バイト読み込んで置く必要があるよね？
+				if (igx_sock_read(&s->sock, buffer, 2, s->detail.read_timeout, 0)!=kSockErrorSuccess)
+				{   
+                    /* チャンクデータの場合はコネクションを切って初期化してしまう。*/
+                    igx_sock_close(&s->sock);
+				}
+				goto __SUCCESS_EXIT;
+			}	
+            
+            data = (char*)pmalloc_c(h_mem, chunk_size+1+sizeof(bit32_t)+2); //__http_malloc(s, chunk_size+1+sizeof(bit32_t)+2);
+			if (data==0)
+			{
+				s->error=kHttpErrorUnknown;
+				goto __ERROR_EXIT;
+			}
+            if (igx_llist_add(h_list, data+sizeof(int), 0)<0)
+            {
+                IGX_ASSERT(0);
+            }
+            chunk_size_sum+=chunk_size;
+
+			*((int*)data)=chunk_size;
+
+			if ((error = igx_sock_read(&s->sock, data+sizeof(int), chunk_size+2, 
+								s->detail.read_timeout, _IGX_GET_PROGRESS(s)))!=kSockErrorSuccess)
+			{
+				IGX_ERROR("read chunk data.... error!!!");
+				s->error=kHttpErrorResponse;
+				goto __ERROR_EXIT;
+			}
+			data[sizeof(int)+chunk_size]=0;
+            s->response.size+=chunk_size;
+            
+			//IGX_DEBUG_LONG("%s", data+sizeof(int));
+			break;
+		} /* for */
+
+		if (i==sizeof(str_no))
+		{
+			s->error = kHttpErrorResponse;
+			goto __ERROR_EXIT;
+		}
+	} /* while */
+
+__SUCCESS_EXIT:
+	/*if (s->mem.list!=0)*/
+	{
+		bit32_t sum=0;
+		char* x;
+        igx_llist_node_t* node;
+
+        IGX_INFO("chunk count:%d", igx_llist_count(h_list));
+
+		if (s->response.data!=0)
+		{
+           if (s->mem.page!=0)
+           {
+           }
+           else
+           {
+                IGX_INFO("before response free!");
+                __http_free(s, s->response.data);
+           }
+		}
+
+		s->response.data = (char*)__http_malloc(s, s->response.size+1);
+		x = (char*)s->response.data;
+        x[sum]=0;
+
+		for (node=igx_llist_get_top_from(h_list, 0); node; node=node->next)
+		{
+			char* x = (char*)node->data;
+            int* size = (int*)x;
+            --size;
+			memcpy((char*)&s->response.data[sum], x, *size);
+			sum+=*size;
+		}
+
+        /* メモリプールにとっているので、解放せず、プールを一気に解放する。
+        {
+            void* p;
+		    while(igx_llist_remove_top_from(h_list, 0, &p)>=0)
+		    {
+                char* p_char = (char*)p;
+                __http_free(s, p_char-4);
+		    }
+        }
+        __delete_linked_list(s);*/
+	}
+
+    igx_delete_mem_page(h_mem);
+	return s->error=kHttpErrorSuccess;
+
+__ERROR_EXIT:
+    __init_mem_page(s);
+    igx_delete_mem_page(h_mem);
+	return s->error;
+}
+static char* __make_header(__igx_http_intern_t* s, char* buffer, size_t buffer_size, 
+                                            const char* path, igx_http_command_type_t type, 
+                                                        size_t data_size, size_t* header_size)
+{
+    char* p_header=buffer;
+    igx_llist_node_t* node;
+    bit32_t n=0;
+    const char* p_root=(path==0||*path!='/')?"/":"";
+    path=(path==0)?"":path;
+
+    if (s->header.content_type==0||
+            *(s->header.content_type)==0)
+    {
+        s->header.content_type = kIGX_HTTP_DEFAULT_CONTENT_TYPE;
+    }
+    if (s->header.charset==0 ||
+            *(s->header.charset)==0)
+    {
+        s->header.charset=kIGX_HTTP_DEFAULT_CHAR_SET;
+    }
+
+RETRY:
+    if (type==kCommandTypePost)
+    {
+        /* "POST %s%s HTTP/1.1\r\nHost:%s\r\nPort:%d\r\nAccept-Charset: %s\r\nContent-Type: %s\r\nContent-Length:%d\r\n */
+        n += sprintf(p_header, __common_header.post, p_root, path, s->header.hostname, s->detail.port, s->header.charset, s->header.content_type, data_size);
+    }
+    else if (type==kCommandTypeGet)
+    {
+        /* "GET %s%s HTTP/1.1\r\nHost:%s\r\nPort:%d\r\nccept-Charset:%s\r\n"*/
+        n += sprintf(p_header, __common_header.get, p_root, path, s->header.hostname, s->detail.port, s->header.charset);
+    }
+    if (s->detail.keep_alive_timeout!=0)
+    {
+        n += sprintf(p_header+n, "%s\r\n", "Connection:Keep-Alive");
+    }
+    else
+    {
+        n += sprintf(p_header+n, "%s\r\n", "Connection:Close");
+    }
+    /*if (data_size!=0) 
+    {
+        n += sprintf(p_header+n, "Content-Type:%s; charset=%s\r\n", s->header.content_type, s->header.charset);
+    }
+    n += sprintf(p_header+n, "Host:%s\r\n", s->header.hostname);*/
+
+    if (s->mem.list!=0)
+    {
+        node = igx_llist_get_bottom_from(s->mem.list, 0);
+        for (; node; node=node->prev)
+        {
+            bit32_t* size = (bit32_t*)node->data;
+    
+            if (n+*size>=buffer_size-2) /* - strlen("\r\n") */
+            {
+                IGX_WARN("header is Too long");
+                if (p_header!=buffer)
+                {
+                    __http_free(s, p_header);
+                }
+                buffer_size<<=1;
+                p_header = (char*)__http_malloc(s, buffer_size);
+                n=0;
+                goto RETRY;
+            }
+    
+            memcpy(buffer+n, size+1, *size);
+            n+=*size;
+        }
+    }
+    p_header[n]='\r', p_header[n+1]='\n', p_header[n+2]=0,p_header[n+3]=0;
+    *header_size=n+2;
+
+    //IGX_DEBUG("+++++++++ request header ++++++++++++++");
+    //IGX_DEBUG("%s", p_header);
+
+    return p_header;
+}
+
+#endif

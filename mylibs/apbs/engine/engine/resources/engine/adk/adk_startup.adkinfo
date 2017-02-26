@@ -1,0 +1,24 @@
+{
+  "debug": {
+    "on/off": true,
+    "debug level": "always",
+    "output": "console"
+  },
+  "host list": {
+    "master": "http://203.80.31.165:9000",
+    "debug": {
+      "test0": "http://203.80.31.165:9000",
+      "test1": "http://203.80.31.165:9000"
+    }
+  },
+  "network": {
+    "keep alive": 0,
+    "auto retry count": 2,
+    "connect timeout": 10,
+    "read timeout": 5,
+    "http": {
+      "key length\u32": 64,
+      "value length\u32": 256
+    }
+  }
+}

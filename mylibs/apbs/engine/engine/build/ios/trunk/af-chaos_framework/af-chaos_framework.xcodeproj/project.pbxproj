@@ -1,0 +1,636 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		9DB9528018F2BDEE00C7C7A6 /* af-chaos_framework-framework */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9DB9528118F2BDEE00C7C7A6 /* Build configuration list for PBXAggregateTarget "af-chaos_framework-framework" */;
+			buildPhases = (
+				9DB9528418F2BE0C00C7C7A6 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "af-chaos_framework-framework";
+			productName = "af-chaos_framework-framework";
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		2134687A18ED275C003D72B2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2134687918ED275C003D72B2 /* Foundation.framework */; };
+		5339652418F4203E0015EB52 /* event_system.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9DF0F2E218F2B17D00662E1A /* event_system.cc */; };
+		5339652818F421BC0015EB52 /* event.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9DF0F2E018F2B17D00662E1A /* event.cc */; };
+		5339652D18F4231A0015EB52 /* application_manager.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9DF0F2D718F2B16300662E1A /* application_manager.cc */; };
+		5339652E18F424A20015EB52 /* event_argument.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9DF0F2E118F2B17D00662E1A /* event_argument.cc */; };
+		5339652F18F424B30015EB52 /* game_loop.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9DF0F2EA18F2B18700662E1A /* game_loop.cc */; };
+		5339653018F424B70015EB52 /* game_manager.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9DF0F2EB18F2B18700662E1A /* game_manager.cc */; };
+		5365488D18FBEB7D00D97333 /* downloader.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5365488B18FBEB7D00D97333 /* downloader.cc */; };
+		9D98DAB118F3B720003814F3 /* binary_data.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9D98DAAF18F3B720003814F3 /* binary_data.cc */; };
+		9D98DAB218F3B720003814F3 /* file_manager.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9D98DAB018F3B720003814F3 /* file_manager.cc */; };
+		9D9A20F618F51DA3000E60CB /* schedule_manager.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9D9A20F518F51DA3000E60CB /* schedule_manager.cc */; };
+		9DB952AE18F2DDC900C7C7A6 /* scene.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9DB952A718F2DDC900C7C7A6 /* scene.cc */; };
+		9DB952AF18F2DDC900C7C7A6 /* scene_interface.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9DB952A818F2DDC900C7C7A6 /* scene_interface.cc */; };
+		9DB952B018F2DDC900C7C7A6 /* scene_manager.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9DB952A918F2DDC900C7C7A6 /* scene_manager.cc */; };
+		9DB952B218F2E30000C7C7A6 /* parameter_update_manager.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9DB952B118F2E30000C7C7A6 /* parameter_update_manager.cc */; };
+		9DD7423018F2AC5C00733A04 /* i_parameter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9DD7422418F2AC5C00733A04 /* i_parameter.cc */; };
+		9DD7423118F2AC5C00733A04 /* parameter_manager.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9DD7422518F2AC5C00733A04 /* parameter_manager.cc */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2134687418ED275C003D72B2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		2134687618ED275C003D72B2 /* libaf-chaos_framework.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libaf-chaos_framework.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2134687918ED275C003D72B2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		2134687D18ED275C003D72B2 /* af-chaos_framework-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "af-chaos_framework-Prefix.pch"; sourceTree = "<group>"; };
+		2134688718ED275C003D72B2 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		2134688A18ED275C003D72B2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		5365488B18FBEB7D00D97333 /* downloader.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = downloader.cc; sourceTree = "<group>"; };
+		5365488C18FBEB7D00D97333 /* downloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = downloader.h; sourceTree = "<group>"; };
+		53D72FCA18F3C43E00957745 /* i_application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = i_application.h; sourceTree = "<group>"; };
+		53D72FCB18F3D0A600957745 /* api_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = api_types.h; sourceTree = "<group>"; };
+		53D72FCC18F3D0A700957745 /* i_parameter_requestor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = i_parameter_requestor.h; sourceTree = "<group>"; };
+		53D72FCD18F3D0A700957745 /* parameter_update_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parameter_update_manager.h; sourceTree = "<group>"; };
+		9D98DAA818F3B6C1003814F3 /* binary_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = binary_data.h; path = ../../../../trunk/chaos_framework/file/binary_data.h; sourceTree = "<group>"; };
+		9D98DAAA18F3B6C1003814F3 /* file_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file_manager.h; path = ../../../../trunk/chaos_framework/file/file_manager.h; sourceTree = "<group>"; };
+		9D98DAAB18F3B6C1003814F3 /* file_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file_types.h; path = ../../../../trunk/chaos_framework/file/file_types.h; sourceTree = "<group>"; };
+		9D98DAAF18F3B720003814F3 /* binary_data.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = binary_data.cc; sourceTree = "<group>"; };
+		9D98DAB018F3B720003814F3 /* file_manager.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = file_manager.cc; sourceTree = "<group>"; };
+		9D9A20F318F51D8A000E60CB /* schedule_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = schedule_manager.h; sourceTree = "<group>"; };
+		9D9A20F518F51DA3000E60CB /* schedule_manager.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = schedule_manager.cc; sourceTree = "<group>"; };
+		9D9A20F718F52B40000E60CB /* schedule_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = schedule_types.h; sourceTree = "<group>"; };
+		9DB952A418F2DDC900C7C7A6 /* i_scene_api_convertor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = i_scene_api_convertor.h; sourceTree = "<group>"; };
+		9DB952A518F2DDC900C7C7A6 /* i_scene_factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = i_scene_factory.h; sourceTree = "<group>"; };
+		9DB952A718F2DDC900C7C7A6 /* scene.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scene.cc; sourceTree = "<group>"; };
+		9DB952A818F2DDC900C7C7A6 /* scene_interface.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scene_interface.cc; sourceTree = "<group>"; };
+		9DB952A918F2DDC900C7C7A6 /* scene_manager.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scene_manager.cc; sourceTree = "<group>"; };
+		9DB952AA18F2DDC900C7C7A6 /* scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene.h; sourceTree = "<group>"; };
+		9DB952AB18F2DDC900C7C7A6 /* scene_interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene_interface.h; sourceTree = "<group>"; };
+		9DB952AC18F2DDC900C7C7A6 /* scene_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene_manager.h; sourceTree = "<group>"; };
+		9DB952AD18F2DDC900C7C7A6 /* scene_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene_types.h; sourceTree = "<group>"; };
+		9DB952B118F2E30000C7C7A6 /* parameter_update_manager.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = parameter_update_manager.cc; path = ../../parameter_manager/intern/parameter_update_manager.cc; sourceTree = "<group>"; };
+		9DD7420C18F2AC5C00733A04 /* download_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = download_types.h; sourceTree = "<group>"; };
+		9DD7422218F2AC5C00733A04 /* i_parameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = i_parameter.h; sourceTree = "<group>"; };
+		9DD7422418F2AC5C00733A04 /* i_parameter.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = i_parameter.cc; sourceTree = "<group>"; };
+		9DD7422518F2AC5C00733A04 /* parameter_manager.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = parameter_manager.cc; sourceTree = "<group>"; };
+		9DD7422618F2AC5C00733A04 /* parameter_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parameter_manager.h; sourceTree = "<group>"; };
+		9DF0F2D318F2B16300662E1A /* application_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = application_manager.h; sourceTree = "<group>"; };
+		9DF0F2D418F2B16300662E1A /* application_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = application_types.h; sourceTree = "<group>"; };
+		9DF0F2D718F2B16300662E1A /* application_manager.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = application_manager.cc; sourceTree = "<group>"; };
+		9DF0F2DB18F2B17D00662E1A /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = "<group>"; };
+		9DF0F2DC18F2B17D00662E1A /* event_argument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event_argument.h; sourceTree = "<group>"; };
+		9DF0F2DD18F2B17D00662E1A /* event_key_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event_key_types.h; sourceTree = "<group>"; };
+		9DF0F2DE18F2B17D00662E1A /* event_system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event_system.h; sourceTree = "<group>"; };
+		9DF0F2E018F2B17D00662E1A /* event.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = event.cc; sourceTree = "<group>"; };
+		9DF0F2E118F2B17D00662E1A /* event_argument.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = event_argument.cc; sourceTree = "<group>"; };
+		9DF0F2E218F2B17D00662E1A /* event_system.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = event_system.cc; sourceTree = "<group>"; };
+		9DF0F2E718F2B18700662E1A /* game_loop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = game_loop.h; sourceTree = "<group>"; };
+		9DF0F2E818F2B18700662E1A /* game_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = game_manager.h; sourceTree = "<group>"; };
+		9DF0F2EA18F2B18700662E1A /* game_loop.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = game_loop.cc; sourceTree = "<group>"; };
+		9DF0F2EB18F2B18700662E1A /* game_manager.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = game_manager.cc; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2134687318ED275C003D72B2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2134687A18ED275C003D72B2 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2134686D18ED275C003D72B2 = {
+			isa = PBXGroup;
+			children = (
+				9DD7420218F2AC2E00733A04 /* src */,
+				2134687B18ED275C003D72B2 /* chaos_framework */,
+				2134687818ED275C003D72B2 /* Frameworks */,
+				2134687718ED275C003D72B2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2134687718ED275C003D72B2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2134687618ED275C003D72B2 /* libaf-chaos_framework.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2134687818ED275C003D72B2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2134687918ED275C003D72B2 /* Foundation.framework */,
+				2134688718ED275C003D72B2 /* XCTest.framework */,
+				2134688A18ED275C003D72B2 /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2134687B18ED275C003D72B2 /* chaos_framework */ = {
+			isa = PBXGroup;
+			children = (
+				2134687C18ED275C003D72B2 /* Supporting Files */,
+			);
+			path = chaos_framework;
+			sourceTree = "<group>";
+		};
+		2134687C18ED275C003D72B2 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				2134687D18ED275C003D72B2 /* af-chaos_framework-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		9D98DAA618F3B667003814F3 /* file */ = {
+			isa = PBXGroup;
+			children = (
+				9D98DAA818F3B6C1003814F3 /* binary_data.h */,
+				9D98DAAA18F3B6C1003814F3 /* file_manager.h */,
+				9D98DAAB18F3B6C1003814F3 /* file_types.h */,
+				9D98DAAE18F3B6DC003814F3 /* intern */,
+			);
+			name = file;
+			sourceTree = "<group>";
+		};
+		9D98DAAE18F3B6DC003814F3 /* intern */ = {
+			isa = PBXGroup;
+			children = (
+				9D98DAAF18F3B720003814F3 /* binary_data.cc */,
+				9D98DAB018F3B720003814F3 /* file_manager.cc */,
+			);
+			name = intern;
+			path = ../../../../trunk/chaos_framework/file/intern;
+			sourceTree = "<group>";
+		};
+		9D9A20F218F51CCD000E60CB /* schedule */ = {
+			isa = PBXGroup;
+			children = (
+				9D9A20F718F52B40000E60CB /* schedule_types.h */,
+				9D9A20F318F51D8A000E60CB /* schedule_manager.h */,
+				9D9A20F418F51D91000E60CB /* intern */,
+			);
+			name = schedule;
+			path = ../../../../trunk/chaos_framework/schedule;
+			sourceTree = "<group>";
+		};
+		9D9A20F418F51D91000E60CB /* intern */ = {
+			isa = PBXGroup;
+			children = (
+				9D9A20F518F51DA3000E60CB /* schedule_manager.cc */,
+			);
+			path = intern;
+			sourceTree = "<group>";
+		};
+		9DB952A118F2DDC900C7C7A6 /* scene */ = {
+			isa = PBXGroup;
+			children = (
+				9DB952A218F2DDC900C7C7A6 /* system */,
+			);
+			name = scene;
+			path = ../../../../trunk/chaos_framework/scene;
+			sourceTree = "<group>";
+		};
+		9DB952A218F2DDC900C7C7A6 /* system */ = {
+			isa = PBXGroup;
+			children = (
+				9DB952A318F2DDC900C7C7A6 /* scene */,
+			);
+			path = system;
+			sourceTree = "<group>";
+		};
+		9DB952A318F2DDC900C7C7A6 /* scene */ = {
+			isa = PBXGroup;
+			children = (
+				9DB952A418F2DDC900C7C7A6 /* i_scene_api_convertor.h */,
+				9DB952A518F2DDC900C7C7A6 /* i_scene_factory.h */,
+				9DB952A618F2DDC900C7C7A6 /* intern */,
+				9DB952AA18F2DDC900C7C7A6 /* scene.h */,
+				9DB952AB18F2DDC900C7C7A6 /* scene_interface.h */,
+				9DB952AC18F2DDC900C7C7A6 /* scene_manager.h */,
+				9DB952AD18F2DDC900C7C7A6 /* scene_types.h */,
+			);
+			path = scene;
+			sourceTree = "<group>";
+		};
+		9DB952A618F2DDC900C7C7A6 /* intern */ = {
+			isa = PBXGroup;
+			children = (
+				9DB952A718F2DDC900C7C7A6 /* scene.cc */,
+				9DB952A818F2DDC900C7C7A6 /* scene_interface.cc */,
+				9DB952A918F2DDC900C7C7A6 /* scene_manager.cc */,
+			);
+			path = intern;
+			sourceTree = "<group>";
+		};
+		9DD7420218F2AC2E00733A04 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				9DB952A118F2DDC900C7C7A6 /* scene */,
+				9DF0F2D218F2B16300662E1A /* application */,
+				9D98DAA618F3B667003814F3 /* file */,
+				9DD7420918F2AC5C00733A04 /* download */,
+				9DF0F2DA18F2B17D00662E1A /* event */,
+				9DF0F2E618F2B18700662E1A /* game */,
+				9D9A20F218F51CCD000E60CB /* schedule */,
+				9DD7422118F2AC5C00733A04 /* parameter */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		9DD7420918F2AC5C00733A04 /* download */ = {
+			isa = PBXGroup;
+			children = (
+				5365488B18FBEB7D00D97333 /* downloader.cc */,
+				5365488C18FBEB7D00D97333 /* downloader.h */,
+				9DD7420C18F2AC5C00733A04 /* download_types.h */,
+			);
+			name = download;
+			path = ../../../../trunk/chaos_framework/download;
+			sourceTree = "<group>";
+		};
+		9DD7422118F2AC5C00733A04 /* parameter */ = {
+			isa = PBXGroup;
+			children = (
+				53D72FCB18F3D0A600957745 /* api_types.h */,
+				53D72FCC18F3D0A700957745 /* i_parameter_requestor.h */,
+				53D72FCD18F3D0A700957745 /* parameter_update_manager.h */,
+				9DD7422218F2AC5C00733A04 /* i_parameter.h */,
+				9DD7422318F2AC5C00733A04 /* intern */,
+				9DD7422618F2AC5C00733A04 /* parameter_manager.h */,
+			);
+			name = parameter;
+			path = ../../../../trunk/chaos_framework/parameter;
+			sourceTree = "<group>";
+		};
+		9DD7422318F2AC5C00733A04 /* intern */ = {
+			isa = PBXGroup;
+			children = (
+				9DD7422418F2AC5C00733A04 /* i_parameter.cc */,
+				9DD7422518F2AC5C00733A04 /* parameter_manager.cc */,
+				9DB952B118F2E30000C7C7A6 /* parameter_update_manager.cc */,
+			);
+			path = intern;
+			sourceTree = "<group>";
+		};
+		9DF0F2D218F2B16300662E1A /* application */ = {
+			isa = PBXGroup;
+			children = (
+				53D72FCA18F3C43E00957745 /* i_application.h */,
+				9DF0F2D318F2B16300662E1A /* application_manager.h */,
+				9DF0F2D418F2B16300662E1A /* application_types.h */,
+				9DF0F2D518F2B16300662E1A /* intern */,
+			);
+			name = application;
+			path = ../../../../trunk/chaos_framework/application;
+			sourceTree = "<group>";
+		};
+		9DF0F2D518F2B16300662E1A /* intern */ = {
+			isa = PBXGroup;
+			children = (
+				9DF0F2D718F2B16300662E1A /* application_manager.cc */,
+			);
+			path = intern;
+			sourceTree = "<group>";
+		};
+		9DF0F2DA18F2B17D00662E1A /* event */ = {
+			isa = PBXGroup;
+			children = (
+				9DF0F2DB18F2B17D00662E1A /* event.h */,
+				9DF0F2DC18F2B17D00662E1A /* event_argument.h */,
+				9DF0F2DD18F2B17D00662E1A /* event_key_types.h */,
+				9DF0F2DE18F2B17D00662E1A /* event_system.h */,
+				9DF0F2DF18F2B17D00662E1A /* intern */,
+			);
+			name = event;
+			path = ../../../../trunk/chaos_framework/event;
+			sourceTree = "<group>";
+		};
+		9DF0F2DF18F2B17D00662E1A /* intern */ = {
+			isa = PBXGroup;
+			children = (
+				9DF0F2E018F2B17D00662E1A /* event.cc */,
+				9DF0F2E118F2B17D00662E1A /* event_argument.cc */,
+				9DF0F2E218F2B17D00662E1A /* event_system.cc */,
+			);
+			path = intern;
+			sourceTree = "<group>";
+		};
+		9DF0F2E618F2B18700662E1A /* game */ = {
+			isa = PBXGroup;
+			children = (
+				9DF0F2E718F2B18700662E1A /* game_loop.h */,
+				9DF0F2E818F2B18700662E1A /* game_manager.h */,
+				9DF0F2E918F2B18700662E1A /* intern */,
+			);
+			name = game;
+			path = ../../../../trunk/chaos_framework/game;
+			sourceTree = "<group>";
+		};
+		9DF0F2E918F2B18700662E1A /* intern */ = {
+			isa = PBXGroup;
+			children = (
+				9DF0F2EA18F2B18700662E1A /* game_loop.cc */,
+				9DF0F2EB18F2B18700662E1A /* game_manager.cc */,
+			);
+			path = intern;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2134687518ED275C003D72B2 /* af-chaos_framework */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2134689918ED275C003D72B2 /* Build configuration list for PBXNativeTarget "af-chaos_framework" */;
+			buildPhases = (
+				2134687218ED275C003D72B2 /* Sources */,
+				2134687318ED275C003D72B2 /* Frameworks */,
+				2134687418ED275C003D72B2 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "af-chaos_framework";
+			productName = chaos_framework;
+			productReference = 2134687618ED275C003D72B2 /* libaf-chaos_framework.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2134686E18ED275C003D72B2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = B04350;
+			};
+			buildConfigurationList = 2134687118ED275C003D72B2 /* Build configuration list for PBXProject "af-chaos_framework" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 2134686D18ED275C003D72B2;
+			productRefGroup = 2134687718ED275C003D72B2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2134687518ED275C003D72B2 /* af-chaos_framework */,
+				9DB9528018F2BDEE00C7C7A6 /* af-chaos_framework-framework */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9DB9528418F2BE0C00C7C7A6 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Environment Variables\nFRAMEWORK_NAME=${PROJECT_NAME}\nFRAMEWORK_VERSION=A\nFRAMEWORK_VERSION_NUMBER=1.0\nFRAMEWORK_BUILD_PATH=\"${SRCROOT}/build/${CONFIGURATION}-framework\"\nFRAMEWORK_DIR=\"${FRAMEWORK_BUILD_PATH}/${FRAMEWORK_NAME}.framework\"\nFRAMEWORK_PACKAGE_NAME=\"${FRAMEWORK_NAME}.${FRAMEWORK_VERSION_NUMBER}.zip\"\n\n# xcode function management\ncall_xcodeclean() {\n    xcodebuild \\\n    -project ${PROJECT_NAME}.xcodeproj \\\n    -target \"${PROJECT_NAME}\" \\\n    -configuration ${CONFIGURATION} \\\n    -sdk $1 clean\n}\ncall_xcodebuild() {\n    xcodebuild \\\n    -project ${PROJECT_NAME}.xcodeproj \\\n    -target \"${PROJECT_NAME}\" \\\n    -configuration ${CONFIGURATION} \\\n    -sdk $1 \n}\n\ncall_xcodeclean iphonesimulator\ncall_xcodeclean iphoneos\n\n# Clean directories\n# xcodebuild \\\n# -project ${PROJECT_NAME}.xcodeproj \\\n# -sdk iphonesimulator${IPHONEOS_DEPLOYMENT_TARGET} \\\n# -target \"${PROJECT_NAME}\" \\\n# -configuration ${CONFIGURATION} \\\n# clean\n# xcodebuild \\\n# -project ${PROJECT_NAME}.xcodeproj \\\n# -sdk iphoneos${IPHONEOS_DEPLOYMENT_TARGET} \\\n# -target \"${PROJECT_NAME}\" \\\n# -configuration ${CONFIGURATION} \\\n# clean\n# rm -rf \"${FRAMEWORK_BUILD_PATH}\"\n# rm -rf \"${SRCROOT}/../applibot_foundation\"\n\n# create framework directories.\nmkdir -p ${FRAMEWORK_DIR}\nmkdir -p ${FRAMEWORK_DIR}/Versions\nmkdir -p ${FRAMEWORK_DIR}/Versions/${FRAMEWORK_VERSION}\nmkdir -p ${FRAMEWORK_DIR}/Versions/${FRAMEWORK_VERSION}/Resources\nmkdir -p ${FRAMEWORK_DIR}/Versions/${FRAMEWORK_VERSION}/Headers\n\n# create directory\nmkdir -p \"${SRCROOT}/../applibot_foundation\"\nmkdir -p \"${SRCROOT}/../applibot_foundation/${PROJECT_NAME}\"\nmkdir -p \"${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc\"\nmkdir -p \"${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/libs\"\nmkdir -p \"${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/libs/ios\"\n\n# Build simulator and device binaries.\ncall_xcodebuild iphonesimulator\ncall_xcodebuild iphoneos\n\n#xcodebuild \\\n#-project ${PROJECT_NAME}.xcodeproj \\\n#-sdk iphonesimulator${IPHONEOS_DEPLOYMENT_TARGET} \\\n#-target \"${PROJECT_NAME}\" \\\n#-configuration ${CONFIGURATION} \\\n#build\n\n#xcodebuild \\\n#-project ${PROJECT_NAME}.xcodeproj \\\n#-sdk iphoneos${IPHONEOS_DEPLOYMENT_TARGET} \\\n#-target \"${PROJECT_NAME}\" \\\n#-configuration ${CONFIGURATION} \\\n#build\n\n## create symlinks\n#ln -s ./${FRAMEWORK_VERSION} ${FRAMEWORK_DIR}/Versions/Current\n#ln -s ./Versions/Current/Headers ${FRAMEWORK_DIR}/Headers\n#ln -s ./Versions/Current/Resources ${FRAMEWORK_DIR}/Resources\n#ln -s ./Versions/Current/${FRAMEWORK_NAME} ${FRAMEWORK_DIR}/${FRAMEWORK_NAME}\n\n# create the universal library\n#lipo \\\n#${SRCROOT}/build/${CONFIGURATION}-iphoneos/lib${FRAMEWORK_NAME}.a \\\n#${SRCROOT}/build/${CONFIGURATION}-iphonesimulator/lib${FRAMEWORK_NAME}.a \\\n#-create -output \"${FRAMEWORK_DIR}/Versions/Current/${FRAMEWORK_NAME}\"\nlipo \\\n${SRCROOT}/build/${CONFIGURATION}-iphoneos/lib${FRAMEWORK_NAME}.a \\\n${SRCROOT}/build/${CONFIGURATION}-iphonesimulator/lib${FRAMEWORK_NAME}.a \\\n-create -output \"${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/libs/ios/${FRAMEWORK_NAME}.a\"\n\n#lipo \\\n#${SRCROOT}/build/${CONFIGURATION}-iphoneos/lib${FRAMEWORK_NAME}.a \\\n#${SRCROOT}/build/${CONFIGURATION}-iphonesimulator/lib${FRAMEWORK_NAME}.a \\\n#-create -output \"${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/libs/ios/${FRAMEWORK_NAME}.a\"\n# copy library headers\n\n#scene\nmkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/scene\nmkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/scene/system\nmkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/scene/system/scene\ncp ${SRCROOT}/../../../../trunk/chaos_framework/scene/system/scene/i_scene_api_convertor.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/scene/system/scene/i_scene_api_convertor.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/scene/system/scene/i_scene_factory.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/scene/system/scene/i_scene_factory.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/scene/system/scene/scene.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/scene/system/scene/scene.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/scene/system/scene/scene_interface.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/scene/system/scene/scene_interface.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/scene/system/scene/scene_manager.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/scene/system/scene/scene_manager.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/scene/system/scene/scene_types.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/scene/system/scene/scene_types.h\n\n#application\nmkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/application\ncp ${SRCROOT}/../../../../trunk/chaos_framework/application/i_application.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/application/i_application.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/application/application_manager.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/application/application_manager.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/application/application_types.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/application/application_types.h\n\n#file\nmkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/file\ncp ${SRCROOT}/../../../../trunk/chaos_framework/file/binary_data.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/file/binary_data.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/file/file_manager.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/file/file_manager.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/file/file_types.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/file/file_types.h\n\n#download\nmkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/download\ncp ${SRCROOT}/../../../../trunk/chaos_framework/download/downloader.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/download/downloader.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/download/download_types.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/download/download_types.h\n\n#error_handler\nmkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/error_handler\ncp ${SRCROOT}/../../../../trunk/chaos_framework/error_handler/error_handler.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/error_handler/error_handler.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/error_handler/error_handler_types.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/error_handler/error_handler_types.h\n\n#event\nmkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/event\ncp ${SRCROOT}/../../../../trunk/chaos_framework/event/event.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/event/event.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/event/event_argument.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/event/event_argument.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/event/event_key_types.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/event/event_key_types.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/event/event_system.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/event/event_system.h\n\n#game\nmkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/game\ncp ${SRCROOT}/../../../../trunk/chaos_framework/game/game_loop.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/game/game_loop.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/game/game_manager.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/game/game_manager.h\n\n#parameter\nmkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/parameter\ncp ${SRCROOT}/../../../../trunk/chaos_framework/parameter/api_types.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/parameter/api_types.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/parameter/i_parameter_requestor.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/parameter/i_parameter_requestor.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/parameter/parameter_update_manager.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/parameter/parameter_update_manager.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/parameter/i_parameter.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/parameter/i_parameter.h\ncp ${SRCROOT}/../../../../trunk/chaos_framework/parameter/parameter_manager.h ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/parameter/parameter_manager.h\n\n\n#mkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/gameplay\n#mkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/hid\n#mkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/llr\n#mkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/network\n#mkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/pil\n#mkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/resources\n#mkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/skelton_animatino\n#mkdir -p ${SRCROOT}/../applibot_foundation/${PROJECT_NAME}/inc/third_party\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2134687218ED275C003D72B2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9D98DAB118F3B720003814F3 /* binary_data.cc in Sources */,
+				5339652818F421BC0015EB52 /* event.cc in Sources */,
+				5339652E18F424A20015EB52 /* event_argument.cc in Sources */,
+				5339652418F4203E0015EB52 /* event_system.cc in Sources */,
+				9DB952B018F2DDC900C7C7A6 /* scene_manager.cc in Sources */,
+				9D9A20F618F51DA3000E60CB /* schedule_manager.cc in Sources */,
+				5365488D18FBEB7D00D97333 /* downloader.cc in Sources */,
+				9DB952AE18F2DDC900C7C7A6 /* scene.cc in Sources */,
+				5339653018F424B70015EB52 /* game_manager.cc in Sources */,
+				9DB952AF18F2DDC900C7C7A6 /* scene_interface.cc in Sources */,
+				9DB952B218F2E30000C7C7A6 /* parameter_update_manager.cc in Sources */,
+				9DD7423118F2AC5C00733A04 /* parameter_manager.cc in Sources */,
+				9DD7423018F2AC5C00733A04 /* i_parameter.cc in Sources */,
+				5339652F18F424B30015EB52 /* game_loop.cc in Sources */,
+				9D98DAB218F3B720003814F3 /* file_manager.cc in Sources */,
+				5339652D18F4231A0015EB52 /* application_manager.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2134689718ED275C003D72B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				VALID_ARCHS = "arm64 armv7 armv7s i386";
+			};
+			name = Debug;
+		};
+		2134689818ED275C003D72B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s i386";
+			};
+			name = Release;
+		};
+		2134689A18ED275C003D72B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				DSTROOT = /tmp/chaos_framework.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "chaos_framework/af-chaos_framework-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					WITH_IOS,
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					../../../../trunk/chaos_framework,
+					../../../../trunk/engine,
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				"IPHONEOS_DEPLOYMENT_TARGET[arch=arm64]" = 5.1;
+				"IPHONEOS_DEPLOYMENT_TARGET[arch=armv7]" = 5.1;
+				"IPHONEOS_DEPLOYMENT_TARGET[arch=armv7s]" = 5.1;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphonesimulator7.1]" = 5.1;
+				LIBRARY_SEARCH_PATHS = "/Users/temp/Desktop/Engine/engine/build/ios/trunk/af-engine/build/Debug-iphoneos";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "af-chaos_framework";
+				SKIP_INSTALL = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s i386";
+			};
+			name = Debug;
+		};
+		2134689B18ED275C003D72B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				DSTROOT = /tmp/chaos_framework.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "chaos_framework/af-chaos_framework-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = WITH_IOS;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					../../../../trunk/chaos_framework,
+					../../../../trunk/engine,
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				"IPHONEOS_DEPLOYMENT_TARGET[arch=*]" = 5.1;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphonesimulator7.1]" = 5.1;
+				LIBRARY_SEARCH_PATHS = "/Users/temp/Desktop/Engine/engine/build/ios/trunk/af-engine/build/Debug-iphoneos";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "af-chaos_framework";
+				SKIP_INSTALL = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s i386";
+			};
+			name = Release;
+		};
+		9DB9528218F2BDEE00C7C7A6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					armv7s,
+				);
+				MACH_O_TYPE = staticlib;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
+			};
+			name = Debug;
+		};
+		9DB9528318F2BDEE00C7C7A6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					armv7s,
+				);
+				MACH_O_TYPE = staticlib;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2134687118ED275C003D72B2 /* Build configuration list for PBXProject "af-chaos_framework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2134689718ED275C003D72B2 /* Debug */,
+				2134689818ED275C003D72B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2134689918ED275C003D72B2 /* Build configuration list for PBXNativeTarget "af-chaos_framework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2134689A18ED275C003D72B2 /* Debug */,
+				2134689B18ED275C003D72B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9DB9528118F2BDEE00C7C7A6 /* Build configuration list for PBXAggregateTarget "af-chaos_framework-framework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9DB9528218F2BDEE00C7C7A6 /* Debug */,
+				9DB9528318F2BDEE00C7C7A6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2134686E18ED275C003D72B2 /* Project object */;
+}

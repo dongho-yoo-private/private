@@ -1,0 +1,14 @@
+{
+  "header": {
+    "application": "cat",
+    "description": "共通レスポンスパラメータ",
+    "url": "common_response",
+    "type": "dynamic",
+    "version": "0.0.0"
+  },
+  "response": {
+    "common": {
+      "result\s32": 0
+    }
+  }
+}

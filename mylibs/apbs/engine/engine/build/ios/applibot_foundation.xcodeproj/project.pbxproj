@@ -1,0 +1,165 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		21C0316C18F65E2300640DEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 213468AB18ED278C003D72B2 /* af-chaos_framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2134687618ED275C003D72B2;
+			remoteInfo = "af-chaos_framework";
+		};
+		21C0316E18F65E2300640DEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 213468AB18ED278C003D72B2 /* af-chaos_framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2134688618ED275C003D72B2;
+			remoteInfo = "af-chaos_frameworkTests";
+		};
+		53D785CF18F80DE600C3E180 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 213468AB18ED278C003D72B2 /* af-chaos_framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2134687618ED275C003D72B2;
+			remoteInfo = "af-chaos_framework";
+		};
+		53D785D118F80DE600C3E180 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 213468AB18ED278C003D72B2 /* af-chaos_framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2134688618ED275C003D72B2;
+			remoteInfo = "af-chaos_frameworkTests";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		213468AB18ED278C003D72B2 /* af-chaos_framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "af-chaos_framework.xcodeproj"; path = "trunk/af-chaos_framework/af-chaos_framework.xcodeproj"; sourceTree = "<group>"; };
+		21F1EFBF18EABD9500D8DAEF /* af-engine.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "af-engine.xcodeproj"; path = "trunk/af-engine/af-engine.xcodeproj"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		21898C411814C86C00A156AB = {
+			isa = PBXGroup;
+			children = (
+				213468AB18ED278C003D72B2 /* af-chaos_framework.xcodeproj */,
+				21F1EFBF18EABD9500D8DAEF /* af-engine.xcodeproj */,
+			);
+			sourceTree = "<group>";
+		};
+		21C0316718F65E2300640DEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				21C0316D18F65E2300640DEB /* libaf-chaos_framework.a */,
+				21C0316F18F65E2300640DEB /* af-chaos_frameworkTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		21F1EFC018EABD9500D8DAEF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				21F1EFC618EABD9600D8DAEF /* libaf-engine.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		53D785CA18F80DE600C3E180 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				53D785D018F80DE600C3E180 /* libaf-chaos_framework.a */,
+				53D785D218F80DE600C3E180 /* af-chaos_frameworkTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXProject section */
+		21898C421814C86C00A156AB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+			};
+			buildConfigurationList = 21898C451814C86C00A156AB /* Build configuration list for PBXProject "applibot_foundation" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 21898C411814C86C00A156AB;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 53D785CA18F80DE600C3E180 /* Products */;
+					ProjectRef = 213468AB18ED278C003D72B2 /* af-chaos_framework.xcodeproj */;
+				},
+				{
+					ProductGroup = 21F1EFC018EABD9500D8DAEF /* Products */;
+					ProjectRef = 21F1EFBF18EABD9500D8DAEF /* af-engine.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		21C0316D18F65E2300640DEB /* libaf-chaos_framework.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libaf-chaos_framework.a";
+			remoteRef = 21C0316C18F65E2300640DEB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		53D785D018F80DE600C3E180 /* libaf-chaos_framework.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libaf-chaos_framework.a";
+			remoteRef = 53D785CF18F80DE600C3E180 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		53D785D218F80DE600C3E180 /* af-chaos_frameworkTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "af-chaos_frameworkTests.xctest";
+			remoteRef = 53D785D118F80DE600C3E180 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin XCBuildConfiguration section */
+		21898C461814C86C00A156AB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		21898C471814C86C00A156AB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		21898C451814C86C00A156AB /* Build configuration list for PBXProject "applibot_foundation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				21898C461814C86C00A156AB /* Debug */,
+				21898C471814C86C00A156AB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 21898C421814C86C00A156AB /* Project object */;
+}

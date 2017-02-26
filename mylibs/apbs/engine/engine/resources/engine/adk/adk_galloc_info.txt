@@ -1,0 +1,61 @@
+{
+	"use": true,
+	"small":[
+		{
+			"min": 0,
+			"max": 16,
+			"size": 0x400000
+		},
+		{
+			"min": 17,
+			"max": 32,
+			"size": 0x800000
+		},
+		{
+			"min": 33,
+			"max": 64,
+			"size": 0x800000
+		},
+		{
+			"min": 65,
+			"max": 128,
+			"size": 0x800000
+		},
+		{
+			"min": 129,
+			"max": 256,
+			"size": 0x100000
+		},
+		{
+			"min": 257,
+			"max": 512,
+			"size": 0x400000
+		},
+		{
+			"min": 513,
+			"max": 1024,
+			"size": 0x400000
+		},
+		{
+			"min": 1025,
+			"max": 2048,
+			"size": 0x100000
+		},
+		{
+			"min": 2049,
+			"max": 4096,
+			"size": 0x100000
+		}
+	],
+	"large": [
+		{
+			"size": 0x6000000
+		}
+	],
+	"option": [
+		{
+			"memory name": true,
+			"block name": true
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"header": {
+		"application": "cat",
+		"description": "ユーザー登録API",
+		"url": "/api/user/signup",
+		"type": "dynamic",
+		"version": "0.0.0"
+	},
+	"request": {
+	},
+	"response": {
+		"result\s32": 0,
+		"requestDatetime\u64": 0,
+		"data": {
+			"userId": 0,
+			"sigunature": "key"
+		}
+	}
+}

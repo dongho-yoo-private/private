@@ -1,0 +1,143 @@
+igx_file.c:227:7: error: conflicting types for 'igx_file_vload'
+void* igx_file_vload(const char* file_name, void* dest, size_t* size, igx_file_security_t* secur)
+      ^
+./igx_file.h:111:23: note: previous declaration is here
+IGX_FILE_EXTERN void* igx_file_vload(const char* file_name, size_t* size, igx_file_security_t* secur);
+                      ^
+igx_file.c:251:24: warning: implicit declaration of function 'mmap' is invalid in C99 [-Wimplicit-function-declaration]
+    p_dest = (ubit8_t*)mmap(0, file_size+1, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
+                       ^
+igx_file.c:251:45: error: use of undeclared identifier 'PROT_READ'
+    p_dest = (ubit8_t*)mmap(0, file_size+1, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
+                                            ^
+igx_file.c:251:55: error: use of undeclared identifier 'PROT_WRITE'
+    p_dest = (ubit8_t*)mmap(0, file_size+1, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
+                                                      ^
+igx_file.c:252:18: error: use of undeclared identifier 'MAP_FAILED'
+    if(p_dest == MAP_FAILED)
+                 ^
+1 warning and 4 errors generated.
+make[2]: *** [igx_file.o] Error 1
+igx_string.c:531:50: warning: comparison between pointer and integer ('size_t' (aka 'unsigned long') and 'iconv_t' (aka 'void *'))
+    if (iconv(ic, src, src_len, out, buffer_size)!=(iconv_t)(intptr_t)-1)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^ ~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.
+igx_string_cc.cc:338:1: warning: control may reach end of non-void function [-Wreturn-type]
+}
+^
+In file included from igx_string_cc.cc:7:
+./igx_string.h:691:29: warning: inline function 'IgxString::operator=' is not defined [-Wundefined-inline]
+    inline const IgxString& operator=(char* p) const;
+                            ^
+./igx_string.h:814:31: note: used here
+    return (const IgxString&) operator=((char*)p);
+                              ^
+2 warnings generated.
+In file included from go_libs.cc:7:
+In file included from ./go_libs.h:10:
+In file included from ../../go/go_types.h:10:
+../../library/igx_string.h:691:29: warning: inline function 'IgxString::operator=' is not defined [-Wundefined-inline]
+    inline const IgxString& operator=(char* p) const;
+                            ^
+../../library/igx_string.h:814:31: note: used here
+    return (const IgxString&) operator=((char*)p);
+                              ^
+1 warning generated.
+In file included from engine.calculate.cc:8:
+In file included from ./engine.h:9:
+In file included from ./go_types.h:10:
+../library/igx_string.h:691:29: warning: inline function 'IgxString::operator=' is not defined [-Wundefined-inline]
+    inline const IgxString& operator=(char* p) const;
+                            ^
+../library/igx_string.h:814:31: note: used here
+    return (const IgxString&) operator=((char*)p);
+                              ^
+1 warning generated.
+In file included from engine.cc:6:
+In file included from ./engine.h:9:
+In file included from ./go_types.h:10:
+../library/igx_string.h:691:29: warning: inline function 'IgxString::operator=' is not defined [-Wundefined-inline]
+    inline const IgxString& operator=(char* p) const;
+                            ^
+../library/igx_string.h:814:31: note: used here
+    return (const IgxString&) operator=((char*)p);
+                              ^
+1 warning generated.
+In file included from engine.operation.cc:6:
+In file included from ./engine.h:9:
+In file included from ./go_types.h:10:
+../library/igx_string.h:691:29: warning: inline function 'IgxString::operator=' is not defined [-Wundefined-inline]
+    inline const IgxString& operator=(char* p) const;
+                            ^
+../library/igx_string.h:814:31: note: used here
+    return (const IgxString&) operator=((char*)p);
+                              ^
+1 warning generated.
+In file included from sgf.body.cc:7:
+In file included from ./sgf.h:11:
+In file included from ./go_types.h:10:
+../library/igx_string.h:691:29: warning: inline function 'IgxString::operator=' is not defined [-Wundefined-inline]
+    inline const IgxString& operator=(char* p) const;
+                            ^
+../library/igx_string.h:814:31: note: used here
+    return (const IgxString&) operator=((char*)p);
+                              ^
+1 warning generated.
+In file included from sgf.cc:1:
+In file included from ./sgf.h:11:
+In file included from ./go_types.h:10:
+../library/igx_string.h:691:29: warning: inline function 'IgxString::operator=' is not defined [-Wundefined-inline]
+    inline const IgxString& operator=(char* p) const;
+                            ^
+../library/igx_string.h:814:31: note: used here
+    return (const IgxString&) operator=((char*)p);
+                              ^
+1 warning generated.
+In file included from sgf.header.cc:7:
+In file included from ./sgf.h:11:
+In file included from ./go_types.h:10:
+../library/igx_string.h:691:29: warning: inline function 'IgxString::operator=' is not defined [-Wundefined-inline]
+    inline const IgxString& operator=(char* p) const;
+                            ^
+../library/igx_string.h:814:31: note: used here
+    return (const IgxString&) operator=((char*)p);
+                              ^
+1 warning generated.
+In file included from sgf.tag.cc:1:
+In file included from ./sgf.h:11:
+In file included from ./go_types.h:10:
+../library/igx_string.h:691:29: warning: inline function 'IgxString::operator=' is not defined [-Wundefined-inline]
+    inline const IgxString& operator=(char* p) const;
+                            ^
+../library/igx_string.h:814:31: note: used here
+    return (const IgxString&) operator=((char*)p);
+                              ^
+1 warning generated.
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib: file: libigx.a(liked_list_test.o) has no symbols
+In file included from go_engine_sample.cc:2:
+In file included from ../go/go_types.h:10:
+../library/igx_string.h:691:29: warning: inline function 'IgxString::operator=' is not defined [-Wundefined-inline]
+    inline const IgxString& operator=(char* p) const;
+                            ^
+../library/igx_string.h:814:31: note: used here
+    return (const IgxString&) operator=((char*)p);
+                              ^
+1 warning generated.
+Undefined symbols for architecture x86_64:
+  "_igx_file_append", referenced from:
+      _igx_log in libigx.a(igx_log.o)
+  "_igx_file_load", referenced from:
+      go::sgf::Import(char const*) in libigx.a(sgf.o)
+  "_igx_file_read", referenced from:
+      go::sgf::Import(char const*) in libigx.a(sgf.o)
+  "_igx_file_size", referenced from:
+      go::sgf::Import(char const*) in libigx.a(sgf.o)
+  "_igx_file_unload", referenced from:
+      go::sgf::Import(char const*) in libigx.a(sgf.o)
+  "_igx_file_writable_path", referenced from:
+      _igx_log_init in libigx.a(igx_log.o)
+  "_igx_file_write", referenced from:
+      go::sgf::ExportFile(char const*, char const*, char const*) const in libigx.a(sgf.o)
+ld: symbol(s) not found for architecture x86_64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+make: *** [sample] Error 1

@@ -1,0 +1,5 @@
+﻿CC=gcc 
+CXX=g++
+CFLAGS=-c -I$(PROJECT_ROOT_PATH) -DDEBUG -DOS_IS_MACOSX=1
+CXXFLAGS=$(CFLAGS)
+LDFLAGS=-lc -lpthread -lssl -lcrypto -lc++ -liconv

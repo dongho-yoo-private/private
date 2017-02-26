@@ -1,0 +1,39 @@
+igx_url_encode.c:103:43: warning: incompatible pointer to integer conversion passing 'const char *' to parameter of type 'char' [-Wint-conversion]
+        n+=conv_url_encode_char(buffer+n, src+i);
+                                          ^~~~~
+igx_url_encode.c:50:58: note: passing argument to parameter 'in' here
+static size_t conv_url_encode_char(char* out, const char in)
+                                                         ^
+igx_url_encode.c:136:25: warning: implicitly declaring library function 'malloc' with type 'void *(unsigned long)'
+        buffer = (char*)malloc(len+1);
+                        ^
+igx_url_encode.c:136:25: note: please include the header <stdlib.h> or explicitly provide a declaration for 'malloc'
+2 warnings generated.
+igx_string.c:533:50: warning: comparison between pointer and integer ('size_t' (aka 'unsigned long') and 'iconv_t' (aka 'void *'))
+    if (iconv(ic, src, src_len, out, buffer_size)!=(iconv_t)(intptr_t)-1)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^ ~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.
+In file included from protocols/http.c:51:
+protocols/http.static.ic:201:40: warning: incompatible pointer types passing 'bit32_t *' (aka 'int *') to parameter of type 'number_t *' (aka 'long long *') [-Wincompatible-pointer-types]
+        if (igx_atoi(p_content_length, &n)==true)
+                                       ^~
+../library/igx_stdlib.h:27:65: note: passing argument to parameter 'ret' here
+IGX_STDLIB_EXTERN bool_t igx_atoi(const char* string, number_t* ret);
+                                                                ^
+1 warning generated.
+In file included from http.c:51:
+./http.static.ic:201:40: warning: incompatible pointer types passing 'bit32_t *' (aka 'int *') to parameter of type 'number_t *' (aka 'long long *') [-Wincompatible-pointer-types]
+        if (igx_atoi(p_content_length, &n)==true)
+                                       ^~
+../../library/igx_stdlib.h:27:65: note: passing argument to parameter 'ret' here
+IGX_STDLIB_EXTERN bool_t igx_atoi(const char* string, number_t* ret);
+                                                                ^
+1 warning generated.
+igx_sock.c:1050:36: warning: incompatible pointer types passing 'bit32_t *' (aka 'int *') to parameter of type 'number_t *' (aka 'long long *') [-Wincompatible-pointer-types]
+            if (igx_atoi(str_port, port)==false)
+                                   ^~~~
+../library/igx_stdlib.h:27:65: note: passing argument to parameter 'ret' here
+IGX_STDLIB_EXTERN bool_t igx_atoi(const char* string, number_t* ret);
+                                                                ^
+1 warning generated.
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib: file: libigx.a(liked_list_test.o) has no symbols

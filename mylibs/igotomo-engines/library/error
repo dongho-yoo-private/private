@@ -1,0 +1,58 @@
+igx_string.c:531:50: warning: comparison between pointer and integer ('size_t' (aka 'unsigned long') and 'iconv_t' (aka 'void *'))
+    if (iconv(ic, src, src_len, out, buffer_size)!=(iconv_t)(intptr_t)-1)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^ ~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.
+igx_string_cc.cc:232:20: error: return type of out-of-line definition of 'IgxString::ParseWithFormat' differs from that in the declaration
+bit32_t IgxString::ParseWithFormat(const char* format, ...)
+                   ^
+./igx_string.h:616:12: note: previous declaration is here
+    size_t ParseWithFormat(const char* format, ...);
+           ^
+igx_string_cc.cc:240:20: error: return type of out-of-line definition of 'IgxString::ParseWithFormat' differs from that in the declaration
+bit32_t IgxString::ParseWithFormat(const char* format, ...) const
+                   ^
+./igx_string.h:617:12: note: previous declaration is here
+    size_t ParseWithFormat(const char* format, ...) const;
+           ^
+igx_string_cc.cc:248:20: error: return type of out-of-line definition of 'IgxString::ParseWithFormat' differs from that in the declaration
+bit32_t IgxString::ParseWithFormat(bit32_t index, const char* format, ...)
+                   ^
+./igx_string.h:626:12: note: previous declaration is here
+    size_t ParseWithFormat(bit32_t index, const char* format, ...);
+           ^
+igx_string_cc.cc:258:20: error: return type of out-of-line definition of 'IgxString::ParseWithFormat' differs from that in the declaration
+bit32_t IgxString::ParseWithFormat(bit32_t index, const char* format, ...) const
+                   ^
+./igx_string.h:627:12: note: previous declaration is here
+    size_t ParseWithFormat(bit32_t index, const char* format, ...) const;
+           ^
+igx_string_cc.cc:301:17: error: return type of out-of-line definition of 'IgxString::str_free' differs from that in the declaration
+void IgxString::str_free()
+                ^
+./igx_string.h:761:11: note: previous declaration is here
+    char* str_free();
+          ^
+igx_string_cc.cc:366:5: error: no matching function for call to 'memset'
+    memset(m_flags, 0, sizeof(m_flags));
+    ^~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/include/string.h:74:7: note: candidate function not viable: no known conversion from 'struct <anonymous struct at ./igx_string.h:749:13>' to 'void *' for 1st argument; take the address of the argument with &
+void    *memset(void *, int, size_t);
+         ^
+igx_string_cc.cc:369:13: error: no member named 'case_ignore' in 'IgxString::<anonymous struct at ./igx_string.h:749:13>'
+    m_flags.case_ignore=1;
+    ~~~~~~~ ^
+igx_string_cc.cc:375:45: error: member reference type 'IgxMemPage *' is a pointer; maybe you meant to use '->'?
+        m_working_buffer = (char*)m_mem_page.Pop(IGX_STRING_MAX_FORMAT_STR_BUFFER_LEN);
+                                  ~~~~~~~~~~^
+                                            ->
+igx_string_cc.cc:400:20: error: out-of-line definition of 'copy_with_format' does not match any declaration in 'IgxString'
+bit32_t IgxString::copy_with_format(bit32_t index, const char* format, va_list ap)
+                   ^~~~~~~~~~~~~~~~
+igx_string_cc.cc:411:9: error: use of undeclared identifier 'type'
+    if (type==0)
+        ^
+igx_string_cc.cc:415:14: error: use of undeclared identifier 'type'
+    else if (type==1)
+             ^
+11 errors generated.
+make: *** [igx_string_cc.o] Error 1

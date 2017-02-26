@@ -1,0 +1,20 @@
+igx_thread_ex.cc:177:13: warning: expression result unused [-Wunused-value]
+    IGX_DEL(list);
+            ^~~~
+../library/igx_memory.h:77:34: note: expanded from macro 'IGX_DEL'
+#       define IGX_DEL(p) delete(p, (const char*)0) 
+                                 ^
+igx_thread_ex.cc:199:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+2 warnings generated.
+Undefined symbols for architecture x86_64:
+  "operator delete(void*, char const*)", referenced from:
+      ThreadTestClass::Start() in igx_thread_ex-f75be5.o
+  "_igx_back_trace", referenced from:
+      _igx_realloc in libigx.a(igx_memory.o)
+  "_igx_print_back_trace", referenced from:
+      _igx_memory_print in libigx.a(igx_memory.o)
+ld: symbol(s) not found for architecture x86_64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+make: *** [unittest] Error 1
