@@ -1,0 +1,26 @@
+ServerName=UserServerYotsuya
+
+[Local]
+type=limited
+maxc=128
+maxa=-1
+listen=1024
+timeout=5
+packet=clear
+maxpacket=512
+
+[Server]
+port=10003
+type=normal
+maxc=10
+maxa=-1
+listen=1024
+timeout=5
+maxpacket=512
+# port count.
+extra0=10
+# port start.
+extra1=10010
+extra2=0
+# port no.
+extra3=10005

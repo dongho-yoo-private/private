@@ -1,0 +1,26 @@
+#
+# ssvr Makefile (Last updated 2009. 11. 11.)
+# it is sample server.
+#
+#
+
+OBJS = svryuser.o svryusermain.o
+
+CFLAGS = -g -O2 -D "__POSIX__" -c
+CC = g++
+TARGET = svryuser
+LDFLAGS = ../libs/libsvrybase.a ../libs/libyi.a ../common/libsyc.a -lpthread -lstdc++ -lc
+
+INCLUDES= -I ../include 
+
+all: clean $(TARGET)
+
+$(TARGET):$(OBJS)
+	$(CC) -o $@ $(OBJS) $(LDFLAGS)
+
+.cpp.o:
+	$(CC) $(INCLUDES) $(CFLAGS) $<
+
+clean:
+	rm -f $(OBJS) $(TARGET)
+

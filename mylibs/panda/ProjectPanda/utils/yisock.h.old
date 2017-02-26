@@ -1,0 +1,66 @@
+#ifndef __yisock_h__
+#define __yisock_h__
+
+#ifdef __cplusplus
+#define EXTERN extern "C"
+#else
+#define EXTERN extern
+#endif
+
+#ifdef WIN32
+#include <windows.h>
+#include <winsock.h>
+#pragma comment(lib, "ws2_32.lib");
+#else
+#include <sys/socket.h>
+#include <unistd.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#endif
+#include <string.h>
+
+// -------------------------------
+EXTERN int yiudpconnect(long address, int port);
+
+// -------------------------------
+EXTERN int yiudplisten(long address, int port);
+
+// -------------------------------
+EXTERN int yiudp(long address, int port);
+
+// -------------------------------
+EXTERN int yisend(int sock, const void* buffer, int n, long address, int port);
+
+// -------------------------------
+EXTERN int yirecv(int sock, void* buffer, int n, long* address, int* port);
+
+// -------------------------------
+EXTERN int yiconnect(long address, int port, int nRetry);
+
+// -------------------------------
+EXTERN int yiconnectu(long address, int port, int nRetry);
+
+// -------------------------------
+EXTERN int yilisten(long address, int port, int nBuffCnt);
+
+// -------------------------------
+EXTERN int yilistenu(long address, int port, int nBuffCnt);
+
+// -------------------------------
+EXTERN int yiaccept(int sock, long* address, long* port);
+
+// --------------------------------
+EXTERN long yihtol(const char* pszHostName, int index);
+
+// --------------------------------
+EXTERN long yiitol(const char* pszIpAddress);
+
+#ifdef WIN32
+// --------------------------------
+EXTERN int yiInitWinsock(int h, int l);
+
+// --------------------------------
+EXTERN void yiCloseWinsock();
+#endif
+
+#endif

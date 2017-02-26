@@ -1,0 +1,102 @@
+[DEBUG] yiupnpGetRouterInfo() send 135 bytes
+M-SEARCH * HTTP/1.1
+MX: 10
+HOST: 239.255.255.250:1900
+MAN: "ssdp:discover"
+ST: urn:schemas-upnp-org:service:WANPPPConnection:1
+
+
+upnp recved 192.168.1.1:1900
+HTTP/1.1 200 OK
+CACHE-CONTROL: max-age=1800
+DATE: Sat, 17 Sep 2011 07:26:15 GMT
+EXT:
+LOCATION: http://192.168.1.1:49155/gatedesc.xml
+SERVER: OS/0.0 UPnP/1.0 UPnP-Device-Host/1.0
+ST: urn:schemas-upnp-org:service:WANPPPConnection:1
+USN: uuid:75802409-bccb-40e7-8e6c-fa095ecce133::urn:schemas-upnp-org:service:WANPPPConnection:1
+
+[DEBUG] HTTP/1.0 200 OK
+CONTENT-LENGTH: 2662
+CONTENT-TYPE: text/xml
+DATE: Sat, 17 Sep 2011 07:26:15 GMT
+LAST-MODIFIED: Thu, 01 Jan 1970 20:21:17 GMT
+SERVER: OS/0.0 UPnP/1.0 UPnP-Device-Host/1.0
+
+<?xml version="1.0"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+	<specVersion>
+		<major>1</major>
+		<minor>0</minor>
+	</specVersion>
+	<device>
+		<deviceType>urn:schemas-upnp-org:device:InternetGatewayDevice:1</deviceType>
+		<friendlyName>PR-S300HI</friendlyName>
+		<manufacturer>NTTEAST/NTTWEST</manufacturer>
+		<modelDescription></modelDescription>
+		<modelName>PR-S300HI</modelName>
+		<UDN>uuid:75802409-bccb-40e7-8e6c-fa095ecce131</UDN>
+		<iconList>
+			<icon>
+				<mimetype>image/gif</mimetype>
+				<width>118</width>
+				<height>119</height>
+				<depth>8</depth>
+				<url>/ligd.gif</url>
+			</icon>
+		</iconList>
+		<serviceList>
+			<service>            
+				<serviceType>urn:schemas-upnp-org:service:Layer3Forwarding:1</serviceType>
+				<serviceId>urn:upnp-org:serviceId:L3Forwarding1</serviceId>
+				<controlURL>/upnp/control/L3Forwarding1</controlURL>
+				<eventSubURL>/upnp/control/L3Forwarding1</eventSubURL>
+				<SCPDURL>/layer3forwardingSCPD.xml</SCPDURL>
+			</service>
+                </serviceList>
+		<deviceList>
+			<device>
+				<deviceType>urn:schemas-upnp-org:device:WANDevice:1</deviceType>
+				<friendlyName>WANDevice</friendlyName>
+				<manufacturer>NTTEAST/NTTWEST</manufacturer>
+				<modelDescription></modelDescription>
+				<modelName>PR-S300HI</modelName>
+				<UDN>uuid:75802409-bccb-40e7-8e6c-fa095ecce132</UDN>
+				<UPC>IGD</UPC>
+				<serviceList>
+					<service>
+						<serviceType>urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1</serviceType>
+						<serviceId>urn:upnp-org:serviceId:WANCommonIFC1</serviceId>
+						<controlURL>/upnp/control/WANCommonIFC1</controlURL>
+						<eventSubURL>/upnp/control/WANCommonIFC1</eventSubURL>
+						<SCPDURL>/gateicfgSCPD.xml</SCPDURL>
+					</service>
+				</serviceList>
+				<deviceList>
+					<device>
+						<deviceType>urn:schemas-upnp-org:device:WANConnectionDevice:1</deviceType>
+						<friendlyName>WANConnectionDevice</friendlyName>
+						<manufacturer>NTTEAST/NTTWEST</manufacturer>
+						<modelDescription></modelDescription>
+						<modelName>PR-S300HI</modelName>
+						<UDN>uuid:75802409-bccb-40e7-8e6c-fa095ecce133</UDN>
+						<UPC>IGD</UPC>
+						<serviceList>
+							<service>
+								<serviceType>urn:schemas-upnp-org:service:WANPPPConnection:1</serviceType>
+								<serviceId>urn:upnp-org:serviceId:WANPPPConn1</serviceId>
+								<controlURL>/upnp/control/WANPPPConn1</controlURL>
+								<eventSubURL>/upnp/control/WANPPPConn1</eventSubURL>
+								<SCPDURL>/gateconnSCPD.xml</SCPDURL>
+							</service>
+						</serviceList>
+					</device>
+				</deviceList>
+			</device>
+		</deviceList>
+		<presentationURL>http://192.168.1.1:80/</presentationURL>
+	</device>
+</root>
+[DEBUG] urlbase or Device description tag not found
+[DEBUG] yiupnpGetRouterInfo() not found
+yiupnpCreatex() failure

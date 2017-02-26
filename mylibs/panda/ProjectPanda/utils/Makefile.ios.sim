@@ -1,0 +1,41 @@
+#
+#
+#
+#
+OBJS = 	yiList.o yiQueue.o yiStack.o yithread.o yimutex.o yitrace.o yitime.o yifile.o yifile.posix.o \
+       	yialloc.o yiEncoder.o yiHashFunc.o yisock.o yiencodex.o  yiupnp.o yiHashTable.o yistr.o \
+	yipsr.o yiProfile.o yiSmtp.o yipop3.o yiUtil.o yiGoEngine.o sgfMgr.o stonemap.o yiStream.o yiTimeEx.o yiTreeNode.o \
+	yiListx.o
+
+# remove -fPIC
+#CFLAGS = -arch i386 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk \
+#	-O2 -D "__POSIX__" -D "__use_sse2__" -D "__DEBUG__" -D"__OSX__" -I ./ -I ./openssl -c
+
+# for debug
+CFLAGS = -arch i386 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk \
+	-g -D "__IOS__" -D "__POSIX__" -D "__use_sse2__" -D "__DEBUG__" -D"__OSX__" -I ./ -I ./openssl -c
+
+CXX = /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/g++
+CC = /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc
+TARGET = libyi.ios.s.a
+YOTSUYA_HOME=/usr/local/ios
+
+all: clean $(TARGET) install
+
+clean:
+	rm -f $(OBJS) $(TARGET)
+	rm -rf objs
+.cpp.o:
+	$(CXX) $(CFLAGS) $<
+
+.c.o:
+	$(CC) $(CFLAGS) $<
+
+$(TARGET):$(OBJS)
+	ar -r $@ $(OBJS) 
+
+install:
+	cp -f $(TARGET) $(YOTSUYA_HOME)/libs
+	cp -f *.h $(YOTSUYA_HOME)/include
+	mkdir objs
+	mv -f *.o objs

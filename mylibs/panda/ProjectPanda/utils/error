@@ -1,0 +1,152 @@
+yithread.c: In function ‘yiThreadStartEx’:
+yithread.c:106: warning: return makes pointer from integer without a cast
+yithread.c: In function ‘yiThreadStartExj’:
+yithread.c:126: warning: assignment makes pointer from integer without a cast
+yithread.c:128: warning: assignment makes pointer from integer without a cast
+yithread.c:129: warning: assignment makes pointer from integer without a cast
+yithread.c:130: warning: assignment makes pointer from integer without a cast
+yithread.c:153: warning: return makes pointer from integer without a cast
+yithread.c: In function ‘yiThreadStart’:
+yithread.c:184: warning: return makes pointer from integer without a cast
+yitrace.c: In function ‘yiTraceDump’:
+yitrace.c:153: warning: format not a string literal and no format arguments
+yitrace.c:153: warning: format not a string literal and no format arguments
+yitrace.c:179: warning: format not a string literal and no format arguments
+yitrace.c:179: warning: format not a string literal and no format arguments
+In file included from yifile.c:9:
+yifile.posix.c: In function ‘yiFileWriteOnce’:
+yifile.posix.c:1522: warning: passing argument 1 of ‘ftell’ makes pointer from integer without a cast
+yifile.posix.c: In function ‘yiFileWriteOnceEx’:
+yifile.posix.c:2172: warning: passing argument 4 of ‘_yiFileWriteEx’ discards qualifiers from pointer target type
+yifile.posix.c: In function ‘_yiFileTrucate’:
+yifile.posix.c:2381: warning: passing argument 1 of ‘truncate’ makes pointer from integer without a cast
+yifile.posix.c: In function ‘yiFileWriteOnce’:
+yifile.posix.c:1522: warning: passing argument 1 of ‘ftell’ makes pointer from integer without a cast
+yifile.posix.c: In function ‘yiFileWriteOnceEx’:
+yifile.posix.c:2172: warning: passing argument 4 of ‘_yiFileWriteEx’ discards qualifiers from pointer target type
+yifile.posix.c: In function ‘_yiFileTrucate’:
+yifile.posix.c:2381: warning: passing argument 1 of ‘truncate’ makes pointer from integer without a cast
+yialloc.c: In function ‘yifreeex’:
+yialloc.c:57: warning: dereferencing ‘void *’ pointer
+In file included from yiencodex.h:3,
+                 from yisock.c:2:
+yi.h:89:1: warning: "offsetof" redefined
+In file included from ./openssl/buffer.h:68,
+                 from ./openssl/x509.h:70,
+                 from yisock.h:256,
+                 from yisock.c:1:
+/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include/stddef.h:414:1: warning: this is the location of the previous definition
+yisock.c: In function ‘__yisend__’:
+yisock.c:474: warning: passing argument 2 of ‘yisend’ discards qualifiers from pointer target type
+yisock.c: In function ‘yisend_ssl’:
+yisock.c:1244: warning: passing argument 2 of ‘yisend’ discards qualifiers from pointer target type
+yisock.c: In function ‘yirecv_ssl’:
+yisock.c:1369: warning: passing argument 2 of ‘yirecv’ discards qualifiers from pointer target type
+In file included from yiencodex.h:3,
+                 from yiencodex.c:22:
+yi.h:82:1: warning: "__shift_mod__" redefined
+yiencodex.c:12:1: warning: this is the location of the previous definition
+yiencodex.c: In function ‘yiToBase64’:
+yiencodex.c:505: warning: incompatible implicit declaration of built-in function ‘printf’
+yiencodex.c:506: warning: incompatible implicit declaration of built-in function ‘memset’
+yiencodex.c: In function ‘_yiToPlain’:
+yiencodex.c:642: warning: incompatible implicit declaration of built-in function ‘strlen’
+yiencodex.c:707: warning: return from incompatible pointer type
+yiupnp.c: In function ‘FindTagxxx’:
+yiupnp.c:1023: warning: second parameter of ‘va_start’ not last named argument
+yiupnp.c:1044: warning: second parameter of ‘va_start’ not last named argument
+yiupnp.c: In function ‘FindTagEx’:
+yiupnp.c:1202: warning: initialization discards qualifiers from pointer target type
+yiHashTable.cpp: In function ‘int yixSearchPath(const char*, unsigned int, const char*, int, unsigned int, unsigned int (*)(const char*, unsigned int, const char*))’:
+yiHashTable.cpp:731: warning: format ‘%s’ expects type ‘char*’, but argument 3 has type ‘int’
+yiHashTable.cpp:731: warning: too few arguments for format
+yiHashTable.cpp:731: warning: format ‘%s’ expects type ‘char*’, but argument 3 has type ‘int’
+yiHashTable.cpp:731: warning: too few arguments for format
+yistr.c: In function ‘yistrTrimEx’:
+yistr.c:312: warning: initialization discards qualifiers from pointer target type
+yistr.c:313: warning: initialization discards qualifiers from pointer target type
+yistr.c: In function ‘yistrSplitEx’:
+yistr.c:361: warning: assignment makes pointer from integer without a cast
+yistr.c:643:14: warning: multi-character character constant
+yistr.c: In function ‘yistrchcpy’:
+yistr.c:643: warning: comparison is always true due to limited range of data type
+yiProfile.c: In function ‘xSearchId’:
+yiProfile.c:74: warning: format ‘%s’ expects type ‘char *’, but argument 4 has type ‘void *’
+yiProfile.c:74: warning: format ‘%s’ expects type ‘char *’, but argument 4 has type ‘void *’
+yiProfile.c:127: warning: format ‘%s’ expects type ‘char *’, but argument 2 has type ‘void *’
+yiProfile.c:127: warning: format ‘%s’ expects type ‘char *’, but argument 2 has type ‘void *’
+yiProfile.c: In function ‘xPrintHeader’:
+yiProfile.c:283: warning: format ‘%s’ expects type ‘char *’, but argument 6 has type ‘struct <anonymous> *’
+yiProfile.c:283: warning: format ‘%s’ expects type ‘char *’, but argument 6 has type ‘struct <anonymous> *’
+yiSmtp.c: In function ‘yiSmtpSendEx’:
+yiSmtp.c:964: warning: format ‘%2x’ expects type ‘unsigned int’, but argument 6 has type ‘char *’
+yiSmtp.c:964: warning: format ‘%5x’ expects type ‘unsigned int’, but argument 7 has type ‘char *’
+yiSmtp.c: In function ‘yiSmtpDestroy’:
+yiSmtp.c:1277: warning: passing argument 1 of ‘yifree’ makes pointer from integer without a cast
+yipop3.c: In function ‘yiMimeStringGet’:
+yipop3.c:142: warning: assignment makes pointer from integer without a cast
+yipop3.c:167: warning: initialization makes pointer from integer without a cast
+yipop3.c:170: warning: passing argument 1 of ‘yiBinaryDelete’ from incompatible pointer type
+yipop3.c:201: warning: assignment makes pointer from integer without a cast
+yipop3.c:202: warning: comparison between pointer and integer
+yipop3.c:205: warning: passing argument 3 of ‘yistrchcpy’ makes integer from pointer without a cast
+yipop3.c:207: warning: assignment makes pointer from integer without a cast
+yipop3.c: In function ‘yiMimeString’:
+yipop3.c:229: warning: initialization discards qualifiers from pointer target type
+yipop3.c: In function ‘yiMimeGetNameAnd’:
+yipop3.c:287: warning: initialization makes pointer from integer without a cast
+yipop3.c:306: warning: assignment makes pointer from integer without a cast
+yipop3.c:335: warning: initialization makes pointer from integer without a cast
+yipop3.c:338: warning: passing argument 1 of ‘yiBinaryDelete’ from incompatible pointer type
+yipop3.c:389: warning: assignment makes pointer from integer without a cast
+yipop3.c:405: warning: initialization makes pointer from integer without a cast
+yipop3.c:406: warning: initialization makes pointer from integer without a cast
+yipop3.c:436: warning: initialization makes pointer from integer without a cast
+yipop3.c: In function ‘yipop3Destroy’:
+yipop3.c:613: warning: passing argument 1 of ‘yifree’ makes pointer from integer without a cast
+yipop3.c: In function ‘xGetOneLine’:
+yipop3.c:857: warning: initialization discards qualifiers from pointer target type
+yipop3.c:881: warning: passing argument 1 of ‘yitoheap’ discards qualifiers from pointer target type
+yipop3.c: In function ‘xGetMailList’:
+yipop3.c:918: warning: assignment makes pointer from integer without a cast
+yipop3.c: At top level:
+yipop3.c:952: warning: initialization from incompatible pointer type
+yipop3.c:953: warning: initialization from incompatible pointer type
+yipop3.c:954: warning: initialization from incompatible pointer type
+yipop3.c:955: warning: initialization from incompatible pointer type
+yipop3.c:956: warning: initialization from incompatible pointer type
+yipop3.c:957: warning: initialization from incompatible pointer type
+yipop3.c:958: warning: initialization from incompatible pointer type
+yipop3.c:959: warning: initialization from incompatible pointer type
+yipop3.c:960: warning: initialization from incompatible pointer type
+yipop3.c:961: warning: initialization from incompatible pointer type
+yipop3.c:962: warning: initialization from incompatible pointer type
+yipop3.c:963: warning: initialization from incompatible pointer type
+yipop3.c: In function ‘xGetDayTime’:
+yipop3.c:987: warning: assignment discards qualifiers from pointer target type
+yipop3.c:992: warning: assignment discards qualifiers from pointer target type
+yipop3.c: In function ‘xParseMail’:
+yipop3.c:1267: warning: passing argument 1 of ‘xGetDate’ discards qualifiers from pointer target type
+yipop3.c:1277: warning: assignment makes pointer from integer without a cast
+yipop3.c:1297: warning: assignment makes pointer from integer without a cast
+yipop3.c:1345: warning: assignment makes pointer from integer without a cast
+yipop3.c:1357: warning: assignment makes pointer from integer without a cast
+yipop3.c:1411: warning: assignment makes pointer from integer without a cast
+yipop3.c:1427: warning: assignment makes pointer from integer without a cast
+yipop3.c:1490: warning: assignment makes pointer from integer without a cast
+yipop3.c:1491: warning: assignment makes pointer from integer without a cast
+yipop3.c:1527: warning: assignment makes pointer from integer without a cast
+yipop3.c:1547: warning: assignment makes pointer from integer without a cast
+yipop3.c:1573: warning: passing argument 2 of ‘yiListAdd’ makes integer from pointer without a cast
+yitTreeNode.h: In static member function ‘static void cyitTreeNode<T>::__delete_node__(void*) [with T = cSgfStoneInfo]’:
+sgfmanager.h:349:   instantiated from here
+yitTreeNode.h:103: warning: deleting ‘void*’ is undefined
+yitTreeNode.h: In static member function ‘static void cyitTreeNode<T>::__delete_node__(void*) [with T = cSgfStoneInfo]’:
+sgfmanager.h:349:   instantiated from here
+yitTreeNode.h:103: warning: deleting ‘void*’ is undefined
+yiTimeEx.cpp: In static member function ‘static char* cyiTime::TimeToString(char*, unsigned int, unsigned int, Bool, char*, char*)’:
+yiTimeEx.cpp:72: warning: deprecated conversion from string constant to ‘char*’
+yiTimeEx.cpp:74: warning: deprecated conversion from string constant to ‘char*’
+yiTreeNode.cpp: In static member function ‘static void cyiTreeNode::__delete_node__(void*)’:
+yiTreeNode.cpp:72: warning: deleting ‘void*’ is undefined
+ar: creating archive libyi.ios.s.a

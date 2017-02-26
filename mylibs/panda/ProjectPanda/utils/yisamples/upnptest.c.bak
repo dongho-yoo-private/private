@@ -1,0 +1,563 @@
+#include "yi.h"
+#include "yisock.h"
+#include "yiupnp.h"
+#include <stdio.h>
+
+const char* pszSearchRequest = "M-SEARCH * HTTP/1.1\r\n\
+HOST: 239.255.255.250:1900\r\n\
+MAN: \"ssdp:discover\"\r\n\
+MX: 3\r\n\
+ST: urn:schemas-upnp-org:service:WANPPPConnection:1";
+
+const char* pszHttpPostHeader ="\
+POST %s HTTP/1.1\r\n\
+HOST: %s:%d\r\n\
+CONTENT-LENGTH: %d\r\n\
+CONTENT-TYPE: text/xml; charset=\"utf-8\"\r\n\
+SOAPACTION: \"urn:schemas-upnp-org:service:WANPPPConnection:1#GetExternalIPAddress\"\r\n\
+\r\n%s";
+
+const char* pszHttpPostHeader2 ="\
+POST %s HTTP/1.1\r\n\
+HOST: %s:%d\r\n\
+CONTENT-LENGTH: %d\r\n\
+CONTENT-TYPE: text/xml; charset=\"utf-8\"\r\n\
+SOAPACTION: \"urn:schemas-upnp-org:service:WANPPPConnection:1#AddPortMapping\"\r\n\
+\r\n%s";
+
+const char* pszHttpMPostHeader ="\
+M-POST %s HTTP/1.1\r\n\
+HOST: %s:%d\r\n\
+CONTENT-LENGTH: %d\r\n\
+CONTENT-TYPE: text/xml; charset=\"utf-8\"\r\n\
+MAN: \"http://schemas.xmlsoap.org/soap/envelope/\"; ns=01\r\n\
+01-SOAPACTION: \"urn:schemas-upnp-org:service:WANPPPConnection:1\"\r\n\
+\r\n%s";
+
+const char* pszGlobalAddressRequest ="\
+<?xml version=\"1.0\"?>\r\n\
+<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\r\n\
+  s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\r\n\
+  <s:Body>\r\n\
+    <u:GetExternalIPAddress xmlns:u=\"urn:schemas-upnp-org:service:WANPPPConnection:1\">\r\n\
+    </u:GetExternalIPAddress>\r\n\
+  </s:Body>\r\n\
+</s:Envelope>\r\n\r\n";
+
+
+const char* pszAddPortMappingRequest ="\
+<?xml version=\"1.0\"?>\r\n\
+<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\r\n\
+  s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\r\n\
+  <s:Body>\r\n\
+  <m:AddPortMapping xmlns:m=\"urn:schemas-upnp-org:service:WANPPPConnection:1\">\r\n\
+<NewRemoteHost></NewRemoteHost>\r\n\
+<NewExternalPort>32333</NewExternalPort>\r\n\
+<NewProtocol>TCP</NewProtocol>\r\n\
+<NewInternalPort>32333</NewInternalPort>\r\n\
+<NewInternalClient>192.168.1.7</NewInternalClient>\r\n\
+<NewEnabled>1</NewEnabled>\r\n\
+<NewPortMappingDescription>UPnP Mapping Test!!</NewPortMappingDescription>\r\n\
+<NewLeaseDuration>0</NewLeaseDuration>\r\n\
+</m:AddPortMapping>\r\n\
+  </s:Body>\r\n\
+</s:Envelope>\r\n\r\n";
+
+const char* pszGlobalAddressRequest2 ="M-POST %s URL HTTP/1.1\r\n\
+HOST: %s:%d\r\n\
+CONTENT-LENGTH: %d\r\n\
+CONTENT-TYPE: text/xml; charset=\"utf-8\"\r\n\
+MAN: \"http://schemas.xmlsoap.org/soap/envelope/\"; ns=01\r\n\
+01-SOAPACTION: \"urn:schemas-upnp-org:service:WANPPPConnection:1\"\r\n\
+\r\n\
+<?xml version=\"1.0\"?>\r\n\
+<s:Envelope\r\n\
+  xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\r\n\
+  s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\r\n\
+  <s:Body>\r\n\
+    <u:GetExternalIPAddress\r\n\
+      xmlns:u=\"urn:schemas-upnp-org:service:WANPPPConnection:1\">\r\n\
+    </u:GetExternalIPAddress>\r\n\
+  </s:Body>\r\n\
+</s:Envelope>\r\n\r\n";
+
+
+// ----------------------------------
+static Bool GetLocation(const char* src, char* buffer)
+{
+	char* pIndex=(char*)src;
+	int index=0;
+
+	pIndex = strstr(pIndex, "Location:");
+
+	if (pIndex==0)
+	{
+		return FALSE;
+	}
+
+	pIndex = &pIndex[strlen("Location:")];
+
+	while(*pIndex)
+	{
+		if (*pIndex==' ')
+		{
+			pIndex++;
+			continue;
+		}
+		if (*pIndex=='\r')
+			break;
+		if (*pIndex=='\n')
+			break;
+		buffer[index++]=*pIndex;
+		pIndex++;
+	}
+
+	buffer[index]=0;
+	return True;
+}
+
+// ----------------------------------
+static char* strcpych(char* dest, const char* src, char ch)
+{
+	char* org=dest;
+	while(*src!=ch)
+	{
+		*dest++=*src++;
+	}
+	*dest=0;
+	return org;
+}
+
+
+// ----------------------------------
+static Bool GetAddressAnd(const char* pszPath, char* address, int* port, char* path)
+{
+	Bool bModePort=False;
+	char* pIndex = strstr(pszPath, "http://");
+	char port_buffer[6];
+
+	if (pIndex==0)
+	{
+		pIndex=(char*)pszPath;
+	}
+	else
+	{
+		pIndex=&pIndex[strlen("http://")];	
+	}
+
+	
+	while(*pIndex)
+	{
+		if (*pIndex==':')
+		{
+			pIndex++;
+			bModePort=True;
+			break;
+		}
+
+		if (*pIndex=='/')
+		{
+			pIndex++;
+			break;
+		}
+
+		*address=*pIndex;
+		address++;
+		pIndex++;
+	}
+
+	*address=0;
+
+	if (bModePort==True)
+	{
+		strcpych(port_buffer, pIndex, '/');
+		*port = atoi(port_buffer);
+
+		if (*port==0)
+		{
+			return False;
+		}
+	}
+
+	pIndex = strstr(pIndex, "/");	
+
+	if (pIndex==0)
+	{
+		return False;
+	}
+	pIndex++;
+
+	strcpy(path, pIndex);
+
+	return True;
+}
+
+// ------------------------------
+void lowcase(char* buffer)
+{
+	char diff = 'a'-'A';
+
+	while(*buffer)
+	{
+		if (*buffer>='A' && *buffer<='Z')
+		{
+			*buffer+=diff;
+		}
+		buffer++;
+	}	
+}
+
+// ------------------------------
+static char* FineTagIndex(char* str, int n, char* tag, int* s, int*e)
+{
+	char stag[128];
+	char etag[128];
+	int  taglen=strlen(tag);
+	char* pIndex=str;
+	char* pEnd=0;
+	char* pStart=0;
+	char* pStartEnd=0;
+	int i=0;
+
+	if (taglen>125)
+		return 0;
+
+	sprintf(stag, "<%s", tag);	
+	sprintf(etag, "</%s", tag);	
+
+
+	for (i=0; i<n+1; i++)
+	{
+		pIndex = strstr(pIndex, stag);
+		pIndex+=taglen;
+		if (pIndex==0)
+			return 0;
+	}
+	pStart=pIndex;
+
+
+	while(*pIndex)
+	{
+		if (strncmp(pIndex, "/>", 2)==0)
+		{
+			pStartEnd=pIndex+1;
+			pEnd=pStartEnd;
+			break;
+		}
+		else if (*pIndex=='>')
+		{
+			pStartEnd=pIndex;
+			break;
+		}
+
+		pIndex++;
+	}
+
+	if (pStartEnd==0)
+	{
+		return 0;
+	}
+
+	pIndex = strstr(pIndex, etag);
+
+	if (pIndex==0)
+	{
+		return 0;
+	}
+
+	pEnd=pIndex;
+
+	*s = pStart-str;	
+	*e = pEnd-pStartEnd;	
+
+	return pStartEnd;
+	
+}
+
+// ------------------------------
+static char* FindTag(char* str, char* value, int n, const char* tag, ...)
+{
+	int i=0;
+	int cnt;
+	char* pIndex=str;
+	void** pArgv=(void**)&n;
+	char* p;
+	int s, e;
+
+	while(pArgv[i+1]!=0)
+	{
+		i++;
+		i++;
+	}
+
+	cnt=i;
+
+	if (cnt==0)
+	{
+		return 0;
+	}
+
+	for (i=0; i<cnt; i++)
+	{
+		int _n = (int)pArgv[i];
+
+		pIndex = FineTagIndex(pIndex, _n, (char*)pArgv[i+1], &s, &e);
+
+		if (pIndex==0)
+		{
+			return 0;
+		}
+		i++;
+	}
+
+	strncpy(value, &pIndex[1], e-1);
+	value[e-1]=0;
+
+	return pIndex;
+}
+
+// ------------------------------
+main()
+{
+	//int sock = yiudp(0, 0);	
+	int sockHttp;
+	int router_addr = yiitol("239.255.255.250");
+	int len = strlen(pszSearchRequest)+1;
+	unsigned int addr=0;
+	int port=0;
+	int timeout=3000;
+	char buffer[4096];
+	int cnt=0;
+	char url[1024];
+	char szAddress[128];
+	char szPath[128];
+	char command[128];
+	int command_len;
+	int i=0;
+	char controlUrl[64];
+	char urlBase[64];
+	char szExternalAddress[128];
+	Bool bIsPPPConnection;
+
+	/*if (yisendu(sock, (void*)pszSearchRequest, len, router_addr, 1900)!=len)
+	{
+		printf("send error\n");
+		return 0;
+	}
+
+	if (yirecvu(sock, buffer, 4096,	&timeout, &addr, &port)<1)
+	{
+		printf("recv error\n");
+		return 0;
+	}
+	printf("%s", buffer);
+
+	if (GetLocation(buffer, url)==FALSE)
+	{
+		printf("no location\n");
+		return 0;
+	}
+	printf("location is %s\n", url);
+
+	if (GetAddressAnd(url, szAddress, &port, szPath)==False)
+	{
+		printf("invalid location\n");
+		return 0;
+	}
+
+
+	printf("address:%s, port:%d, path:%s PPP:%d\n", szAddress, port, szPath, bIsPPPConnection);
+
+	getchar();
+
+	sockHttp = yiconnect(yiitol(szAddress), port, 3);
+
+	if (sockHttp<0)
+	{
+		printf("connection error %s:%d\n", szAddress, port);
+		return 0;
+	}
+
+	sprintf(command, "GET /%s HTTP/1.0\r\n\r\n", szPath);
+	printf("SendCommand: %s", command);
+	command_len = strlen(command);
+	if (yisend(sockHttp, command, command_len+1, False)!=command_len+1)
+	{
+		printf("send error %s\n", command);
+		return 0;
+	}
+
+	while(1)
+	{
+		int n=0;
+		timeout=1000;
+		if ((n=yirecv(sockHttp, &buffer[cnt], 4096, &timeout))<1)
+		{
+			yiclose(sockHttp);
+			break;
+		}
+		cnt+=n;
+	}
+
+	lowcase(buffer);
+	printf("%s, %d bytes\n", buffer, cnt);
+
+	i=0;
+	while(1)
+	{
+		char* p;
+		char value[128];
+		if ((p=FindTag(buffer, value, 0, "root", 0, "servicelist", i, "service", 0, "servicetype", 0, 0))==0)
+		{
+			printf("tag not found\n");
+			return 0;
+		}
+
+		if (strstr(value, "wanpppconnection")!=0)
+		{
+
+			printf("tag found, value: %s\n", value);
+			if (FindTag(p, controlUrl, 0, "controlurl", 0, 0)==0)
+			{
+				printf("tag not found, contorlURL\n");
+				return 0;
+			}
+			break;
+		}
+	
+		i++;
+	}
+
+	printf("controlUrl:%s\n", controlUrl);
+
+	if (FindTag(buffer, urlBase, 0, "urlbase", 0, 0)==0)
+	{
+		return 0;
+	}
+
+	if (GetAddressAnd(urlBase, szAddress, &port, szPath)==False)
+	{
+		printf("invalid location\n");
+		return 0;
+	}
+	printf("address:%s, port:%d\n", szAddress, port);
+*/
+
+	if (yiupnpGetRouterControlUrl(szAddress, &port, controlUrl, &bIsPPPConnection)==False)
+	{
+		printf("no router\n");
+		return 0;
+	}
+
+/*	printf("%s:%d, %s, IsPPP:%d\n", szAddress, port, controlUrl, bIsPPPConnection);
+	getchar();
+	sockHttp = yiconnect(yiitol(szAddress), port, 3);
+
+	if (sockHttp<0)
+	{
+		printf("connect error\n");
+		return 0;
+	}
+
+
+	{
+		char buffer[4096];
+		int len = strlen(pszGlobalAddressRequest);
+		int res;
+		//char fullpath[128];
+		//sprintf(fullpath, "%s%s", urlBase, "ud/?6");
+		sprintf(buffer, pszHttpPostHeader, controlUrl, szAddress, port, len, pszGlobalAddressRequest);
+
+		printf(buffer);
+		printf("length:%d\n", len);
+		len=strlen(buffer);
+
+		if ((res=yisend(sockHttp, buffer, len+1, False))!=len+1)
+		{
+			printf("send error....%d\n", res);
+			return 0;
+		}
+	}
+
+	buffer[0]=0;
+	cnt=0;
+	while(1)
+	{
+		int n=0;
+		timeout=300;
+		if ((n=yirecv(sockHttp, &buffer[cnt], 4096, &timeout))<1)
+		{
+			yiclose(sockHttp);
+			break;
+		}
+		cnt+=n;
+	}
+	if (cnt==0)
+	{
+		printf("recv error\n");
+	}
+	buffer[cnt]=0;
+	printf("recv success\n");
+	printf("%s", buffer);
+*/
+
+	//if (yiupnpGetRouterControlUrl(szAddress, &port, controlUrl, &bIsPPPConnection)==False)
+	if (yiupnpGetExternalAddress(szAddress, port, controlUrl, bIsPPPConnection, szExternalAddress)==False)
+	{
+		printf("yiupnpGetExternalAddress failure\n");
+		return False;
+	}
+
+	printf("external address: %s\n", szExternalAddress);
+/*
+	getchar();
+
+	sockHttp = yiconnect(yiitol(szAddress), port, 3);
+
+	{
+		char buffer[4096];
+		int len = strlen(pszAddPortMappingRequest);
+		int res;
+		//char fullpath[128];
+		//sprintf(fullpath, "%s%s", urlBase, "ud/?6");
+		sprintf(buffer, pszHttpPostHeader2, "/UD/?6", szAddress, port, len, pszAddPortMappingRequest);
+
+		printf(buffer);
+		printf("length:%d\n", len);
+		len=strlen(buffer);
+
+		if ((res=yisend(sockHttp, buffer, len+1, False))!=len+1)
+		{
+			printf("send error....%d\n", res);
+			return 0;
+		}
+	}
+	
+	buffer[0]=0;
+	cnt=0;
+	while(1)
+	{
+		int n=0;
+		timeout=300;
+		if ((n=yirecv(sockHttp, &buffer[cnt], 4096, &timeout))<1)
+		{
+			yiclose(sockHttp);
+			break;
+		}
+		cnt+=n;
+	}
+	if (cnt==0)
+	{
+		printf("recv error\n");
+	}
+	buffer[cnt]=0;
+	printf("recv success\n");
+	printf("%s", buffer);
+*/
+	if (yiupnpAddPortMap(szAddress, port, controlUrl, bIsPPPConnection, "192.168.1.7", 32333, "TestPort")==False)
+	{
+		return 0;
+	}
+	return 0;	
+}
+

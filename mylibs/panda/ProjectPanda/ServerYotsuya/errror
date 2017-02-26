@@ -1,0 +1,10 @@
+svryuser.rcu.cpp: In member function ‘Bool csvryuser::OnReqRegisterMyNetwork(int, eNatType, unsigned int, int, void**)’:
+svryuser.rcu.cpp:503: error: ‘eUSPID_RPY_REGISTER_MY_NETWORK’ was not declared in this scope
+svryuser.rcu.cpp:510: error: invalid conversion from ‘int*’ to ‘address_t*’
+svryuser.rcu.cpp:510: error:   initializing argument 5 of ‘int yirecvu(int, void*, int, int*, address_t*, int*)’
+svryuser.rcu.cpp:534: error: ‘udpSock’ was not declared in this scope
+svryuser.rcu.cpp:535: error: ‘clsoe’ was not declared in this scope
+svryuser.rcu.cpp:497: error: label ‘NOTIFY_ERROR’ used but not defined
+svryuser.rcu.cpp:505: error: label ‘CLOSE_SOCKET’ used but not defined
+make[1]: *** [svryuser.rcu.o] エラー 1
+make: *** [user] エラー 2

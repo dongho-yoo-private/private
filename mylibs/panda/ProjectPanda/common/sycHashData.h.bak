@@ -1,0 +1,61 @@
+#ifndef __sycRegisterData_h__
+#define __sycRegisterData_h__
+#include "yi.h"
+#include "yistd.h"
+#include "yiList.h"
+
+#define YOTSUYA_HASH_SIZE 128
+#define YOTSUYA_HASH_SIZE_SHIFT 7
+
+// ---------------------------------
+typedef struct xssyHashData
+{
+	int nArrayCnt;
+	int nLayerCnt;
+	
+	int nTotalUsedMemory;
+	int nTotalDataCnt;
+	int nFreeLayerCnt;
+	char szRootPath[256];
+
+	cyiList**** pHashTableEntryPoint;
+			
+}ssycHashData;
+
+// ---------------------------------
+typedef struct xssycHashDefFile
+{
+	Bit32 	n;
+	Bit32	n2;
+}ssycHashDefFile;
+
+// ---------------------------------
+class csycHashData
+{
+public:
+	// ---------------------------------
+	ssycHashData* Load(const char* root_path, int array_shift);
+
+	// ---------------------------------
+	void Delete();
+
+	// ---------------------------------
+	int AddRefData(int layer1, int layer2, void* pRef);
+
+
+	// ---------------------------------
+	cyiList* GetList(int layer1, int layer2); 
+
+	// ---------------------------------
+	void ReleaseList(cyiList* list);
+
+	// ---------------------------------
+	const void* GetData(int layer1, int layer2, int dataindex); 
+
+
+private:
+	HandleMutex m_hMutex;
+	ssycHashData* m_p;
+};
+
+#endif

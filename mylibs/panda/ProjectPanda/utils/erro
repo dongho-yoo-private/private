@@ -1,0 +1,20 @@
+In file included from yifile.c:10:
+yifile.posix.c: In function ‘__get_check_sum__’:
+yifile.posix.c:289: error: ‘data’ undeclared (first use in this function)
+yifile.posix.c:289: error: (Each undeclared identifier is reported only once
+yifile.posix.c:289: error: for each function it appears in.)
+yifile.posix.c: トップレベル:
+yifile.posix.c:300: error: conflicting types for ‘yiFileCreditWrite’
+yifile.h:87: error: previous declaration of ‘yiFileCreditWrite’ was here
+yifile.posix.c: In function ‘yiFileCreditWrite’:
+yifile.posix.c:309: error: ‘pszFileName’ undeclared (first use in this function)
+yifile.posix.c:313: error: ‘eFE_OPEN’ undeclared (first use in this function)
+yifile.posix.c:318: 警告: passing argument 1 of ‘__get_check_sum__’ discards qualifiers from pointer target type
+yifile.posix.c:325: error: ‘data’ undeclared (first use in this function)
+yifile.posix.c: In function ‘yiFileCreditLoad’:
+yifile.posix.c:343: error: ‘pszFileName’ undeclared (first use in this function)
+yifile.posix.c:350: error: ‘eFE_OPEN’ undeclared (first use in this function)
+yifile.posix.c:378: error: too few arguments to function ‘flock’
+yifile.posix.c:387: 警告: assignment makes pointer from integer without a cast
+yifile.posix.c:393: 警告: assignment makes pointer from integer without a cast
+make: *** [yifile.o] エラー 1

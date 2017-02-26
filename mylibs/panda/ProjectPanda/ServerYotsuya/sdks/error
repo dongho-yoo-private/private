@@ -1,0 +1,3 @@
+uthp.cpp: In function ‘int uthpRegisterMyNetwork(syiSocket*, eNatType, unsigned int, int)’:
+uthp.cpp:442: error: ‘uthpSen’ was not declared in this scope
+make: *** [uthp.o] エラー 1

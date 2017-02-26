@@ -1,0 +1,79 @@
+#include "yi.h"
+#include "yistd.h"
+#include "yiPacket.h"
+#include "yiclient.h"
+#include "sycenv.h"
+
+#include <string.h>
+#include <unistd.h>
+
+main(int argc, char** argv)
+{
+	Bool bIsClearPacket=False;
+
+	if (argv[1]==0)
+	{
+		yiTrace("no argument...\n");
+		return 0;
+	}
+
+	if (argv[2]!=0)
+	{
+		if (strcmp(argv[2], "-c")==0)
+		{
+			bIsClearPacket=True;
+		}
+	}
+
+	char localport[256];
+	int i;
+	int cnt=0;
+	int loopcnt=10;
+
+	cyiClient* client;
+
+	if (bIsClearPacket==False)
+	{
+		client  = new cyiClient(csycEnv::GetLocalPortName(argv[1], localport), argv[1]);
+	}
+	else
+	{
+		client  = new cyiClient(csycEnv::GetLocalPortName(argv[1], localport));
+	}
+
+	syiSecs secStart = yiGetCurrentSec();
+	
+	if (client->connect(5)==False)
+	{
+		yiTrace("connection failure!(%d)\n", i);
+		delete client;
+		return 0;
+	}
+
+	ssyNormalPacket packet;
+	packet.id = ePID_ECHO ;
+	sprintf(packet.data.data, "hellow(%d)", i);
+
+	if (client->write(packet)==False)
+	{
+		yiTrace("write failure!\n");
+		client->disconnect();
+		delete client;
+		return 0;
+	}
+
+	if (client->read(packet, 5000)==False)
+	{
+		yiTrace("read timeout !\n");
+		client->disconnect();
+		delete client;
+		return 0;
+	}
+
+	client->disconnect();
+	delete client;
+
+	syiSecs sec = yiCompareSecs(secStart, yiGetCurrentSec());
+	yiTrace("response %0d.%06d\n", sec.sec, sec.usec);
+}
+

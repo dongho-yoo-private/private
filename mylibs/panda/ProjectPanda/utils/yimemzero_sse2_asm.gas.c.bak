@@ -1,0 +1,77 @@
+
+inline void* yimemzero_sse2_asm(void* dest, int size)
+{
+#ifndef __x64__
+asm volatile ("\n"
+	"mov %0, %%ecx\n"
+	"lea (%%edi, %0), %%ebx\n"
+	"cmp $16, %%ecx\n"
+	"jb  memzero4\n" 
+    "initbuff:\n"
+	"pxor %%xmm0, %%xmm0\n"
+    "memzero16:\n"
+	"movdqa %%xmm0,(%%edi)\n"
+	"lea 16(%%edi), %%edi\n"
+	"sub $16, %%ecx\n"
+	"cmp $16, %%ecx\n"
+	"jge memzero16\n"
+	"cmp %%ebx, %%edi\n"
+	"je  memzero_end\n"
+    "memzero4:\n"
+	"xorl  %%eax, %%eax\n"
+    "memzero4_loop:\n"
+	"cmp $4, %%ecx\n"
+	"jb  memzero1_loop\n" 
+	"movl %%eax, (%%edi)\n"
+	"sub $4, %%ecx\n"
+	"lea  4(%%edi), %%edi\n"
+	"cmp  %%ebx, %%edi\n"
+	"jne      memzero4_loop\n"
+     "memzero1_loop:\n"
+	"movb     %%al, (%%edi)\n"
+	"lea      1(%%edi), %%edi\n"
+	"cmp      %%ebx, %%edi\n"
+	"jne      memzero1_loop\n"
+	" memzero_end:\n"
+	"    emms" :: "r" (size), "D" (dest));
+
+#else
+asm volatile ("\n"
+	"mov %0, %%rcx\n"
+	"lea (%%rdi, %0), %%rbx\n"
+	"cmp $16, %%rcx\n"
+	"jb  memzero8\n" 
+	"mov %1, %%rdx\n" 
+	"mov $4, %%rax\n"
+    "initbuff:\n"
+	"pxor %%xmm0, %%xmm0\n"
+    "memzero16:\n"
+	"movdqa %%xmm0,(%%rdi)\n"
+	"lea 16(%%rdi), %%rdi\n"
+	"sub $16, %%rcx\n"
+	"cmp $16, %%rcx\n"
+	"jge memzero16\n"
+	"cmp %%rbx, %%rdi\n"
+	"je  memzero_end\n"
+    "memzero8:\n"
+	"xor  %%rax, %%rax\n"
+    "memzero8_loop:\n"
+	"cmp $8, %%rcx\n"
+	"jb  memzero1_loop\n" 
+	"mov %%rax, (%%rdi)\n"
+	"lea 8(%%rdi), %%rdi\n"
+	"cmp %%rbx, %%rdi\n"
+	"jne memzero8_loop\n"
+     "memzero1_loop:\n"
+	"movb %%al, (%%rdi)\n"
+	"lea 1(%%rdi), %%rdi\n"
+	"cmp %%rbx, %%rdi\n"
+	"jne memzero1_loop\n"
+     "memzero_end:\n"
+	"    emms" :: "r" (size), "D" (dest));
+
+#endif
+	return dest;
+}
+
+

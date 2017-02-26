@@ -1,0 +1,5 @@
+ar: creating libsvrybase.a
+svryuser.cpp: In member function ‘virtual Bool csvryuser::OnMessagex(int, int, void*, int, void**)’:
+svryuser.cpp:257: error: ‘HandleuserFile’ was not declared in this scope
+make[1]: *** [svryuser.o] エラー 1
+make: *** [user] エラー 2

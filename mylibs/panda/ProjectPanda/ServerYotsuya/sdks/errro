@@ -1,0 +1,29 @@
+uthp.cpp: In function ‘int uthpSend(syiSocket*, int, void*, int)’:
+uthp.cpp:19: error: ‘struct xsyiSocket’ has no member named ‘security1’
+uthp.cpp:19: error: ‘struct xsyiSocket’ has no member named ‘security2’
+uthp.cpp:23: error: ‘struct xsyiSocket’ has no member named ‘security1’
+uthp.cpp:23: error: ‘struct xsyiSocket’ has no member named ‘security2’
+uthp.cpp: In function ‘int uthpRecv(syiSocket*, int*, void*, int*, int)’:
+uthp.cpp:37: error: ‘struct xsyiSocket’ has no member named ‘security1’
+uthp.cpp: In function ‘syiSocket* uthpSock(int, eUthpSocketType, int, sNetworkInfo*, void*)’:
+uthp.cpp:90: error: ‘struct xsyiSocket’ has no member named ‘network’
+uthp.cpp:91: error: ‘struct xsyiSocket’ has no member named ‘network’
+uthp.cpp:91: error: ‘struct xsyiSocket’ has no member named ‘me’
+uthp.cpp:112: error: ‘struct xsyiSocket’ has no member named ‘remote_security’
+uthp.cpp:114: error: ‘struct xsyiSocket’ has no member named ‘network’
+uthp.cpp: In function ‘syiSocket* uthpTcpConnect(address_t, int, long unsigned int)’:
+uthp.cpp:135: error: ‘struct xsyiSocket’ has no member named ‘security1’
+uthp.cpp: In function ‘int uthpTcpLogin(syiSocket*, long unsigned int, const char*, const char*, sNetworkInfo*, syiSocket*)’:
+uthp.cpp:185: error: ‘struct xsyiSocket’ has no member named ‘security1’
+uthp.cpp:185: error: ‘struct xsyiSocket’ has no member named ‘security1’
+uthp.cpp:192: error: ‘struct xsyiSocket’ has no member named ‘security1’
+uthp.cpp:210: error: ‘struct xsyiSocket’ has no member named ‘security2’
+uthp.cpp:211: error: ‘struct xsyiSocket’ has no member named ‘me’
+uthp.cpp:212: error: ‘struct xsyiSocket’ has no member named ‘id’
+uthp.cpp: In function ‘int uthpSendRCUOk(syiSocket*, int)’:
+uthp.cpp:224: error: ‘struct xsyiSocket’ has no member named ‘me’
+uthp.cpp: In function ‘syiSocket* uthpUdpHolePunching(syiSocket*, int, int, int)’:
+uthp.cpp:309: error: no matching function for call to ‘uthpSock(int&, eUthpSocketType, int&, syiAddress*, syiAddress*, int)’
+uthp.h:65: note: candidates are: syiSocket* uthpSock(int, eUthpSocketType, sNetworkInfo*, void*)
+uthp.cpp:49: note:                 syiSocket* uthpSock(int, eUthpSocketType, int, sNetworkInfo*, void*)
+make: *** [uthp.o] エラー 1

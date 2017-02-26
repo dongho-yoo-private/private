@@ -1,0 +1,511 @@
+#include "yisock.h"
+#include "yi.h"
+#include "yistd.h"
+
+
+
+#ifdef WIN32
+
+#define __close__ closesocket
+
+// --------------------------------
+int yiInitWinsock(int h, int l)
+{
+	WORD wVersion = MAKEWORD(h, l);
+	WSADATA wsaData;
+	int nErrorStatus;
+
+	nErrorStatus = WSAStartup(wVersion, &wsaData);
+
+	if (nErrorStatus!=0)
+	{
+		WSACleanup();
+		return -1;
+	}
+	
+	return wsaData.wVersion;
+	/*if (HIBYTE(wsaData.wVersion)==h &&
+		LOBYTE(wsaData.wVersion)==l)
+	{
+		return wsaData.wVersion;
+	}*/
+	
+}
+
+// --------------------------------
+void yiCloseWinsock()
+{
+	WSACleanup();
+}
+#else
+#define __close__ close
+#endif
+
+#define __NORMAL_PACKET_SIZE__ 
+#define __CLOSE_PACKET_SIZE__ 0
+#define __KEEP_ALIVE_PACKET_SIZE__ 2
+#define __REQ_REPLY_SIZE__	   1
+#define __TIME_OUT_SIZE__	   -1
+
+syiConnection* __global_connections__[1024] = {0, };
+HandleMutex	__hMutex__=0;
+
+static syiConnection** GetConnections()
+{
+	return __global_connections__;
+}
+
+// ----------------------------
+enum ePacketFlag {
+	ePF_YOTSUYA_FLAG 	= 1<<31,
+	ePF_RETRY		= 1<<30,
+	ePF_REQ_REPLY		= 1<<29,
+};
+
+// ----------------------------
+typedef struct xsyiUdpPacket 
+{
+	Bit32 	flags; 
+	Bit32 	id;
+	Bit32	security;
+} syiUdpPacket;
+
+enum eConnectionType {
+	eCT_NORMAL,
+	eCT_LISTENER
+};
+
+// ----------------------------
+typedef struct xsyiConnection {
+	eConnectionType type;
+	int sock;
+	long port;
+	long addr;
+
+	unsigned short security;
+	unsigned short sequence;
+	unsigned short timeout; /*millisec*/
+	unsigned short myfd;
+	unsigned short remotefd;
+	
+	cyiQueue* packets;
+}syiConnection ;
+
+typedef struct xyipacket {
+	unsigned int size;
+	long 	addr;
+	int  	port;
+	char data[1];
+} syipacket;
+
+// -------------------------------
+Bool yiudpinit()
+{
+	memset(__global_connections__, 0, sizeof(*__global_connections__));
+	__hMutex__=yiMutexCreate();
+
+	if (__hMutex__==0)
+	{
+		return False;
+	}
+
+	return True;	
+}
+
+// -------------------------------
+static int GetBlankId()
+{
+	int i;
+	syiConnection** con =  GetConnections();
+
+	yiMutexLock(__hMutex__);
+
+	for (i=1; i<1024; i++)
+	{
+		if (con[i]==0)
+		{
+			yiMutexUnlock(__hMutex__);
+			return i;
+		}
+	}
+
+	yiMutexUnlock(__hMutex__);
+	return -1;
+}
+
+// -------------------------------
+static int SetConnection(int i, syiConnection* con)
+{
+	syiConnection** _con =  GetConnections();
+	yiMutexLock(__hMutex__);
+
+	if (con==0)
+	{
+		if (_con[i]->packets)
+		{
+			delete _con[i]->packets;
+		}
+		yifree(_con[i]);
+	}
+	_con[i]=con;
+	yiMutexUnlock(__hMutex__);
+}
+
+// -------------------------------
+static int AddPacket(int i, void* con, int size)
+{
+	syiConnection** _con =  GetConnections();
+	char* p;
+	yiMutexLock(__hMutex__);
+	p = (char*)yialloc(size+sieof(int));
+	*((int*)p)=size;
+	memcpy(&p[sizeof(int)], con, size);
+	_con[i]->packets->enq(p);
+	yiMutexUnlock(__hMutex__);
+}
+
+// -------------------------------
+static syipacket* GetPacket(int i)
+{
+	syiConnection** _con =  GetConnections();
+	yiMutexLock(__hMutex__);
+	syiPacket* pret = _con[i]->packets->deq();
+	yiMutexUnlock(__hMutex__);
+
+	return pret;
+}
+
+// -------------------------------
+int yiudplisten(long address, int port)
+{
+	int sock = yiudp(address, port);
+	syiConnection* pCon;
+
+	if (sock==-1)
+	{
+		return -1;
+	}
+
+	pCon = (syiConnection*)yialloci(sizeof(syiConnection));
+
+	pCon->type = eCT_LISTENER;
+	pCon->sock=sock;	
+
+	port = yigetport(sock, &addr);
+
+	pCon->security=0;
+	pCon->sequence=0;
+	pCon->timeout=0; /*millisec*/
+	pCon->packet = new cyiQueue();	
+
+	__global_connections__[0] = pCon;
+	return sock;
+}
+
+// -------------------------------
+int yiudpaccept(int fd)
+{
+	syiConnection* p = __global_connections__[0];
+	cyiQueue* queue = p->packets;
+
+	queue->lock();
+	if (queue->GetCount()==0)
+	{
+		queue->unlock();
+		return -1;
+	}
+
+	{
+		yiAnyValue val;
+		if (pack->deq(val)==false)
+		{
+			return -1;
+		}
+
+		if (val==0)
+		{
+			return -1;
+		}
+
+		syipacket* 
+		syiConnectInfo* pConInfo;
+		pack->unlock();
+
+		if (p->size!=0)
+		{
+			yifree(p);
+			return -1;
+		}
+
+		pConInfo = (syiConnectInfo*)xDecode(p->data, p->size);
+
+		if (pConInfo==0)
+		{
+			yifree(p);
+			return -1;
+		}
+
+		int sock = yiudp(0, 0);
+		yisend(sock, &sock, 1, 
+	}
+}
+
+// -------------------------------
+int yiudp(long address, int port)
+{
+	int on=1;
+	int sock;
+	struct sockaddr_in addr;
+
+	if ((sock=socket(AF_INET, SOCK_DGRAM, 0))<0)	
+	{
+		return -1;
+	}
+
+	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));	
+	addr.sin_family = AF_INET;
+	addr.sin_addr.s_addr = (address==0) ? INADDR_ANY:address;
+	addr.sin_port = htons(port);
+
+	if (bind(sock, (struct sockaddr*)&addr, sizeof(addr))<0)
+	{
+		return -1;
+	}	
+	return sock;
+}
+
+// -------------------------------
+int yirecv(int sock, void* buffer, int n, long* address, int* port)
+{
+	struct sockaddr_in user;
+	socklen_t len = sizeof(user);
+	int res = recvfrom(sock, buffer, n, 0, (struct sockaddr*)&user, &len);
+
+	*address = user.sin_addr.s_addr;
+	*port    = ntohs(user.sin_port);
+	return res;
+}
+
+// -------------------------------
+int yisend(int sock, const void* buffer, int n, long address, int port)
+{
+	struct sockaddr_in user;
+	user.sin_addr.s_addr = address;
+	user.sin_port = htons(port);
+	user.sin_family = AF_INET;
+
+	return sendto(sock, buffer, n, 0, (struct sockaddr*)&user, sizeof(user));
+}
+
+
+// -------------------------------
+int yiconnect(long address, int port, int nRetry)
+{
+	int sock;
+	struct sockaddr_in addr;
+
+	if ((sock=  socket(AF_INET, SOCK_STREAM, 0))<0)	
+	{
+		return -1;
+	}
+
+	memset(&addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(port);
+	addr.sin_addr.s_addr = address;
+
+RETRY:
+	if (connect(sock, (struct sockaddr *)&addr, sizeof(addr))!=0)
+	{
+		if (nRetry==0)
+		{
+			__close__(sock);
+			return -1;
+		}
+
+		usleep(100000);
+		nRetry--;
+		goto RETRY;
+	}
+
+	return sock;
+}
+
+// -------------------------------
+int yiconnectu(long address, int port, int nRetry)
+{
+	int sock;
+	struct sockaddr_in addr;
+
+	if ((sock=  socket(AF_INET, SOCK_DGRAM, 0))<0)	
+	{
+		return -1;
+	}
+
+	memset(&addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(port);
+	addr.sin_addr.s_addr = address;
+
+RETRY:
+	if (connect(sock, (struct sockaddr *)&addr, sizeof(addr))!=0)
+	{
+		if (nRetry==0)
+		{
+			__close__(sock);
+			return -1;
+		}
+
+		usleep(100000);
+		nRetry--;
+		goto RETRY;
+	}
+
+	return sock;
+}
+
+// -------------------------------
+int yilisten(long address, int port, int nBuffCnt)
+{
+	int sock;
+	int on=1;
+	struct sockaddr_in my_addr;
+	struct sockaddr* p;
+	int nAddrSize;
+
+	if (port==0)
+	{
+		sock = address;
+		goto LISTEN_ONLY;
+	}
+	
+
+	if ((sock =  socket(AF_INET, SOCK_STREAM, 0))<0)	
+	{
+		return -1;
+	}
+
+	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));	
+	memset(&my_addr, 0, sizeof(my_addr));
+	my_addr.sin_family = AF_INET;
+	my_addr.sin_port = htons(port);
+	my_addr.sin_addr.s_addr = address ? address:htonl(INADDR_ANY);
+	nAddrSize = sizeof(my_addr);
+
+	if (bind(sock, (struct sockaddr*)&my_addr, nAddrSize)==-1)
+	{
+		__close__(sock);
+		return -1;
+	}
+
+LISTEN_ONLY:
+	if (listen(sock, nBuffCnt)==-1)
+	{
+		__close__(sock);
+		return -1;
+	}
+
+	return sock;
+}
+
+// -------------------------------
+int yilistenu(long address, int port, int nBuffCnt)
+{
+	int sock;
+	int on=1;
+	struct sockaddr_in my_addr;
+	struct sockaddr* p;
+	int nAddrSize;
+
+	if (port==0)
+	{
+		sock = address;
+		goto LISTEN_ONLY;
+	}
+	
+
+	if ((sock =  socket(AF_INET, SOCK_DGRAM, 0))<0)	
+	{
+		return -1;
+	}
+
+	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));	
+	memset(&my_addr, 0, sizeof(my_addr));
+	my_addr.sin_family = AF_INET;
+	my_addr.sin_port = htons(port);
+	my_addr.sin_addr.s_addr = address ? address:htonl(INADDR_ANY);
+	nAddrSize = sizeof(my_addr);
+
+	if (bind(sock, (struct sockaddr*)&my_addr, nAddrSize)==-1)
+	{
+		__close__(sock);
+		return -1;
+	}
+
+LISTEN_ONLY:
+	if (listen(sock, nBuffCnt)==-1)
+	{
+		__close__(sock);
+		return -1;
+	}
+
+	return sock;
+}
+
+// -------------------------------
+int yiaccept(int sock, long* address, long* port)
+{
+	struct sockaddr_in addr_accept_in;
+	struct sockaddr*p = (struct sockaddr*)&addr_accept_in;
+	int ret;
+
+	socklen_t addr_size=sizeof(*p);
+	ret = accept(sock, p, &addr_size);
+
+	if (ret==-1)
+	{
+		return -1;
+	}
+
+	if (address)
+		*address = addr_accept_in.sin_addr.s_addr;
+
+	if (port)
+		*port = ntohs(addr_accept_in.sin_port);
+
+	return ret;
+}
+
+// --------------------------------
+long yihtol(const char* pszHostName, int index)
+{
+	int i=0;
+	struct hostent* host = gethostbyname(pszHostName);
+	return *((long*)host->h_addr_list[index]);
+}
+
+// --------------------------------
+long yiitol(const char* pszIpAddress)
+{
+	return inet_addr(pszIpAddress);
+}
+
+// -------------------------
+long yigetport(int sock)
+{
+	struct sockaddr_in addr_accept_in;
+	int n = sizeof(addr_accept_in);
+
+	if (getsockname(sock, (struct sockaddr*)&addr_accept_in, &n)==-1)
+	{
+		return -1;
+	}
+
+	return ntohs(addr_accept_in.sin_port);
+}
+
+// -------------------------
+long yiclose(int sock)
+{
+	__close__(sock);
+}

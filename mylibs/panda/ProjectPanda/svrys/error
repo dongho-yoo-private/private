@@ -1,0 +1,4 @@
+In file included from svryproxy.cpp:5:
+/usr/local/yotsuya/include/sycProxyUser.h:66: error: ‘sUserCreditInfo’ does not name a type
+/usr/local/yotsuya/include/sycProxyUser.h:76: 警告: ‘typedef’ was ignored in this declaration
+make: *** [svryproxy.o] エラー 1

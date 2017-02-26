@@ -1,0 +1,6 @@
+svrybase.create.cpp: In member function 'Bool csvrybase::Start(sServerInformation*, sServerInformation*)':
+svrybase.create.cpp:8: warning: 'daemon' is deprecated (declared at /usr/include/stdlib.h:292)
+svrybase.create.cpp:8: warning: 'daemon' is deprecated (declared at /usr/include/stdlib.h:292)
+svrybase.operations.cpp: In member function 'Bool csvrybase::CreditWrite(const char*, const void*, int, int)':
+svrybase.operations.cpp:60: error: invalid conversion from 'char*' to 'long unsigned int'
+make: *** [svrybase.operations.o] Error 1

@@ -1,0 +1,21 @@
+#ifndef __sycgo_h__
+#define __sycgo_h__
+
+//
+// PacketIdz.
+// about the game.
+//
+enum eGoPacketId {
+	eGPID_REQUEST_LOGIN = 256,
+	eGPID_REGISTER_PLAYER,
+	eGPID_START_RECIEVE_PLAYERS,
+	eGPID_END_RECIEVE_PLAYERS,
+	eGPID_REQUEST_PLAY,
+	eGPID_SEND_GO_PACKET,
+	eGPID_SEND_REQUEST,
+	eGPID_SEND_CHATT_MESSAGE,
+	eGPID_REQUEST_BROADCAST
+};
+
+
+#endif

@@ -1,0 +1,33 @@
+#
+# ssvr Makefile (Last updated 2009. 11. 11.)
+# it is sample server.
+#
+#
+
+YOTSUYA_HOME=/usr/local/goyotsuya
+
+OBJS = svryuser.o svryuser.login.o svryuser.rcu.o svryuser.load.o svryuser.main.o svryuser.register.o 
+
+CFLAGS = -g -O2 -D "__POSIX__" -D "__OSX__" -c
+CC = g++
+TARGET = svryuser
+LDFLAGS = $(YOTSUYA_HOME)/libs/libsvrybase.a $(YOTSUYA_HOME)/libs/libyi.a -lpthread -lstdc++ -lc
+
+INCLUDES= -I $(YOTSUYA_HOME)/include 
+
+all: clean $(TARGET) install
+
+$(TARGET):$(OBJS)
+	$(CC) -o $@ $(OBJS) $(LDFLAGS)
+
+.cpp.o:
+	$(CC) $(INCLUDES) $(CFLAGS) $<
+
+clean:
+	rm -f $(OBJS) $(TARGET)
+	rm -rf objs
+
+install:
+	cp -f $(TARGET) $(YOTSUYA_HOME)/bin
+	mkdir objs
+	mv $(OBJS) objs

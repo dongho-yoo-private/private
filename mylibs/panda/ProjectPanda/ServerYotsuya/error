@@ -1,0 +1,41 @@
+In file included from svrybase.h:23,
+                 from svrybase.init.cpp:1:
+/usr/local/goyotsuya/include/yithread.h:21: warning: 'cdecl' attribute ignored
+/usr/local/goyotsuya/include/yithread.h:28: warning: 'cdecl' attribute ignored
+In file included from svrybase.h:23,
+                 from svrybase.create.cpp:1:
+/usr/local/goyotsuya/include/yithread.h:21: warning: 'cdecl' attribute ignored
+/usr/local/goyotsuya/include/yithread.h:28: warning: 'cdecl' attribute ignored
+svrybase.create.cpp: In member function 'Bool csvrybase::Start(sServerInformation*, sServerInformation*)':
+svrybase.create.cpp:8: warning: 'daemon' is deprecated (declared at /usr/include/stdlib.h:292)
+svrybase.create.cpp:8: warning: 'daemon' is deprecated (declared at /usr/include/stdlib.h:292)
+In file included from svrybase.h:23,
+                 from svrybase.loop.cpp:1:
+/usr/local/goyotsuya/include/yithread.h:21: warning: 'cdecl' attribute ignored
+/usr/local/goyotsuya/include/yithread.h:28: warning: 'cdecl' attribute ignored
+In file included from svrybase.h:23,
+                 from svrybase.dispatch.cpp:1:
+/usr/local/goyotsuya/include/yithread.h:21: warning: 'cdecl' attribute ignored
+/usr/local/goyotsuya/include/yithread.h:28: warning: 'cdecl' attribute ignored
+In file included from svrybase.h:23,
+                 from svrybase.virtuals.cpp:1:
+/usr/local/goyotsuya/include/yithread.h:21: warning: 'cdecl' attribute ignored
+/usr/local/goyotsuya/include/yithread.h:28: warning: 'cdecl' attribute ignored
+In file included from svrybase.h:23,
+                 from svrybase.operations.cpp:1:
+/usr/local/goyotsuya/include/yithread.h:21: warning: 'cdecl' attribute ignored
+/usr/local/goyotsuya/include/yithread.h:28: warning: 'cdecl' attribute ignored
+ar: creating archive libsvrybase.a
+In file included from /usr/local/goyotsuya/include/svrybase.h:23,
+                 from svryuser.h:6,
+                 from svryuser.cpp:1:
+/usr/local/goyotsuya/include/yithread.h:21: warning: 'cdecl' attribute ignored
+/usr/local/goyotsuya/include/yithread.h:28: warning: 'cdecl' attribute ignored
+svryuser.cpp: In member function 'Bool csvryuser::UpdateUserFile(void**, int, void*, int, int)':
+svryuser.cpp:1065: error: cast from 'unsigned int*' to 'unsigned int' loses precision
+svryuser.cpp:1074: error: cast from 'unsigned int (*)[7]' to 'unsigned int' loses precision
+svryuser.cpp:1083: error: cast from 'unsigned int*' to 'unsigned int' loses precision
+svryuser.cpp:1092: error: cast from 'short unsigned int*' to 'unsigned int' loses precision
+svryuser.cpp:1109: error: cast from 'unsigned int (*)[7]' to 'unsigned int' loses precision
+make[1]: *** [svryuser.o] Error 1
+make: *** [user] Error 2
