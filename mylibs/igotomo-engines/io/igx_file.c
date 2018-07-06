@@ -42,7 +42,32 @@ static ubit32_t igx_file_last_error=0;
 #include <unistd.h>
 #include <errno.h>
 
-bit32_t igx_file_read(const char* file_name, void* buffer, int index, size_t size)
+bool_t igx_file_check_bom(void* p_file_header, bool_t* is_little_endian)
+{
+    ubit16_t* bomb=(ubit16_t*)p_file_header;
+    if (bomb==0)
+    {
+        return false;
+    }
+    if (*bomb==0xFEFF)
+    {
+        if (is_little_endian!=0)
+        {
+            *is_little_endian=true;
+        }
+        return true;
+    }
+    else if (*bomb0==0xFFFE)
+    {
+        if (is_little_endian!=0)
+        {
+            *is_little_endian=false;
+        }
+        return true;
+    }
+    return false;
+}
+static bit32_t igx_file_read(const char* file_name, void* buffer, int index, size_t size)
 {
 	int sum=0;
 	igx_file_t fd = open(file_name, O_RDONLY, kFileMode666);

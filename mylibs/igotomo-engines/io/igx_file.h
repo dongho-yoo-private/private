@@ -52,7 +52,6 @@ typedef struct {
     int   (*checksum_func)(void* ,size_t);
     ubit32_t key;
 } igx_file_security_t;
-
 /**
 * @brief ファイルを読み込みます。
 *
