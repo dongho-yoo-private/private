@@ -7,6 +7,16 @@
 /** @brief BIO_系に置き換えると問題ない？ */
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
+struct igx_sock_addr_t
+{
+    union
+    {
+        ubit32_t addrv4;
+        ubit64_t addrv6;
+    }addr;
+    bit32_t port;
+};
+
 #if defined(__POSIX__)
 #   include <unistd.h>
 #   include <errno.h>
@@ -1057,4 +1067,10 @@ const char* igx_sock_url_parse(const char* url, char* protocol, char* hostname, 
     }
   return start_path_addr;
 }
-
+bool_t igx_sock_make_addr(igx_sock_addr_t* addr,const char* host, bit32_t port)
+{
+    igx_addrv4_t addr=igx_sock_get_host_addr(host);
+    addr->addr.addrv4=addr;
+    addr->port=port;
+    return addr!=0?true:false;
+}

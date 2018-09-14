@@ -133,5 +133,10 @@ IGX_SOCK_EXTERN bool_t igx_sock_wait(igx_sock_t* socket, bit32_t timeout);
 * \retval ホスト名の後の文字列のアドレスを返します。
 */
 IGX_SOCK_EXTERN const char* igx_sock_url_parse(const char* url, char* protocol, char* hostname, bit32_t* port);
-
+/**
+* @brief @ref igx_sock_make_addr 形式のアドレスを取得します。
+* @param host ホスト名
+* @param port ポート名
+*/
+IGX_SOCK_EXTERN bool_t igx_sock_make_addr(struct igx_sock_addr_t* addr,const char* host, bit32_t port);
 #endif

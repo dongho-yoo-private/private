@@ -62,6 +62,8 @@ typedef struct {
 
 /** @brief 32bitアドレス */
 typedef ubit32_t igx_addrv4_t;
+/** @brief 接続先のアドレス */
+struct igx_addr_t;
 
 /**@brief 一度に読み・書きするサイズ */
 #define kIGX_SOCK_OPTIMIZED_PACKET_SIZE (4096)
