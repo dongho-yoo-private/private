@@ -8,7 +8,8 @@
 #include "network.h"
 
 typedef struct {
-   addr_v4_t addr; 
+   addr_v4_t addr;
+   port_t port;
 }igx_stune_protocol_t;
 
 #endif
