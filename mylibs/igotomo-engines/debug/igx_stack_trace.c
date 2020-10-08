@@ -5,9 +5,11 @@
 #include "igx_stack_trace.h"
 #include "igx_debug.h"
 
+#define MY_BACKTRACE 1
+
 bit32_t igx_get_stacktrace(void* simbols[], bit32_t max_count)
 {
-#if 0
+#if MY_BACKTRACE
     void** p_bp=(void**)&simbols; // %ebp-4
     void**   ret_addr;
     Dl_info info;
